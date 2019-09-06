@@ -10,6 +10,7 @@ username = "anonymous"
 password = "bahramisepid@gmail.com"
 
 root_dir = '/Volumes/MISR_REPO/'
+local_donwload_dir = '/Nolin/2001/Ml1b2e/August/'
 
 # for MI1B2E Jul2016
 """
@@ -68,20 +69,20 @@ orders = ['0624864632',
 	  #'0624907093']
 
 # for ML1BTE Aug2001
-orders = ['0627517786',
-	  			'0627517787',
-          '0627517794',
+remote_orders_list = ['0627517786',
+	  '0627517787',
+    '0627517794',
 	  '0627517791',
 	  '0627517789',
 	  '0627517788',
 	  '0627517792',
 	  '0627517793']
 
-for order in orders:
+for remote_order_dir in remote_orders_list:
 
-   order_download_dir = root_dir+'/Nolin/2001/Ml1b2e/August/' # local dir- ldir directory? DL dir???
+   local_dir = root_dir+local_download_dir # local dir- ldir directory? DL dir???
 
-   remote_dir_path = '/PullDir/' + order + '/' # is it local or on the server? what is rdir directory?
+   remote_dir_path = '/PullDir/' + remote_order_dir + '/' # is it local or on the server? what is rdir directory?
 
    ftp = FTP(host, username, password)
 
@@ -115,21 +116,22 @@ for order in orders:
              #if (file_to_download.find('.f') > 0): continue
              #if (file_to_download.find('GMP') < 0): continue
 
-	     i = file_to_download.index('MISR_')
+	     index_of_MISR = file_to_download.index('MISR_')
 	     
-             rfile = file_to_download[i:]
+             remote_file = file_to_download[ index_of_MISR : ]
 
-             if (not os.path.exists(order_download_dir + rfile)):
+             if (not os.path.exists(local_dir + remote_file)):
 
-                print (rfile)
-                lfile = open(order_download_dir + rfile, 'wb')
+                print ( f'-> this remote file does not exist on FTP server: {remote_file}')
+
+                lfile = open(local_dir + remote_file, 'wb')  # wb=???
 
                 try:
-                        ftp.retrbinary('RETR %s' % rfile, lfile.write)
+                        ftp.retrbinary('RETR %s' % remote_file, lfile.write)
                         lfile.close()
 
                 except ftplib.error_temp:
-                        print ('FTP ERROR: checksum failure on file "%s/%s"' % (remote_dir_path, rfile))
+                        print ('FTP ERROR: checksum failure on file "%s/%s"' % (remote_dir_path, remote_file))
 
 ftp.close()
 
