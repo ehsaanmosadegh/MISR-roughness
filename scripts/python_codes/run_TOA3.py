@@ -105,9 +105,9 @@ if __name__ == '__main__':
     bands = ['Red']
     minnaert = 0
 
-    odirs = ['/home/mare/Nolin/2001/TOA3/August/Cf/',
-	     '/home/mare/Nolin/2001/TOA3/August/Ca/',
-	     '/home/mare/Nolin/2001/TOA3/August/Aa/']
+    order_directories = ['/home/mare/Nolin/2001/TOA3/August/Cf/',
+	     			'/home/mare/Nolin/2001/TOA3/August/Ca/',
+	     			'/home/mare/Nolin/2001/TOA3/August/Aa/']
 	     #'/home/mare/Nolin/2009/TOA3/Apr_ascend/NIR/']
 
     for order in orders:
@@ -175,10 +175,10 @@ if __name__ == '__main__':
 			if (orbit == 88342) and (block == 9) and (order == '0624779435'): continue
 			#if ((e.cfFile != None) and (nband != 3)):
 			if (camera == 'cf') and (nband != 3):
-			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (odirs[0], path, orbit, block, 'cf')
-			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (odirs[0], path, orbit, block, 'cf')
-			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (odirs[0], e.path, e.orbit, e.block, 'cf')
-			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (odirs[0], e.path, e.orbit, e.block, 'cf')
+			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (order_directories[0], path, orbit, block, 'cf')
+			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (order_directories[0], path, orbit, block, 'cf')
+			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (order_directories[0], e.path, e.orbit, e.block, 'cf')
+			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (order_directories[0], e.path, e.orbit, e.block, 'cf')
 				
 			## here ....
 			    cmd = 'TOA3 \"%s\" %d %d %d \"%s\" \"%s\"' % (File, block, nband, minnaert, fname2, fname3)
@@ -189,10 +189,10 @@ if __name__ == '__main__':
 					sys.exit(1)
 			#if ((e.caFile != None) and (nband != 3)):
 			if (camera == 'ca') and (nband != 3):
-			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (odirs[1], path, orbit, block, 'ca')
-			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (odirs[1], path, orbit, block, 'ca')
-			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (odirs[1], e.path, e.orbit, e.block, 'ca')
-			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (odirs[1], e.path, e.orbit, e.block, 'ca')
+			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (order_directories[1], path, orbit, block, 'ca')
+			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (order_directories[1], path, orbit, block, 'ca')
+			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (order_directories[1], e.path, e.orbit, e.block, 'ca')
+			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (order_directories[1], e.path, e.orbit, e.block, 'ca')
 			    cmd = 'TOA3 \"%s\" %d %d %d \"%s\" \"%s\"' % (File, block, nband, minnaert, fname2, fname3)
 			    #if (n >= 0):
 			    if not (os.path.exists(fname2) and os.path.exists(fname3)) :
@@ -205,10 +205,10 @@ if __name__ == '__main__':
 			    elif (nband == 2): idx = 2
 			    elif (nband == 1): idx = 1 
 			    #else: idx = 2
-			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (odirs[idx], path, orbit, block, 'an')
-			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (odirs[idx], path, orbit, block, 'an')
-			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (odirs[band], e.path, e.orbit, e.block, 'an')
-			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (odirs[band], e.path, e.orbit, e.block, 'an')
+			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (order_directories[idx], path, orbit, block, 'an')
+			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (order_directories[idx], path, orbit, block, 'an')
+			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (order_directories[band], e.path, e.orbit, e.block, 'an')
+			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (order_directories[band], e.path, e.orbit, e.block, 'an')
 			    cmd = 'TOA3 \"%s\" %d %d %d \"%s\" \"%s\"' % (File, block, nband, minnaert, fname2, fname3)
 			    #if (n >= 0):
 			    if not (os.path.exists(fname2) and os.path.exists(fname3)) :
