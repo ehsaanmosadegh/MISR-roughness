@@ -95,13 +95,13 @@ for order in orders:
 
       if (file_to_download.endswith('.hdf')):
 
-         i = file_to_download.index('_P')
+         index_of_path = file_to_download.index('_P')
 
-         path = int(file_to_download[i + 2 : i + 5])
+         path = int( file_to_download[ index_of_path + 2 : index_of_path + 5 ] )
 
-         i = file_to_download.index('_O')
+         index_of_orbit = file_to_download.index('_O')
 
-         orbit = int(file_to_download[i + 2 : i + 8])
+         orbit = int( file_to_download[ index_of_orbit + 2 : index_of_orbit + 8 ] )
 
 	 if (True):
          #if (path > 45) and (path < 100): #Arctic SeaIce
