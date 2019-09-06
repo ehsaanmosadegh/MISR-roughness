@@ -124,8 +124,8 @@ for remote_order_dir in remote_orders_list:
 
                 print ( f'-> this remote file does not exist on FTP server: {remote_file}')
 
-                downloading_file = open(local_dir + remote_file, 'wb')  # wb=???
-
+                downloading_file = open(local_dir + remote_file, 'wb')  # w= write to file, b= in binary mode
+                # ???????
                 try:
                         ftp.retrbinary('RETR %s' % remote_file, downloading_file.write)
                         downloading_file.close()
