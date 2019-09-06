@@ -81,11 +81,11 @@ for order in orders:
 
    order_download_dir = root_dir+'/Nolin/2001/Ml1b2e/August/' # local dir- ldir directory? DL dir???
 
-   rdir_path = '/PullDir/' + order + '/' # is it local or on the server? what is rdir directory?
+   remote_dir_path = '/PullDir/' + order + '/' # is it local or on the server? what is rdir directory?
 
    ftp = FTP(host, username, password)
 
-   ftp.cwd(rdir_path) # change wd to this on the server
+   ftp.cwd(remote_dir_path) # change wd to this on the server
 
    entries = []
 
@@ -129,7 +129,7 @@ for order in orders:
                         lfile.close()
 
                 except ftplib.error_temp:
-                        print ('FTP ERROR: checksum failure on file "%s/%s"' % (rdir_path, rfile))
+                        print ('FTP ERROR: checksum failure on file "%s/%s"' % (remote_dir_path, rfile))
 
 ftp.close()
 
