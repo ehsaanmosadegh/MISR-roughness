@@ -124,11 +124,11 @@ for remote_order_dir in remote_orders_list:
 
                 print ( f'-> this remote file does not exist on FTP server: {remote_file}')
 
-                lfile = open(local_dir + remote_file, 'wb')  # wb=???
+                downloading_file = open(local_dir + remote_file, 'wb')  # wb=???
 
                 try:
-                        ftp.retrbinary('RETR %s' % remote_file, lfile.write)
-                        lfile.close()
+                        ftp.retrbinary('RETR %s' % remote_file, downloading_file.write)
+                        downloading_file.close()
 
                 except ftplib.error_temp:
                         print ('FTP ERROR: checksum failure on file "%s/%s"' % (remote_dir_path, remote_file))
