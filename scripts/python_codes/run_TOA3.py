@@ -113,8 +113,8 @@ if __name__ == '__main__':
   for order in orders:
 		input_order_dir = ['/home/mare/Nolin/2001/Ml1b2e/August/' + order + '/'] # what is idir??? is it idir?
 
-		for d in input_order_dir: 	# what is d??? and input_order_dir???
-			files = sorted(os.listdir(d))
+		for input_dir in input_order_dir: 	# what is d??? and input_order_dir???
+			files = sorted(os.listdir(input_dir))
 	    n = 0
 	    for f in files:
 		#if f.find('GRP_TERRAIN_GM') > -1 and f.endswith('.hdf'):
@@ -136,20 +136,20 @@ if __name__ == '__main__':
 			for e in l:
 			    if e.path == path and e.orbit == orbit:
 				if camera == 'cf':
-				    e.cfFile = os.path.join(d, f)
+				    e.cfFile = os.path.join(input_dir, f)
 				elif camera == 'ca':
-				    e.caFile = os.path.join(d, f)
+				    e.caFile = os.path.join(input_dir, f)
 				elif camera == 'an':
-				    e.anFile = os.path.join(d, f)
+				    e.anFile = os.path.join(input_dir, f)
 
 		    if camera == 'cf':
-			cfFile = os.path.join(d, f)
+			cfFile = os.path.join(input_dir, f)
 		    elif camera == 'ca':
-			caFile = os.path.join(d, f)
+			caFile = os.path.join(input_dir, f)
 		    elif camera == 'an':
-			anFile = os.path.join(d, f)
+			anFile = os.path.join(input_dir, f)
 		    """
-		    File = os.path.join(d, f) 
+		    File = os.path.join(input_dir, f) 
 		#for e in l:
 		for block in xrange(1, 41):
 		    for band in bands:
@@ -181,7 +181,7 @@ if __name__ == '__main__':
 			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (order_directories[0], e.path, e.orbit, e.block, 'cf')
 				
 			## here ....
-			    cmd = 'TOA3 \"%s\" %d %d %d \"%s\" \"%s\"' % (File, block, nband, minnaert, fname2, fname3)
+			    cmd = 'TOA3 \"%s\" %input_dir %input_dir %input_dir \"%s\" \"%s\"' % (File, block, nband, minnaert, fname2, fname3)
 			    #if (n >= 0):
 			    if not (os.path.exists(fname2) and os.path.exists(fname3)) :
 				sys.stderr.write('%5d: %s\n' % (n, cmd))
@@ -193,7 +193,7 @@ if __name__ == '__main__':
 			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (order_directories[1], path, orbit, block, 'ca')
 			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (order_directories[1], e.path, e.orbit, e.block, 'ca')
 			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (order_directories[1], e.path, e.orbit, e.block, 'ca')
-			    cmd = 'TOA3 \"%s\" %d %d %d \"%s\" \"%s\"' % (File, block, nband, minnaert, fname2, fname3)
+			    cmd = 'TOA3 \"%s\" %input_dir %input_dir %input_dir \"%s\" \"%s\"' % (File, block, nband, minnaert, fname2, fname3)
 			    #if (n >= 0):
 			    if not (os.path.exists(fname2) and os.path.exists(fname3)) :
 				sys.stderr.write('%5d: %s\n' % (n, cmd))
@@ -209,7 +209,7 @@ if __name__ == '__main__':
 			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (order_directories[idx], path, orbit, block, 'an')
 			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (order_directories[band], e.path, e.orbit, e.block, 'an')
 			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (order_directories[band], e.path, e.orbit, e.block, 'an')
-			    cmd = 'TOA3 \"%s\" %d %d %d \"%s\" \"%s\"' % (File, block, nband, minnaert, fname2, fname3)
+			    cmd = 'TOA3 \"%s\" %input_dir %input_dir %input_dir \"%s\" \"%s\"' % (File, block, nband, minnaert, fname2, fname3)
 			    #if (n >= 0):
 			    if not (os.path.exists(fname2) and os.path.exists(fname3)) :
 				sys.stderr.write('%5d: %s\n' % (n, cmd))
