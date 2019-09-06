@@ -20,7 +20,7 @@ def sigintHandler(a, b):
 	sys.exit(0)
 
 if __name__ == '__main__':
-    signal.signal(signal.SIGINT, sigintHandler)
+  signal.signal(signal.SIGINT, sigintHandler)
 	
     #l = []
     #f = open('../PSU/POB_2011_SantiamPass.txt', 'r')
@@ -100,20 +100,20 @@ if __name__ == '__main__':
 #	      '0624864634',
 #	      '0624864635']
     # for MILB2E August 2001
-    orders = ['0627517785']
+  orders = ['0627517785']
 
-    bands = ['Red']
-    minnaert = 0
+  bands = ['Red']
+  minnaert = 0
 
-    order_directories = ['/home/mare/Nolin/2001/TOA3/August/Cf/',
+  order_directories = ['/home/mare/Nolin/2001/TOA3/August/Cf/',
 	     			'/home/mare/Nolin/2001/TOA3/August/Ca/',
 	     			'/home/mare/Nolin/2001/TOA3/August/Aa/']
 	     #'/home/mare/Nolin/2009/TOA3/Apr_ascend/NIR/']
 
-    for order in orders:
-	idirs = ['/home/mare/Nolin/2001/Ml1b2e/August/' + order + '/'] 
+  for order in orders:
+		idirs = ['/home/mare/Nolin/2001/Ml1b2e/August/' + order + '/'] 
 
-	for d in idirs:
+		for d in idirs:
 	    files = sorted(os.listdir(d))
 	    n = 0
 	    for f in files:
