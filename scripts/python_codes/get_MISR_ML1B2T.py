@@ -6,10 +6,11 @@ from ftplib import FTP
 
 host = "l5ftl01.larc.nasa.gov"
 
-username = "anonymous"
-password = "bahramisepid@gmail.com"
+username = "ehsanm"
+#password = "bahramisepid@gmail.com"
+password = 'E@dri2019'
 
-root_dir = '/Volumes/MISR_REPO/'
+root_dir_local = '/Volumes/MISR_REPO/'
 local_donwload_dir = '/Nolin/2001/Ml1b2e/August/'
 
 # for MI1B2E Jul2016
@@ -80,7 +81,7 @@ remote_orders_list = ['0627517786',
 
 for remote_order_dir in remote_orders_list:
 
-   local_dir = root_dir+local_download_dir # local dir- ldir directory? DL dir???
+   local_dir = root_dir_local+local_download_dir # local dir- ldir directory? DL dir???
 
    remote_dir_path = '/PullDir/' + remote_order_dir + '/' # is it local or on the server? what is rdir directory?
 
@@ -110,7 +111,7 @@ for remote_order_dir in remote_orders_list:
          #if (path < 80) and (path > 72):
          #if (path < 66) and (path > 59):
 
-             if (file_to_download.find('CLOUD') < 0): continue
+             if (file_to_download.find('CLOUD') < 0): continue  # if files have CLOUD (?) then do not download?
              #if (file_to_download.find('ELLIPSOID') < 0): continue
              #if (file_to_download.find('TERRAIN') < 0): continue
              #if (file_to_download.find('.f') > 0): continue
@@ -118,7 +119,7 @@ for remote_order_dir in remote_orders_list:
 
 	     index_of_MISR = file_to_download.index('MISR_')
 	     
-             remote_file = file_to_download[ index_of_MISR : ]
+             remote_file = file_to_download[ index_of_MISR : ]  # ???
 
              if (not os.path.exists(local_dir + remote_file)):
 
@@ -127,7 +128,7 @@ for remote_order_dir in remote_orders_list:
                 downloading_file = open(local_dir + remote_file, 'wb')  # w= write to file, b= in binary mode
                 # ???????
                 try:
-                        ftp.retrbinary('RETR %s' % remote_file, downloading_file.write)
+                        ftp.retrbinary('RETR %s' % remote_file, downloading_file.write)  # Retrieve a file in binary transfer mode
                         downloading_file.close()
 
                 except ftplib.error_temp:
