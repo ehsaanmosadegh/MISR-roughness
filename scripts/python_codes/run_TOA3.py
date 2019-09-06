@@ -111,10 +111,10 @@ if __name__ == '__main__':
 	     #'/home/mare/Nolin/2009/TOA3/Apr_ascend/NIR/']
 
   for order in orders:
-		idirs = ['/home/mare/Nolin/2001/Ml1b2e/August/' + order + '/'] 
+		input_dir = ['/home/mare/Nolin/2001/Ml1b2e/August/' + order + '/'] # what is idir??? is it input_dir?
 
-		for d in idirs:
-	    files = sorted(os.listdir(d))
+		for d in input_dir: 	# what is d??? and input_dir???
+			files = sorted(os.listdir(d))
 	    n = 0
 	    for f in files:
 		#if f.find('GRP_TERRAIN_GM') > -1 and f.endswith('.hdf'):
