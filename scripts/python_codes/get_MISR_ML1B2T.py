@@ -85,23 +85,23 @@ for order in orders:
 
    ftp = FTP(host, username, password)
 
-   ftp.cwd(remote_dir_path) # change wd to this on the server
+   ftp.cwd(remote_dir_path) # cwd = change work directory to this dir on the server
 
-   entries = []
+   files_list = []
 
-   ftp.dir(entries.append)
+   ftp.dir(files_list.append)  # Produces a directory listing
 
-   for entry in entries:
+   for file_to_download in files_list:
 
-      if (entry.endswith('.hdf')):
+      if (file_to_download.endswith('.hdf')):
 
-         i = entry.index('_P')
+         i = file_to_download.index('_P')
 
-         path = int(entry[i + 2 : i + 5])
+         path = int(file_to_download[i + 2 : i + 5])
 
-         i = entry.index('_O')
+         i = file_to_download.index('_O')
 
-         orbit = int(entry[i + 2 : i + 8])
+         orbit = int(file_to_download[i + 2 : i + 8])
 
 	 if (True):
          #if (path > 45) and (path < 100): #Arctic SeaIce
@@ -109,15 +109,15 @@ for order in orders:
          #if (path < 80) and (path > 72):
          #if (path < 66) and (path > 59):
 
-             if (entry.find('CLOUD') < 0): continue
-             #if (entry.find('ELLIPSOID') < 0): continue
-             #if (entry.find('TERRAIN') < 0): continue
-             #if (entry.find('.f') > 0): continue
-             #if (entry.find('GMP') < 0): continue
+             if (file_to_download.find('CLOUD') < 0): continue
+             #if (file_to_download.find('ELLIPSOID') < 0): continue
+             #if (file_to_download.find('TERRAIN') < 0): continue
+             #if (file_to_download.find('.f') > 0): continue
+             #if (file_to_download.find('GMP') < 0): continue
 
-	     i = entry.index('MISR_')
+	     i = file_to_download.index('MISR_')
 	     
-             rfile = entry[i:]
+             rfile = file_to_download[i:]
 
              if (not os.path.exists(order_download_dir + rfile)):
 
