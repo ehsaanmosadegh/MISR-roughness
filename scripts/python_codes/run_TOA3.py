@@ -111,9 +111,9 @@ if __name__ == '__main__':
 	     #'/home/mare/Nolin/2009/TOA3/Apr_ascend/NIR/']
 
   for order in orders:
-		input_order_dir = ['/home/mare/Nolin/2001/Ml1b2e/August/' + order + '/'] # what is idir??? is it idir?
+		order_download_dir = ['/home/mare/Nolin/2001/Ml1b2e/August/' + order + '/'] # what is idir??? is it idir?
 
-		for input_dir in input_order_dir: 	# what is d??? and input_order_dir???
+		for input_dir in order_download_dir: 	# what is d??? and order_download_dir???
 			files = sorted(os.listdir(input_dir))
 	    n = 0
 	    for f in files:

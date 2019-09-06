@@ -79,7 +79,7 @@ orders = ['0627517786',
 
 for order in orders:
 
-   ldir_path = root_dir+'/Nolin/2001/Ml1b2e/August/' # local dir- ldir directory? DL dir???
+   order_download_dir = root_dir+'/Nolin/2001/Ml1b2e/August/' # local dir- ldir directory? DL dir???
 
    rdir_path = '/PullDir/' + order + '/' # is it local or on the server? what is rdir directory?
 
@@ -119,10 +119,10 @@ for order in orders:
 	     
              rfile = entry[i:]
 
-             if (not os.path.exists(ldir_path + rfile)):
+             if (not os.path.exists(order_download_dir + rfile)):
 
                 print (rfile)
-                lfile = open(ldir_path + rfile, 'wb')
+                lfile = open(order_download_dir + rfile, 'wb')
 
                 try:
                         ftp.retrbinary('RETR %s' % rfile, lfile.write)
