@@ -4,11 +4,10 @@
 import sys, os, os.path, signal
 from ftplib import FTP
 
+#------ setting for DL data from NASA server
 host = "l5ftl01.larc.nasa.gov"
-
-username = "ehsanm"
-#password = "bahramisepid@gmail.com"
-password = 'E@dri2019'
+username = 'anonymous'
+password = 'emosadegh@nevada.unr.edu'
 
 root_dir_local = '/Volumes/MISR_REPO/'
 local_donwload_dir = '/Nolin/2001/Ml1b2e/August/'
