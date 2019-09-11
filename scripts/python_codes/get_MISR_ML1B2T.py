@@ -3,6 +3,7 @@
 # author: Ehsan Mosadegh (ehsan.mosadegh@gmail.com)
 # date: Sep 10, 2019
 # usage: to download MISR data from NASA Langley server
+# usage: We use Python3, and ftplib library to communicate with the server
 #-------------------------------------------------------------------------------------
 #from __future__ import print_function
 import sys, os, os.path, signal
@@ -153,12 +154,23 @@ for order_ID in order_ID_list :
 				print( f'-> we do not have this file yet: {remote_file}')
 				print(f'-> downloading the file: {remote_file}')
 
-	      # downloading_file = open(local_dir + remote_file, 'wb')  # w= write to file, b= in binary mode
+				local_file = open(local_dir + remote_file, 'wb')  # opens/creates a file on local machine; w= write to file, b= in binary mode
+				print(f'-> local file created: {local_file}')
+
+				try :
+
+					print(f'-> downloading the file {remote_file}')
+					my_ftp.retrbinary( 'RETR {remote_file}' , local_file.write)
+					local_file.close()
+				
+				except:
+					print(f'-> ERROR in downloading file')
+
 
 	      # try :
 	      	
-	      # 	my_ftp.retrbinary('RETR %s' % remote_file, downloading_file.write)  # Retrieve a file in binary transfer mode
-	      #   downloading_file.close()
+	      # 	my_ftp.retrbinary('RETR %s' % remote_file, local_file.write)  # Retrieve a file in binary transfer mode
+	      #   local_file.close()
 
 	      # except ftplib.error_temp :
 
