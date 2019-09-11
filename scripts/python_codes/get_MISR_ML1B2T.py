@@ -84,7 +84,7 @@ orders = ['0624864632',
 	  #'0624907093']
 
 # for ML1BTE Aug2001
-order_ID_list = ['062816110196687', '062816109987111']
+order_ID_list = ['062816110196687'] #, '062816109987111']
 
 for order_ID in order_ID_list:
 
@@ -97,7 +97,7 @@ for order_ID in order_ID_list:
 	my_ftp = FTP(ftp_host, username, password)
 	#print(f'-> ftp is: {my_ftp}')
 
-	print(f'-> change dir to: {order_dir}')  # does not woek???
+	print(f'-> change dir to: {order_dir} on FTP')  # does not woek???
 	my_ftp.cwd(order_dir) # cwd = change work directory to this dir on the server
 	#os.chdir(remote_order_dir)
 	print(f'-> we are at dir: { my_ftp.pwd() } ')
@@ -109,17 +109,20 @@ for order_ID in order_ID_list:
 	print(f'-> size of list: { len(files_list) }')
 
 	for file_to_download in files_list :
-		print(f'-> doing QA check...')
-		if (file_to_download.endswith('.hdf')):
+		print(" ")
+		############# add QA quality check here...
+		print(f'-> QA check on file: ==> "{file_to_download}" <==')
+
+		if (file_to_download.endswith('.hdf')) :
 
 			index_of_path = file_to_download.index('_P')
 
 			path = int( file_to_download[ index_of_path + 2 : index_of_path + 5 ] )
-			print(f'-> path no. is= {path}')
+			#print(f'-> path no. is= {path}')
 			index_of_orbit = file_to_download.index('_O')
 
 			orbit = int( file_to_download[ index_of_orbit + 2 : index_of_orbit + 8 ] )
-			print(f'-> orbit no. is= {orbit}')
+			#print(f'-> orbit no. is= {orbit}')
   		### what QA should we use here? based on file name?
 
 	 #if (True):
@@ -142,7 +145,8 @@ for order_ID in order_ID_list:
 
 			if ( not os.path.exists( local_dir + remote_file ) ) :
 
-				print ( f'-> we do not have this file yet: {remote_file}')
+				print( f'-> we do not have this file yet: {remote_file}')
+				print(f'-> downloading the file: {remote_file}')
 
 	      # downloading_file = open(local_dir + remote_file, 'wb')  # w= write to file, b= in binary mode
 
@@ -154,6 +158,11 @@ for order_ID in order_ID_list:
 	      # except ftplib.error_temp :
 
 	      # 	print ('FTP ERROR: checksum failure on file "%s/%s"' % (remote_order_dir, remote_file))
+			else:
+				pass
+
+		else:
+			print(f'-> the file does NOT end to ".hdf", skipping the file...')
 
 my_ftp.close()
 
