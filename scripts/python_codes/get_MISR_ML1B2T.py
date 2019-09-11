@@ -1,16 +1,20 @@
 #!/usr/bin/python3
-
+#-------------------------------------------------------------------------------------
+# author: Ehsan Mosadegh (ehsan.mosadegh@gmail.com)
+# date: Sep 10, 2019
+# usage: to download MISR data from NASA Langley server
+#-------------------------------------------------------------------------------------
 #from __future__ import print_function
 import sys, os, os.path, signal
 from ftplib import FTP
-
-#------ setting for DL data from NASA server
+#-------------------------------------------------------------------------------------
+#--- setting for DL data from NASA server
 
 ftp_host = 'l5ftl01.larc.nasa.gov'
 username = 'anonymous'
 password = 'emosadegh@nevada.unr.edu'
 
-#------ setting for directory path 
+#--- setting for directory path 
 
 local_root_dir = '/Volumes/MISR_REPO/'
 local_download_dir = 'dl_test/'
@@ -18,6 +22,7 @@ local_download_dir = 'dl_test/'
 ftp_dir = '/PullDir/'
 local_dir = local_root_dir+local_download_dir # local dir- check if it exists locally.
 
+file_extension = '.xml'  # '.hdf' '.xml'
 # check if the local download dir exists
 if ( os.path.isdir( local_dir ) == False ) :
 	print(f'-> ERROR: either the root or the local donwload directory does not exist on your system. Pease make/set the download directory and try again.')
@@ -86,7 +91,7 @@ orders = ['0624864632',
 # for ML1BTE Aug2001
 order_ID_list = ['062816110196687'] #, '062816109987111']
 
-for order_ID in order_ID_list:
+for order_ID in order_ID_list :
 
 	print(f'-> processing order: {order_ID}')
    #local_dir = local_root_dir+local_download_dir # local dir- ldir directory? DL dir???
@@ -113,7 +118,7 @@ for order_ID in order_ID_list:
 		############# add QA quality check here...
 		print(f'-> QA check on file: ==> "{file_to_download}" <==')
 
-		if (file_to_download.endswith('.hdf')) :
+		if (file_to_download.endswith(file_extension)) :
 
 			index_of_path = file_to_download.index('_P')
 
@@ -162,7 +167,8 @@ for order_ID in order_ID_list:
 				pass
 
 		else:
-			print(f'-> the file does NOT end to ".hdf", skipping the file...')
+			print(f'-> the file does NOT end to "{file_extension}", skipping the file...')
 
+print(f'-> all downloads are fininshed, now we close the FTP connection.')
 my_ftp.close()
 
