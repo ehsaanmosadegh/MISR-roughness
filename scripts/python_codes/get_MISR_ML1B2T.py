@@ -12,10 +12,20 @@ password = 'emosadegh@nevada.unr.edu'
 
 #------ setting for directory path 
 
-root_dir_local = '/Volumes/MISR_REPO/'
-local_download_dir = '/Nolin/2001/Ml1b2e/August/'
+local_root_dir = '/Volumes/MISR_REPO/'
+local_download_dir = 'dl_test/'
+
 ftp_dir = '/PullDir/'
-local_dir = root_dir_local+local_download_dir # local dir- check if it exists locally.
+local_dir = local_root_dir+local_download_dir # local dir- check if it exists locally.
+
+# check if the local download dir exists
+if ( os.path.isdir( local_dir ) == False ) :
+	print(f'-> ERROR: either the root or the local donwload directory does not exist on your system. Pease make/set the download directory and try again.')
+	print(f'-> Exiting...')
+	raise SystemExit()
+
+else:
+	print(f'-> download dir is: {local_dir}')
 
 # for MI1B2E Jul2016
 """
@@ -74,14 +84,12 @@ orders = ['0624864632',
 	  #'0624907093']
 
 # for ML1BTE Aug2001
-order_ID_list = [
-	
-		'062816110196687' ]  # '062816109811111'
+order_ID_list = ['062816110196687', '062816109987111']
 
 for order_ID in order_ID_list:
 
 	print(f'-> processing order: {order_ID}')
-   #local_dir = root_dir_local+local_download_dir # local dir- ldir directory? DL dir???
+   #local_dir = local_root_dir+local_download_dir # local dir- ldir directory? DL dir???
 
    #remote_order_dir = '/PullDir/' + order_ID + '/' # is it local or on the server? what is rdir directory?
 	order_dir = ftp_dir + order_ID
