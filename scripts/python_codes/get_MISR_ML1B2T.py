@@ -23,7 +23,10 @@ local_download_dir = 'dl_test/'
 ftp_dir = '/PullDir/'
 local_dir = local_root_dir+local_download_dir # local dir- check if it exists locally.
 
-file_extension = '.xml'  # '.hdf' '.xml'
+ff_index = 0  #  either 0 or 1
+ff_list = [ 'xml' , 'hdf' ]
+file_format = ff_list[ ff_index]
+
 # check if the local download dir exists
 if ( os.path.isdir( local_dir ) == False ) :
 	print(f'-> ERROR: either the root or the local donwload directory does not exist on your system. Pease make/set the download directory and try again.')
@@ -151,13 +154,35 @@ for order_ID in order_ID_list :
 
 			if ( not os.path.exists( local_dir + remote_file ) ) :
 
-				print( f'-> we do not have this file yet: {remote_file}')
-				print(f'-> downloading the file: {remote_file}')
+				print( f'-> we do NOT have this file on our local machine:' )
+				print( f'-> {remote_file}' )
+				print(f'-> downloading the file...' )
 
 				local_file = open(local_dir + remote_file, 'wb')  # opens/creates a file on local machine; w= write to file, b= in binary mode
 				print(f'-> local file created: {local_file}')
 
 				try :
+
+					if ( file_format == 'xml' ) :
+
+						# use ascii function as transfter mode
+
+					elif ( file_format == 'hdf' ) :
+
+						# use binary function as transfer mode
+
+					else: 
+						print( f'-> check the file fomat settings; exiting ...')
+						raise SystemExit()
+
+				except:
+					print(f'-> issue with downloading file from the FTP')
+					ftplib.all_errors
+
+
+
+
+
 
 					print(f'-> downloading the file {remote_file}')
 					my_ftp.retrbinary( 'RETR {remote_file}' , local_file.write)
@@ -176,11 +201,12 @@ for order_ID in order_ID_list :
 
 	      # 	print ('FTP ERROR: checksum failure on file "%s/%s"' % (remote_order_dir, remote_file))
 			else:
-				pass
+				print(f'-> the file exist on our local directory.')
 
 		else:
 			print(f'-> the file does NOT end to "{file_extension}", skipping the file...')
 
-print(f'-> all downloads are fininshed, now we close the FTP connection.')
+print(f'-> all files downloaded at: {local_dir}')
+print(f'-> closing the FTP connection...')
 my_ftp.close()
 
