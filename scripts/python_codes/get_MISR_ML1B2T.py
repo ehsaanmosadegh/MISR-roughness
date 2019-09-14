@@ -38,34 +38,6 @@ else:
 	print(f'-> download dir is: {local_dir}')
 	print( f'-> file format is: {file_format}')
 
-# for MI1B2E Jul2016
-"""
-orders = ['0624779399', 
-	  '0624779400', 
-	  '0624779401', 
-	  '0624779402', 
-	  '0624779415', 
-	  '0624779416', 
-	  '0624779417', 
-	  '0624779418', 
-	  '0624779419', 
-	  '0624779420', 
-	  '0624779421', 
-	  '0624779422', 
-	  '0624779424', 
-	  '0624779427', 
-	  '0624779429', 
-	  '0624779432', 
-	  '0624779433', 
-	  '0624779434', 
-	  '0624779435', 
-	  '0624779436', 
-	  '0624779437', 
-	  '0624779438', 
-	  '0624779439', 
-	  '0624779440', 
-	  '0624779441']
-"""
 # for MIB2GEOP Apr2016
 #orders = ['0624777838']
 
@@ -105,24 +77,25 @@ for order_ID in order_ID_list :
    #remote_order_dir = '/PullDir/' + order_ID + '/' # is it local or on the server? what is rdir directory?
 	order_dir = ftp_dir + order_ID
 	print(f'-> connecting to FTP')
-	my_ftp = FTP(ftp_host, username, password)
-	#print(f'-> ftp is: {my_ftp}')
+	ftp_connection = FTP(ftp_host, username, password)
+	#print(f'-> ftp is: {ftp_connection}')
 
 	print(f'-> change dir to: {order_dir} on FTP')  # does not woek???
-	my_ftp.cwd(order_dir) # cwd = change work directory to this dir on the server
+	ftp_connection.cwd(order_dir) # cwd = change work directory to this dir on the server
 	#os.chdir(remote_order_dir)
-	print(f'-> we are at dir: { my_ftp.pwd() } ')
+	print(f'-> we are at dir: { ftp_connection.pwd() } ')
 
 	files_list = []  # for each loop inside a loop
 
-	my_ftp.dir(files_list.append)  # Produces a directory listing; does it work anymore???
+	ftp_connection.dir(files_list.append)  # Produces a directory listing; does it work anymore???
 
 	print(f'-> size of list: { len(files_list) }')
 
 	for file_to_download in files_list :
 		print(" ")
 		############# add QA quality check here...
-		print(f'-> QA check on file: ==> "{file_to_download}" <==')
+		print( f'-> QA check on file:')
+		print( f' "{file_to_download}" ')
 
 		if (file_to_download.endswith(file_format)) :
 
@@ -160,35 +133,48 @@ for order_ID in order_ID_list :
 				print( f'-> {remote_file_name}' )
 				#print(f'-> downloading the file...' )
 
-				#local_file = open(local_dir + remote_file_name, 'wb')  # opens/creates a file on local machine; w= write to file, b= in binary mode
-				#print(f'-> local file created: {local_file}')
+				local_file_name = local_dir + remote_file_name  # opens/creates a file on local machine; w= write to file, b= in binary mode
+				print(f'-> local file created: {local_file_name}')
 
 				try :
 
 					if ( file_format == 'xml' ) :
 
 						# use ascii function as transfter mode
-						print( f'-> downloading the file: ')
+						print( f'-> downloading file: ')
 						print( f'-> {remote_file_name} ' )
-						#local_file = open(local_dir + remote_file_name, 'w')  # opens/creates a file on local machine; w= write to file, b= in binary mode
-						with open ( local_dir + remote_file_name , 'w' ) as local_file_object :
+						
+						# Open the local file for writing in ASCII mode
+						with open ( local_file_name , 'w' ) as file_object :
 
-							my_ftp.retrlines( 'RETR {remote_file_name}' , local_file_object.write )
+							print( f'-> file opened: {local_file_name}')
+
+							ftp_connection.retrlines( f'RETR {remote_file_name}' , file_object.write )  # PROBLEM ??????
+
+							print( f'-> GREAT, data was written to the file')
+
+
+
+
 
 					elif ( file_format == 'hdf' ) :
 
-						# use binary function as transfer mode
-						pass
+						# Open the local file for writing in binary mode
+						file_object = open ( local_file_name , 'wb' )
+							
+						ftp_connection.retrbinary( f'RETR {local_file_name}' , file_object.write )
 
 					else :
 
 						print( f'-> check the file fomat settings; exiting ...')
 						raise SystemExit()
 
-				except :
-
-					print(f'-> issue with downloading file from the FTP')
+				except :# 
 					ftplib.all_errors
+
+					print(f'-> ERROR: issue with downloading file from the FTP. Existing...')
+					raise SystemExit()
+					
 
 
 
@@ -196,8 +182,8 @@ for order_ID in order_ID_list :
 
 
 					# print(f'-> downloading the file {remote_file_name}')
-					# my_ftp.retrbinary( 'RETR {remote_file_name}' , local_file.write)
-					# local_file.close()
+					# ftp_connection.retrbinary( 'RETR {remote_file_name}' , local_file_name.write)
+					# local_file_name.close()
 				
 				# except:
 				# 	print(f'-> ERROR in downloading file')
@@ -205,20 +191,21 @@ for order_ID in order_ID_list :
 
 	      # try :
 	      	
-	      # 	my_ftp.retrbinary('RETR %s' % remote_file_name, local_file.write)  # Retrieve a file in binary transfer mode
-	      #   local_file.close()
+	      # 	ftp_connection.retrbinary('RETR %s' % remote_file_name, local_file_name.write)  # Retrieve a file in binary transfer mode
+	      #   local_file_name.close()
 
 	      # except ftplib.error_temp :
 
 	      # 	print ('FTP ERROR: checksum failure on file "%s/%s"' % (remote_order_dir, remote_file_name))
 			else:
-				print(f'-> the file exist on our local directory; no need to downloading the file.')
+				print(f'-> file EXISTS on your local directory; no need to downloading the file.')
 
 		else:
-			print(f'-> the file does NOT end to "{file_format}", skipping the file...')
+			print(f'-> file does NOT end to "{file_format}", skipping the file...')
 
 print( " " )
 print(f'-> tried downloading all ordered files to: {local_dir}')
 print(f'-> closing the FTP connection...')
-my_ftp.close()
+ftp_connection.close()
+print( f'-> SUCCESSFULLY ENDED!')
 
