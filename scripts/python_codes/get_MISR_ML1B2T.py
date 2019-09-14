@@ -6,7 +6,7 @@
 #
 # to use: 
 # We use Python3, and ftplib library to communicate with the server.
-# change the setting on top of the script that says (USER) base on your local machine
+# change the setting on top of the script that says (USER) based on your local machine
 
 # future to-do tasks:
 # a QA on file name patterns; it should capture the file name pattern and selectes the pattern of interest, pattern such as camerta, orbit, path...
@@ -33,9 +33,9 @@ ff_index = 1  #  either 0 or 1
 ff_list = ['xml' , 'hdf']
 file_format = ff_list[ ff_index]
 
-#-- setting for orders; list all order numbers in thsi list wraped in single quotation and seperated by comma (from email from NASA server)
+#-- setting for orders; list all order numbers in this list wraped in single quotation and seperated by comma (from email from NASA server)
 
-order_ID_list = ['062816110196687' ]#, '062816109987111' , '062816109811111' , '062816110081117' , '062816110281817' , '062816110468891' , '062816110389171']
+order_ID_list = ['062816110196687' , '062816109987111' , '062816109811111' , '062816110081117' , '062816110281817' , '062816110468891' , '062816110389171']
 
 # (USER) change these setting based on your local machine for downloading files from NASA server
 #-------------------------------------------------------------------------------------
@@ -46,12 +46,12 @@ order_ID_list = ['062816110196687' ]#, '062816109987111' , '062816109811111' , '
 local_dir = local_root_dir + local_download_dir # local dir- check if it exists locally.
 
 if ( os.path.isdir( local_dir ) == False ) :
-	print(f'-> ERROR: either the root or the local donwload directory does not exist on your system. Pease make/set the download directory and try again.')
-	print(f'-> Exiting...')
+	print( f'-> ERROR: either the root or the local donwload directory does not exist on your system. Pease make/set the download directory and try again.')
+	print( f'-> Exiting...')
 	raise SystemExit()
 
 else:
-	print(f'-> download dir is: {local_dir}')
+	print( f'-> download dir is: {local_dir}')
 	print( f'-> file format is: {file_format}')
 
 # check if the local download dir exists
