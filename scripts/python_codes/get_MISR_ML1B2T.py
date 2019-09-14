@@ -90,7 +90,7 @@ for order_ID in order_ID_list :
 
 		if (file_to_download.endswith(file_format)) :
 
-		############# add QA quality check here...
+		############# add QA quality check here based on file name/tag ...
 			# index_of_path = file_to_download.index('_P')
 
 			# path = int( file_to_download[ index_of_path + 2 : index_of_path + 5 ] )
@@ -114,6 +114,8 @@ for order_ID in order_ID_list :
              #if (file_to_download.find('TERRAIN') < 0): continue
              #if (file_to_download.find('.f') > 0): continue
              #if (file_to_download.find('GMP') < 0): continue
+
+    ############# add QA quality check here based on file name/tag ...
 
 			index_of_MISR = file_to_download.index('MISR_')
 	     
