@@ -8,7 +8,7 @@
 # We use Python3, and ftplib library to communicate with the server.
 # change the setting on top of the script that says (USER) base on your local machine
 
-# future to-do :
+# future to-do tasks:
 # a QA on file name patterns; it should capture the file name pattern and selectes the pattern of interest, pattern such as camerta, orbit, path...
 #-------------------------------------------------------------------------------------
 
@@ -25,8 +25,8 @@ password = 'emosadegh@nevada.unr.edu'
 
 #-- setting for directory path 
 
-local_root_dir = '/Volumes/MISR_REPO/'
-local_download_dir = 'dl_test/'
+local_root_dir = '/Users/ehsan/Documents/MISR/'
+local_download_dir = 'test_download/'
 ftp_dir = '/PullDir/'
 
 ff_index = 1  #  either 0 or 1
@@ -35,7 +35,7 @@ file_format = ff_list[ ff_index]
 
 #-- setting for orders; list all order numbers in thsi list wraped in single quotation and seperated by comma (from email from NASA server)
 
-order_ID_list = ['062816110196687' , '062816109987111' , '062816109811111' , '062816110081117' , '062816110281817' , '062816110468891' , '062816110389171']
+order_ID_list = ['062816110196687' ]#, '062816109987111' , '062816109811111' , '062816110081117' , '062816110281817' , '062816110468891' , '062816110389171']
 
 # (USER) change these setting based on your local machine for downloading files from NASA server
 #-------------------------------------------------------------------------------------
@@ -85,19 +85,19 @@ for order_ID in order_ID_list :
 	for file_to_download in files_list :
 
 		print(" ")
-		############# add QA quality check here...
 		print( f'-> QA check on file:')
 		print( f' "{file_to_download}" ')
 
 		if (file_to_download.endswith(file_format)) :
 
-			index_of_path = file_to_download.index('_P')
+		############# add QA quality check here...
+			# index_of_path = file_to_download.index('_P')
 
-			path = int( file_to_download[ index_of_path + 2 : index_of_path + 5 ] )
-			#print(f'-> path no. is= {path}')
-			index_of_orbit = file_to_download.index('_O')
+			# path = int( file_to_download[ index_of_path + 2 : index_of_path + 5 ] )
+			# #print(f'-> path no. is= {path}')
+			# index_of_orbit = file_to_download.index('_O')
 
-			orbit = int( file_to_download[ index_of_orbit + 2 : index_of_orbit + 8 ] )
+			# orbit = int( file_to_download[ index_of_orbit + 2 : index_of_orbit + 8 ] )
 			#print(f'-> orbit no. is= {orbit}')
   		### what QA should we use here? based on file name?
 
@@ -126,13 +126,13 @@ for order_ID in order_ID_list :
 				#print(f'-> downloading the file...' )
 
 				local_file_full_path = local_dir + remote_file_name  # opens/creates a file on local machine; w= write to file, b= in binary mode
-				print(f'-> local file created: {local_file_full_path}')
+				#print(f'-> local file created: {local_file_full_path}')
 
 				try :
 
 					if ( file_format == 'xml' ) :
 
-						# use ascii function as transfter mode
+						# use ASCII function as transfter mode
 						print( f'-> downloading file: ')
 						print( f'-> {remote_file_name} ' )
 						
@@ -148,7 +148,7 @@ for order_ID in order_ID_list :
 
 					elif ( file_format == 'hdf' ) :
 
-						# use ascii function as transfter mode
+						# use BINARY function as transfter mode
 						print( f'-> downloading file: ')
 						print( f'-> {remote_file_name} ' )
 
@@ -172,9 +172,6 @@ for order_ID in order_ID_list :
 					print(f'-> ERROR: issue with downloading file from the FTP. Existing...')
 					raise SystemExit()
 
-	      # except ftplib.error_temp :
-
-	      # 	print ('FTP ERROR: checksum failure on file "%s/%s"' % (remote_order_dir, remote_file_name))
 			else:
 				print(f'-> file EXISTS on your local directory; no need to downloading the file.')
 
