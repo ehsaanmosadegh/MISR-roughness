@@ -163,7 +163,7 @@ for order_ID in order_ID_list :
 
 					else :
 
-						print( f'-> check the file fomat settings; exiting ...')
+						print( f'-> ERROR: check the file fomat settings; exiting ...')
 						raise SystemExit()
 
 				except :# 
