@@ -7,6 +7,7 @@
 #-------------------------------------------------------------------------------------
 #from __future__ import print_function
 import sys, os, os.path, signal
+import ftplib
 from ftplib import FTP
 #-------------------------------------------------------------------------------------
 #--- setting for DL data from NASA server
@@ -35,6 +36,7 @@ if ( os.path.isdir( local_dir ) == False ) :
 
 else:
 	print(f'-> download dir is: {local_dir}')
+	print( f'-> file format is: {file_format}')
 
 # for MI1B2E Jul2016
 """
@@ -122,7 +124,7 @@ for order_ID in order_ID_list :
 		############# add QA quality check here...
 		print(f'-> QA check on file: ==> "{file_to_download}" <==')
 
-		if (file_to_download.endswith(file_extension)) :
+		if (file_to_download.endswith(file_format)) :
 
 			index_of_path = file_to_download.index('_P')
 
@@ -150,32 +152,41 @@ for order_ID in order_ID_list :
 
 			index_of_MISR = file_to_download.index('MISR_')
 	     
-			remote_file = file_to_download[ index_of_MISR : ]  # ???
+			remote_file_name = file_to_download[ index_of_MISR : ]  # ???
 
-			if ( not os.path.exists( local_dir + remote_file ) ) :
+			if ( not os.path.exists( local_dir + remote_file_name ) ) :
 
 				print( f'-> we do NOT have this file on our local machine:' )
-				print( f'-> {remote_file}' )
-				print(f'-> downloading the file...' )
+				print( f'-> {remote_file_name}' )
+				#print(f'-> downloading the file...' )
 
-				local_file = open(local_dir + remote_file, 'wb')  # opens/creates a file on local machine; w= write to file, b= in binary mode
-				print(f'-> local file created: {local_file}')
+				#local_file = open(local_dir + remote_file_name, 'wb')  # opens/creates a file on local machine; w= write to file, b= in binary mode
+				#print(f'-> local file created: {local_file}')
 
 				try :
 
 					if ( file_format == 'xml' ) :
 
 						# use ascii function as transfter mode
+						print( f'-> downloading the file: ')
+						print( f'-> {remote_file_name} ' )
+						#local_file = open(local_dir + remote_file_name, 'w')  # opens/creates a file on local machine; w= write to file, b= in binary mode
+						with open ( local_dir + remote_file_name , 'w' ) as local_file_object :
+
+							my_ftp.retrlines( 'RETR {remote_file_name}' , local_file_object.write )
 
 					elif ( file_format == 'hdf' ) :
 
 						# use binary function as transfer mode
+						pass
 
-					else: 
+					else :
+
 						print( f'-> check the file fomat settings; exiting ...')
 						raise SystemExit()
 
-				except:
+				except :
+
 					print(f'-> issue with downloading file from the FTP')
 					ftplib.all_errors
 
@@ -184,29 +195,30 @@ for order_ID in order_ID_list :
 
 
 
-					print(f'-> downloading the file {remote_file}')
-					my_ftp.retrbinary( 'RETR {remote_file}' , local_file.write)
-					local_file.close()
+					# print(f'-> downloading the file {remote_file_name}')
+					# my_ftp.retrbinary( 'RETR {remote_file_name}' , local_file.write)
+					# local_file.close()
 				
-				except:
-					print(f'-> ERROR in downloading file')
+				# except:
+				# 	print(f'-> ERROR in downloading file')
 
 
 	      # try :
 	      	
-	      # 	my_ftp.retrbinary('RETR %s' % remote_file, local_file.write)  # Retrieve a file in binary transfer mode
+	      # 	my_ftp.retrbinary('RETR %s' % remote_file_name, local_file.write)  # Retrieve a file in binary transfer mode
 	      #   local_file.close()
 
 	      # except ftplib.error_temp :
 
-	      # 	print ('FTP ERROR: checksum failure on file "%s/%s"' % (remote_order_dir, remote_file))
+	      # 	print ('FTP ERROR: checksum failure on file "%s/%s"' % (remote_order_dir, remote_file_name))
 			else:
-				print(f'-> the file exist on our local directory.')
+				print(f'-> the file exist on our local directory; no need to downloading the file.')
 
 		else:
-			print(f'-> the file does NOT end to "{file_extension}", skipping the file...')
+			print(f'-> the file does NOT end to "{file_format}", skipping the file...')
 
-print(f'-> all files downloaded at: {local_dir}')
+print( " " )
+print(f'-> tried downloading all ordered files to: {local_dir}')
 print(f'-> closing the FTP connection...')
 my_ftp.close()
 
