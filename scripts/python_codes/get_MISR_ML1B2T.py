@@ -3,32 +3,48 @@
 # author: Ehsan Mosadegh (ehsan.mosadegh@gmail.com)
 # date: Sep 10, 2019
 # usage: to download MISR data from NASA Langley server
-# usage: We use Python3, and ftplib library to communicate with the server
+#
+# to use: 
+# We use Python3, and ftplib library to communicate with the server.
+# change the setting on top of the script that says (USER) base on your local machine
+
+# future to-do :
+# a QA on file name patterns; it should capture the file name pattern and selectes the pattern of interest, pattern such as camerta, orbit, path...
 #-------------------------------------------------------------------------------------
-#from __future__ import print_function
+
 import sys, os, os.path, signal
 import ftplib
 from ftplib import FTP
+
 #-------------------------------------------------------------------------------------
-#--- setting for DL data from NASA server
+# (USER) change these setting based on your local machine for downloading files from NASA server
 
 ftp_host = 'l5ftl01.larc.nasa.gov'
 username = 'anonymous'
 password = 'emosadegh@nevada.unr.edu'
 
-#--- setting for directory path 
+#-- setting for directory path 
 
 local_root_dir = '/Volumes/MISR_REPO/'
 local_download_dir = 'dl_test/'
-
 ftp_dir = '/PullDir/'
-local_dir = local_root_dir+local_download_dir # local dir- check if it exists locally.
 
-ff_index = 0  #  either 0 or 1
-ff_list = [ 'xml' , 'hdf' ]
+ff_index = 1  #  either 0 or 1
+ff_list = ['xml' , 'hdf']
 file_format = ff_list[ ff_index]
 
+#-- setting for orders; list all order numbers in thsi list wraped in single quotation and seperated by comma (from email from NASA server)
+
+order_ID_list = ['062816110196687' , '062816109987111' , '062816109811111' , '062816110081117' , '062816110281817' , '062816110468891' , '062816110389171']
+
+# (USER) change these setting based on your local machine for downloading files from NASA server
+#-------------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------------
 # check if the local download dir exists
+
+local_dir = local_root_dir + local_download_dir # local dir- check if it exists locally.
+
 if ( os.path.isdir( local_dir ) == False ) :
 	print(f'-> ERROR: either the root or the local donwload directory does not exist on your system. Pease make/set the download directory and try again.')
 	print(f'-> Exiting...')
@@ -38,47 +54,22 @@ else:
 	print(f'-> download dir is: {local_dir}')
 	print( f'-> file format is: {file_format}')
 
-# for MIB2GEOP Apr2016
-#orders = ['0624777838']
+# check if the local download dir exists
+#-------------------------------------------------------------------------------------
 
-# for MIB2GEOP May2016
-#orders = ['0624871775']
+#-------------------------------------------------------------------------------------
+# connect to NASA server through FTP and donwload files
 
-# for MIB2GEOP Jul2016
-#orders = ['0624786633']
-"""
-# for MI1B2E May2016
-orders = ['0624864632',
-	  '0624864633',
-	  '0624864634',
-	  '0624864635']
-"""
-# for MIL2TCSP Apr2016
-#orders = ['0624906331',
-	  #'0624906332',
-	  #'0624906333]
-
-# for MIL2TCSP May2016
-#orders = ['0624911745']
-
-# for MIL2TCSP Jul2016
-#orders = ['0624907089',
-	  #'0624907091',
-	  #'0624907093']
-
-# for ML1BTE Aug2001
-order_ID_list = ['062816110196687'] #, '062816109987111']
+print(f'-> connecting to FTP')
+ftp_connection = FTP(ftp_host, username, password)
+#print(f'-> ftp is: {ftp_connection}')
 
 for order_ID in order_ID_list :
-
+	print( " " )
+	print( '##########################################################################' )
 	print(f'-> processing order: {order_ID}')
-   #local_dir = local_root_dir+local_download_dir # local dir- ldir directory? DL dir???
 
-   #remote_order_dir = '/PullDir/' + order_ID + '/' # is it local or on the server? what is rdir directory?
 	order_dir = ftp_dir + order_ID
-	print(f'-> connecting to FTP')
-	ftp_connection = FTP(ftp_host, username, password)
-	#print(f'-> ftp is: {ftp_connection}')
 
 	print(f'-> change dir to: {order_dir} on FTP')  # does not woek???
 	ftp_connection.cwd(order_dir) # cwd = change work directory to this dir on the server
@@ -92,6 +83,7 @@ for order_ID in order_ID_list :
 	print(f'-> size of list: { len(files_list) }')
 
 	for file_to_download in files_list :
+
 		print(" ")
 		############# add QA quality check here...
 		print( f'-> QA check on file:')
@@ -133,8 +125,8 @@ for order_ID in order_ID_list :
 				print( f'-> {remote_file_name}' )
 				#print(f'-> downloading the file...' )
 
-				local_file_name = local_dir + remote_file_name  # opens/creates a file on local machine; w= write to file, b= in binary mode
-				print(f'-> local file created: {local_file_name}')
+				local_file_full_path = local_dir + remote_file_name  # opens/creates a file on local machine; w= write to file, b= in binary mode
+				print(f'-> local file created: {local_file_full_path}')
 
 				try :
 
@@ -145,24 +137,29 @@ for order_ID in order_ID_list :
 						print( f'-> {remote_file_name} ' )
 						
 						# Open the local file for writing in ASCII mode
-						with open ( local_file_name , 'w' ) as file_object :
+						with open ( local_file_full_path , 'w' ) as file_object :
 
-							print( f'-> file opened: {local_file_name}')
+							print( f'-> file created/opened: {local_file_full_path}')
 
-							ftp_connection.retrlines( f'RETR {remote_file_name}' , file_object.write )  # PROBLEM ??????
+							ftp_connection.retrlines( f'RETR {remote_file_name}' , file_object.writelines )  # remote file or just the file name?
 
 							print( f'-> GREAT, data was written to the file')
 
 
-
-
-
 					elif ( file_format == 'hdf' ) :
 
-						# Open the local file for writing in binary mode
-						file_object = open ( local_file_name , 'wb' )
+						# use ascii function as transfter mode
+						print( f'-> downloading file: ')
+						print( f'-> {remote_file_name} ' )
+
+						# Open the local file for writing in BINARY mode
+						with open ( local_file_full_path , 'wb' ) as file_object :
+
+							print( f'-> file created/opened: {local_file_full_path}')
 							
-						ftp_connection.retrbinary( f'RETR {local_file_name}' , file_object.write )
+							ftp_connection.retrbinary( f'RETR {remote_file_name}' , file_object.write )
+
+							print( f'-> GREAT, data was written to the file')
 
 					else :
 
@@ -174,25 +171,6 @@ for order_ID in order_ID_list :
 
 					print(f'-> ERROR: issue with downloading file from the FTP. Existing...')
 					raise SystemExit()
-					
-
-
-
-
-
-
-					# print(f'-> downloading the file {remote_file_name}')
-					# ftp_connection.retrbinary( 'RETR {remote_file_name}' , local_file_name.write)
-					# local_file_name.close()
-				
-				# except:
-				# 	print(f'-> ERROR in downloading file')
-
-
-	      # try :
-	      	
-	      # 	ftp_connection.retrbinary('RETR %s' % remote_file_name, local_file_name.write)  # Retrieve a file in binary transfer mode
-	      #   local_file_name.close()
 
 	      # except ftplib.error_temp :
 
@@ -203,9 +181,18 @@ for order_ID in order_ID_list :
 		else:
 			print(f'-> file does NOT end to "{file_format}", skipping the file...')
 
+# connect to NASA server through FTP and donwload files
+#-------------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------------
+# closing FTP connection and exiting
+
 print( " " )
 print(f'-> tried downloading all ordered files to: {local_dir}')
 print(f'-> closing the FTP connection...')
 ftp_connection.close()
 print( f'-> SUCCESSFULLY ENDED!')
+
+# closing FTP connection and exiting
+#-------------------------------------------------------------------------------------
 
