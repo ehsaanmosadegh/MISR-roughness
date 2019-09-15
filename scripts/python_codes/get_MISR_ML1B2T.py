@@ -12,7 +12,7 @@
 # a QA on file name patterns; it should capture the file name pattern and selectes the pattern of interest, pattern such as camerta, orbit, path...
 #-------------------------------------------------------------------------------------
 
-import sys, os, os.path, signal
+import os, os.path
 import ftplib
 from ftplib import FTP
 
