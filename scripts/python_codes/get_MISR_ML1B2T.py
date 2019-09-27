@@ -1,14 +1,16 @@
 #!/usr/bin/python3
 #-------------------------------------------------------------------------------------
-# author: Ehsan Mosadegh (ehsan.mosadegh@gmail.com)
+# author: Ehsan Mosadegh (emosadegh@nevada.unr.edu & ehsanm@dri.edu)
 # date: Sep 10, 2019
-# usage: to download MISR data from NASA Langley server
 #
-# to use: 
+# purpose: 
+# to download MISR data from NASA Langley server
+#
+# how to use: 
 # We use Python3, and ftplib library to communicate with the server.
 # change the setting on top of the script that says (USER) based on your local machine
 
-# future to-do tasks:
+# future TO-DO tasks:
 # a QA on file name patterns; it should capture the file name pattern and selectes the pattern of interest, pattern such as camerta, orbit, path...
 #-------------------------------------------------------------------------------------
 
@@ -29,9 +31,9 @@ local_root_dir = '/Users/ehsan/Documents/MISR/'
 local_download_dir = 'test_download/'
 ftp_dir = '/PullDir/'
 
-ff_index = 1  #  either 0 or 1
+ff_index = 1  		# either 0 or 1
 ff_list = ['xml' , 'hdf']
-file_format = ff_list[ ff_index]
+file_format = ff_list[ ff_index ]
 
 #-- setting for orders; list all order numbers in this list wraped in single quotation and seperated by comma (from email from NASA server)
 
