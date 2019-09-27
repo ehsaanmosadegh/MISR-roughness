@@ -6,7 +6,7 @@
 # usage:
 #
 
-from __future__ import print_function
+#from __future__ import print_function
 import sys, os, os.path, signal
 
 #class Entry:
@@ -123,9 +123,9 @@ import sys, os, os.path, signal
 
 download_dir = '/Volumes/MISR_REPO/Nolin/2001/Ml1b2e/August/' # what is idir??? is it idir?
 
-dl_orders_list = ['0627517785' , '0627517787' , '0627517788']  # hdf files are here in each order dir
+dl_orders_list = ['0627517785']# , '0627517787' , '0627517788']  # hdf files are here in each order dir
 
-bands = ['Red']
+bands = ['Red'] # why only red?
 minnaert = 0
 
 # png and dat directories - is it destination dir? / toa dir?
@@ -155,94 +155,71 @@ for order in dl_orders_list :  # we DL them in previous step; hdf and xml
 
 	    # n = 0 # ???
 
-	    # f == MISR_file if found anywhere
+	    # f == MISR_hdf_file if found anywhere
 
-	  # for each file in each dir ...
+	  #### start working on each file
 
+	for MISR_hdf_file in sorted_files_list :  # whow about xml and hdf file difference?
+		#print(f'-> MISR file to process= {MISR_hdf_file}')
 
-# 	  #### start working on each file
+	###################### find the pattern in file ... #####################
+	########## QA checking ???
 
-# 		for MISR_file in sorted_files_list :  # whow about xml and hdf file difference?
-# 			print(f'-> MISR file to process= {MISR_file}')
+		#if MISR_hdf_file.find('GRP_TERRAIN_GM') > -1 and MISR_hdf_file.endswith('.hdf'):
 
-# 		###################### find the pattern in file ... #####################
-# 		########## QA checking ???
+		# pick a MISR file and start processing it
+		if MISR_hdf_file.find('GRP_ELLIPSOID_GM') > -1 and MISR_hdf_file.endswith('.hdf'): # find this pattern - use a different file pattern finder/catcher and get the necessary keywords from the file name. we should get the .hdf file
 
-# 			#if MISR_file.find('GRP_TERRAIN_GM') > -1 and MISR_file.endswith('.hdf'):
-# 			if MISR_file.find('GRP_ELLIPSOID_GM') > -1 and MISR_file.endswith('.hdf'): # find this pattern - use a different file pattern finder/catcher and get the necessary keywords from the file name. we should get the .hdf file
+      ############################################# find the pattern for path -- where we use it? ######################
+			index_of_path = MISR_hdf_file.index('_P') # finds the pattern
+			path = int(MISR_hdf_file[ index_of_path + 2: index_of_path + 5])
+			#print(f'-> path is= {path}')
 
-# 	        # find the pattern for path -- where we use it?
-# 				index_of_path = MISR_file.index('_P') # finds the pattern
-# 				path = int(MISR_file[ index_of_path + 2: index_of_path + 5])
+        # find the pattern for orbit -- where we use it?
+			index_of_orbit = MISR_hdf_file.index('_O')
+			orbit = int(MISR_hdf_file[ index_of_orbit + 2: index_of_orbit + 8])
+			#print(f'-> orbit is= {orbit}')
 
-# 	        # find the pattern for orbit -- where we use it?
-# 				index_of_orbit = MISR_file.index('_O')
-# 				orbit = int(MISR_file[ index_of_orbit + 2: index_of_orbit + 8])
+			# find the camera in the file name
+			if MISR_hdf_file.find('_CF') > -1 :
 
-# 				# find the camera in the file name
-# 				if MISR_file.find('_CF') > -1 :
-# 					camera = 'cf'
-# 				elif MISR_file.find('_CA') > -1 :
-# 					camera = 'ca'
-# 				elif MISR_file.find('_AN') > -1 :
-# 					camera = 'an'
-# 				else:
-# 					camera = '??'
+				camera = 'cf'
 
+			elif MISR_hdf_file.find('_CA') > -1 :
 
-# # 		    """ not mine
-# # 		    if camera == 'cf' or camera == 'ca' or camera == 'an':
-# # 			for e in l:
-# # 			    if e.path == path and e.orbit == orbit:
-# # 				if camera == 'cf':
-# # 				    e.cfprocessing_file = os.path.join(local_order_dir_fullpath, MISR_file)
-# # 				elif camera == 'ca':
-# # 				    e.caprocessing_file = os.path.join(local_order_dir_fullpath, MISR_file)
-# # 				elif camera == 'an':
-# # 				    e.anprocessing_file = os.path.join(local_order_dir_fullpath, MISR_file)
+				camera = 'ca'
 
-# # 		    if camera == 'cf':
-# # 			cfprocessing_file = os.path.join(local_order_dir_fullpath, MISR_file)
-# # 		    elif camera == 'ca':
-# # 			caprocessing_file = os.path.join(local_order_dir_fullpath, MISR_file)
-# # 		    elif camera == 'an':
-# # 			anprocessing_file = os.path.join(local_order_dir_fullpath, MISR_file)
-# # 		    """ not mine
+			elif MISR_hdf_file.find('_AN') > -1 :
 
-#             # what is the process on the file ?
-# 		    processing_file = os.path.join(local_order_dir_fullpath, MISR_file)
-# 					print(f'-> we processing the file = {processing_file}')
+				camera = 'an'
 
+			else:
 
+				camera = '??'
 
+      ############################################# find the pattern for path -- where we use it? ######################
 
+			#---> up to here
+      # what is the process on the file ?
+			processing_file = os.path.join( local_DL_dir_fullpath , MISR_hdf_file )
+			#print(f'-> we processing the file = {processing_file}')
 
+			# ??????????????????????????????????????????
+			# decide for block and band 
 
+			#for e in l:  # ?????
+			for block in xrange(1, 41):  # block? range?
 
+				for band in bands:  # why band range???
+					print(f'-> band is = {band}')
 
+					# why check band ???
+					if (band == 'NIR'): nband = 3
+					elif (band == 'Red'): nband = 2  # what is nband?
+					elif (band == 'Green'): nband = 1
+					elif (band == 'Blue'): nband = 0
 
-
-
-
-
-
-
-
-
-
-
-
-# 		#for e in l:
-# 		for block in xrange(1, 41):  # why this range for block?
-
-# 		    for band in bands:  # why band range???
-#                 print(f'-> band is = {band}')
-#                # why check band ???
-#     			if (band == 'NIR'): nband = 3
-#     			elif (band == 'Red'): nband = 2  # what is nband?
-#     			elif (band == 'Green'): nband = 1
-#     			elif (band == 'Blue'): nband = 0
-
+	    # ??????????????????????????????????????????
 
 # 			# why skipping these orbit/block/orders and it goes to next block?
 
@@ -265,58 +242,112 @@ for order in dl_orders_list :  # we DL them in previous step; hdf and xml
 
 # #######################################################################################################
 
-# 			if (camera == 'cf') and (nband != 3) :  # why this? are we processing this?
+			if (camera == 'cf') and (nband != 3) :  # why? are we processing this?
 
-#                 # naming .dat and .png files
+				# naming .dat and .png files
 
-# 			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (png_directories[0], path, orbit, block, 'cf') # [0] for cf
-# 			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (png_directories[0], path, orbit, block, 'cf')
-# 			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (png_directories[0], e.path, e.orbit, e.block, 'cf')
-# 			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (png_directories[0], e.path, e.orbit, e.block, 'cf')
+				fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (png_directories[0], path, orbit, block, 'cf') # [0] for cf
+				fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (png_directories[0], path, orbit, block, 'cf')
+				#fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (png_directories[0], e.path, e.orbit, e.block, 'cf')
+				#fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (png_directories[0], e.path, e.orbit, e.block, 'cf')
 
-#     			## here .... what is cmd ?
-#                 # is TOA3 a C-code? check the old script
-#                # check : https://www.geeksforgeeks.org/python-os-system-method/
-#                #-------------------------------------------------
-# 			    cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_file, block, nband, minnaert, fname2, fname3)
-#                 #------------------------------------------------
+    			## here .... what is cmd ?
+                # is TOA3 a C-code? check the old script
+               # check : https://www.geeksforgeeks.org/python-os-system-method/
+               #-------------------------------------------------
+				cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_file, block, nband, minnaert, fname2, fname3)
+                #------------------------------------------------
+# #######################################################################################################      
 
-#                 #if (n >= 0):
-# 			    if not (os.path.exists(fname2) and os.path.exists(fname3)) :
-# 				sys.stderr.write('%5d: %s\n' % (n, cmd))
-# 				if os.system(cmd) != 0:
-# 					sys.exit(1)
-# 			#if ((e.caprocessing_file != None) and (nband != 3)):
-# 			if (camera == 'ca') and (nband != 3):
-# 			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (png_directories[1], path, orbit, block, 'ca')
-# 			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (png_directories[1], path, orbit, block, 'ca')
-# 			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (png_directories[1], e.path, e.orbit, e.block, 'ca')
-# 			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (png_directories[1], e.path, e.orbit, e.block, 'ca')
-# 			    cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_file, block, nband, minnaert, fname2, fname3)
-# 			    #if (n >= 0):
-# 			    if not (os.path.exists(fname2) and os.path.exists(fname3)) :
-# 				sys.stderr.write('%5d: %s\n' % (n, cmd))
-# 				if os.system(cmd) != 0:
-# 					sys.exit(1)
-# 			#if (e.anprocessing_file != None):
-# 			if (camera == 'an'):
-# 			    if (nband == 3): idx = -1
-# 			    elif (nband == 2): idx = 2
-# 			    elif (nband == 1): idx = 1
-# 			    #else: idx = 2
-# 			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (png_directories[idx], path, orbit, block, 'an')
-# 			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (png_directories[idx], path, orbit, block, 'an')
-# 			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (png_directories[band], e.path, e.orbit, e.block, 'an')
-# 			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (png_directories[band], e.path, e.orbit, e.block, 'an')
-# 			    cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_file, block, nband, minnaert, fname2, fname3)
-# 			    #if (n >= 0):
-# 			    if not (os.path.exists(fname2) and os.path.exists(fname3)) :
-# 				sys.stderr.write('%5d: %s\n' % (n, cmd))
-# 				if os.system(cmd) != 0:
-# 					sys.exit(1)
-# 			n += 1
+      ### why check not ?
+			#if (n >= 0):
+			if not (os.path.exists(fname2) and os.path.exists(fname3)) :
 
-#     sys.exit(0)
+				sys.stderr.write('%5d: %s\n' % (n, cmd))
+				
+				if os.system(cmd) != 0:
+					sys.exit(1)
 
-    
+# #######################################################################################################
+
+			#if ((e.caprocessing_file != None) and (nband != 3)):
+			if (camera == 'ca') and (nband != 3) : # why not checked?
+
+				fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (png_directories[1], path, orbit, block, 'ca')
+				print(f'-> fname2= {fname2}')
+
+				fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (png_directories[1], path, orbit, block, 'ca')
+				print(f'-> fname3= {fname3}')
+
+				#fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (png_directories[1], e.path, e.orbit, e.block, 'ca')
+				#fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (png_directories[1], e.path, e.orbit, e.block, 'ca')
+				cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_file, block, nband, minnaert, fname2, fname3)
+				print(f'-> cmd is= {cmd}')
+
+# #######################################################################################################
+
+			    #if (n >= 0):
+			if not (os.path.exists(fname2) and os.path.exists(fname3)) :
+				sys.stderr.write('%5d: %s\n' % (n, cmd))
+				if os.system(cmd) != 0:
+					sys.exit(1)
+
+# #######################################################################################################
+
+			#if (e.anprocessing_file != None):
+			if (camera == 'an'):
+
+			    if (nband == 3): idx = -1
+			    elif (nband == 2): idx = 2
+			    elif (nband == 1): idx = 1
+
+			    #else: idx = 2
+			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (png_directories[idx], path, orbit, block, 'an')
+			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (png_directories[idx], path, orbit, block, 'an')
+			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (png_directories[band], e.path, e.orbit, e.block, 'an')
+			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (png_directories[band], e.path, e.orbit, e.block, 'an')
+			    cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_file, block, nband, minnaert, fname2, fname3)
+			    #if (n >= 0):
+			if not (os.path.exists(fname2) and os.path.exists(fname3)) :
+				sys.stderr.write('%5d: %s\n' % (n, cmd))
+				if os.system(cmd) != 0:
+					sys.exit(1)
+
+			n += 1
+
+		#sys.exit(0)
+
+
+
+
+
+
+
+
+
+
+
+			#print(f'-> camera is= {camera}')
+# 		    """ not mine
+# 		    if camera == 'cf' or camera == 'ca' or camera == 'an':
+# 			for e in l:
+# 			    if e.path == path and e.orbit == orbit:
+# 				if camera == 'cf':
+# 				    e.cfprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 				elif camera == 'ca':
+# 				    e.caprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 				elif camera == 'an':
+# 				    e.anprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+
+# 		    if camera == 'cf':
+# 			cfprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 		    elif camera == 'ca':
+# 			caprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 		    elif camera == 'an':
+# 			anprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 		    """ not mine
+
+
+
+
 
