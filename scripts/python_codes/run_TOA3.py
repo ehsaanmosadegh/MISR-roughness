@@ -17,9 +17,9 @@ import sys, os, os.path, signal
 	# 	self.path = path
 	# 	self.orbit = orbit
 	# 	self.block = block
-	# 	self.cfprocessing_file = None
-	# 	self.caprocessing_file = None
-	# 	self.anprocessing_file = None
+	# 	self.cfprocessing_hdf_file = None
+	# 	self.caprocessing_hdf_file = None
+	# 	self.anprocessing_hdf_file = None
 
     # def sigintHandler(a, b):
     # 	sys.exit(0)
@@ -110,7 +110,10 @@ import sys, os, os.path, signal
 # NOTE: /home/mare/ == /Volumes/MISR_REPO/
 
 
-
+root_path = '/Volumes/MISR_REPO/Nolin/2001/TOA3/'
+month = 'August/'
+dat_png_dir = root_path+month
+print(f'-> root dir is= {dat_png_dir}')
 
 
 
@@ -129,7 +132,7 @@ bands = ['Red'] # why only red?
 minnaert = 0
 
 # png and dat directories - is it destination dir? / toa dir?
-png_directories = ['/Volumes/MISR_REPO/Nolin/2001/TOA3/August/Cf/',  # should I make them myself? what is this dir ?
+TOA_dir_list = ['/Volumes/MISR_REPO/Nolin/2001/TOA3/August/Cf/',  # should I make them myself? what is this dir ?
 	     								'/Volumes/MISR_REPO/Nolin/2001/TOA3/August/Ca/',
 	     								'/Volumes/MISR_REPO/Nolin/2001/TOA3/August/Aa/']
 	     #'/home/mare/Nolin/2009/TOA3/Apr_ascend/NIR/']
@@ -201,23 +204,25 @@ for order in dl_orders_list :  # we DL them in previous step; hdf and xml
 
 			#---> up to here
       # what is the process on the file ?
-			processing_file = os.path.join( local_DL_dir_fullpath , MISR_hdf_file )
-			#print(f'-> we processing the file = {processing_file}')
+			processing_hdf_file = os.path.join( local_DL_dir_fullpath , MISR_hdf_file )
+			print(f'-> we are processing the file = {processing_hdf_file}')
 
 			# ??????????????????????????????????????????
 			# decide for block and band 
 
 			#for e in l:  # ?????
-			for block in xrange(1, 41):  # block? range?
+			for block in range(1, 41) :  # block? range?
+				#print(type(range(1,10)))
 
 				for band in bands:  # why band range???
-					print(f'-> band is = {band}')
+					#print(f'-> band is = {band}')
 
 					# why check band ???
-					if (band == 'NIR'): nband = 3
+					if (band == 'NIR'): nband = 3 # ???
 					elif (band == 'Red'): nband = 2  # what is nband?
 					elif (band == 'Green'): nband = 1
 					elif (band == 'Blue'): nband = 0
+					#print(f'-> nband is= {nband}')
 
 	    # ??????????????????????????????????????????
 
@@ -238,84 +243,94 @@ for order in dl_orders_list :  # we DL them in previous step; hdf and xml
 # 			if (orbit == 87979) and (block == 35) and (order == '0624779433'): continue
 # 			if (orbit == 87979) and (block == 36) and (order == '0624779433'): continue
 # 			if (orbit == 88342) and (block == 9) and (order == '0624779435'): continue
-# 			#if ((e.cfprocessing_file != None) and (nband != 3)):
+# 			#if ((e.cfprocessing_hdf_file != None) and (nband != 3)):
 
 # #######################################################################################################
+
+# Q- how define a good file name?
+
+
 
 			if (camera == 'cf') and (nband != 3) :  # why? are we processing this?
 
 				# naming .dat and .png files
 
-				fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (png_directories[0], path, orbit, block, 'cf') # [0] for cf
-				fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (png_directories[0], path, orbit, block, 'cf')
-				#fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (png_directories[0], e.path, e.orbit, e.block, 'cf')
-				#fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (png_directories[0], e.path, e.orbit, e.block, 'cf')
+				fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (TOA_dir_list[0], path, orbit, block, 'cf') # [0] for cf
+				#print(f'-> fname2 is= {fname2} and type= {type(fname2)}')
+
+
+				fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (TOA_dir_list[0], path, orbit, block, 'cf')
+				#print(f'-> fname3 is= {fname3}')
+
+				#fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (TOA_dir_list[0], e.path, e.orbit, e.block, 'cf')
+				#fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (TOA_dir_list[0], e.path, e.orbit, e.block, 'cf')
 
     			## here .... what is cmd ?
                 # is TOA3 a C-code? check the old script
                # check : https://www.geeksforgeeks.org/python-os-system-method/
-               #-------------------------------------------------
-				cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_file, block, nband, minnaert, fname2, fname3)
-                #------------------------------------------------
-# #######################################################################################################      
-
-      ### why check not ?
-			#if (n >= 0):
-			if not (os.path.exists(fname2) and os.path.exists(fname3)) :
-
-				sys.stderr.write('%5d: %s\n' % (n, cmd))
-				
-				if os.system(cmd) != 0:
-					sys.exit(1)
-
-# #######################################################################################################
-
-			#if ((e.caprocessing_file != None) and (nband != 3)):
-			if (camera == 'ca') and (nband != 3) : # why not checked?
-
-				fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (png_directories[1], path, orbit, block, 'ca')
-				print(f'-> fname2= {fname2}')
-
-				fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (png_directories[1], path, orbit, block, 'ca')
-				print(f'-> fname3= {fname3}')
-
-				#fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (png_directories[1], e.path, e.orbit, e.block, 'ca')
-				#fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (png_directories[1], e.path, e.orbit, e.block, 'ca')
-				cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_file, block, nband, minnaert, fname2, fname3)
+               #------------------------------------------------- ???? 
+				cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(processing_hdf_file, block, nband, minnaert, fname2, fname3)
 				print(f'-> cmd is= {cmd}')
+                #------------------------------------------------
+# # #######################################################################################################      
 
-# #######################################################################################################
+#       ### why check not ?
+# 			#if (n >= 0):
+# 			if not (os.path.exists(fname2) and os.path.exists(fname3)) :
 
-			    #if (n >= 0):
-			if not (os.path.exists(fname2) and os.path.exists(fname3)) :
-				sys.stderr.write('%5d: %s\n' % (n, cmd))
-				if os.system(cmd) != 0:
-					sys.exit(1)
+# 				sys.stderr.write('%5d: %s\n' % (n, cmd))
+				
+# 				if os.system(cmd) != 0:
+# 					sys.exit(1)
 
-# #######################################################################################################
+# # #######################################################################################################
 
-			#if (e.anprocessing_file != None):
-			if (camera == 'an'):
+# 			#if ((e.caprocessing_hdf_file != None) and (nband != 3)):
+# 			if (camera == 'ca') and (nband != 3) : # why not checked?
 
-			    if (nband == 3): idx = -1
-			    elif (nband == 2): idx = 2
-			    elif (nband == 1): idx = 1
+# 				fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (TOA_dir_list[1], path, orbit, block, 'ca')
+# 				print(f'-> fname2= {fname2}')
 
-			    #else: idx = 2
-			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (png_directories[idx], path, orbit, block, 'an')
-			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (png_directories[idx], path, orbit, block, 'an')
-			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (png_directories[band], e.path, e.orbit, e.block, 'an')
-			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (png_directories[band], e.path, e.orbit, e.block, 'an')
-			    cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_file, block, nband, minnaert, fname2, fname3)
-			    #if (n >= 0):
-			if not (os.path.exists(fname2) and os.path.exists(fname3)) :
-				sys.stderr.write('%5d: %s\n' % (n, cmd))
-				if os.system(cmd) != 0:
-					sys.exit(1)
+# 				fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (TOA_dir_list[1], path, orbit, block, 'ca')
+# 				print(f'-> fname3= {fname3}')
 
-			n += 1
+# 				#fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (TOA_dir_list[1], e.path, e.orbit, e.block, 'ca')
+# 				#fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (TOA_dir_list[1], e.path, e.orbit, e.block, 'ca')
+# 				cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_hdf_file, block, nband, minnaert, fname2, fname3)
+# 				print(f'-> cmd is= {cmd}')
 
-		#sys.exit(0)
+# # #######################################################################################################
+
+# 			    #if (n >= 0):
+# 			if not (os.path.exists(fname2) and os.path.exists(fname3)) :
+# 				sys.stderr.write('%5d: %s\n' % (n, cmd))
+# 				if os.system(cmd) != 0:
+# 					sys.exit(1)
+
+# # #######################################################################################################
+
+# 			#if (e.anprocessing_hdf_file != None):
+# 			if (camera == 'an'):
+
+# 			    if (nband == 3): idx = -1
+# 			    elif (nband == 2): idx = 2
+# 			    elif (nband == 1): idx = 1
+
+# 			    #else: idx = 2
+# 			    fname2 = '%stoa_p%03d_o%06d_b%03d_%s.dat' % (TOA_dir_list[idx], path, orbit, block, 'an')
+# 			    fname3 = '%stoa_p%03d_o%06d_b%03d_%s.png' % (TOA_dir_list[idx], path, orbit, block, 'an')
+# 			    #fname2 = '%smisr_p%03d_o%06d_b%03d_%s.dat' % (TOA_dir_list[band], e.path, e.orbit, e.block, 'an')
+# 			    #fname3 = '%smisr_p%03d_o%06d_b%03d_%s.png' % (TOA_dir_list[band], e.path, e.orbit, e.block, 'an')
+# 			    cmd = 'TOA3 \"%s\" %local_order_dir_fullpath %local_order_dir_fullpath %local_order_dir_fullpath \"%s\" \"%s\"' % (processing_hdf_file, block, nband, minnaert, fname2, fname3)
+# 			    #if (n >= 0):
+# 			if not (os.path.exists(fname2) and os.path.exists(fname3)) :
+# 				sys.stderr.write('%5d: %s\n' % (n, cmd))
+# 				if os.system(cmd) != 0:
+# 					sys.exit(1)
+
+# 			n += 1
+
+# 		#sys.exit(0)
 
 
 
@@ -333,21 +348,19 @@ for order in dl_orders_list :  # we DL them in previous step; hdf and xml
 # 			for e in l:
 # 			    if e.path == path and e.orbit == orbit:
 # 				if camera == 'cf':
-# 				    e.cfprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 				    e.cfprocessing_hdf_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
 # 				elif camera == 'ca':
-# 				    e.caprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 				    e.caprocessing_hdf_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
 # 				elif camera == 'an':
-# 				    e.anprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 				    e.anprocessing_hdf_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
 
 # 		    if camera == 'cf':
-# 			cfprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 			cfprocessing_hdf_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
 # 		    elif camera == 'ca':
-# 			caprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 			caprocessing_hdf_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
 # 		    elif camera == 'an':
-# 			anprocessing_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
+# 			anprocessing_hdf_file = os.path.join(local_order_dir_fullpath, MISR_hdf_file)
 # 		    """ not mine
-
-
 
 
 
