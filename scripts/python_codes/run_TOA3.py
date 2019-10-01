@@ -205,7 +205,7 @@ for order in dl_orders_list :  # we DL them in previous step; hdf and xml
 			#---> up to here
       # what is the process on the file ?
 			processing_hdf_file = os.path.join( local_DL_dir_fullpath , MISR_hdf_file )
-			print(f'-> we are processing the file = {processing_hdf_file}')
+			# print(f'-> we are processing the file = {processing_hdf_file}')
 
 			# ??????????????????????????????????????????
 			# decide for block and band 
@@ -270,18 +270,18 @@ for order in dl_orders_list :  # we DL them in previous step; hdf and xml
                # check : https://www.geeksforgeeks.org/python-os-system-method/
                #------------------------------------------------- ???? 
 				cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(processing_hdf_file, block, nband, minnaert, fname2, fname3)
-				print(f'-> cmd is= {cmd}')
+				# print(f'-> cmd is= { type(cmd)}')
                 #------------------------------------------------
 # # #######################################################################################################      
 
-#       ### why check not ?
-# 			#if (n >= 0):
-# 			if not (os.path.exists(fname2) and os.path.exists(fname3)) :
+	      ### why check not ?
+				#if (n >= 0):
+				if not (os.path.exists(fname2) and os.path.exists(fname3)) :
 
-# 				sys.stderr.write('%5d: %s\n' % (n, cmd))
-				
-# 				if os.system(cmd) != 0:
-# 					sys.exit(1)
+					sys.stderr.write('%5d: %s\n' % (n, cmd))
+					
+					if os.system(cmd) != 0:
+						sys.exit(1)
 
 # # #######################################################################################################
 

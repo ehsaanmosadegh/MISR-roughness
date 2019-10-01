@@ -4,7 +4,7 @@
 # date: Sep 10, 2019
 #
 # purpose: 
-# to download MISR data from NASA Langley server
+# to download MISR Ellipsoid data from NASA Langley server
 #
 # how to use: 
 # We use Python3, and ftplib library to communicate with the server.
@@ -25,15 +25,21 @@ ftp_host = 'l5ftl01.larc.nasa.gov'
 username = 'anonymous'
 password = 'emosadegh@nevada.unr.edu'
 
-#-- setting for directory path 
+#-- set local directory path 
 
-local_root_dir = '/Users/ehsan/Documents/MISR/'
-local_download_dir = 'test_download/'
-ftp_dir = '/PullDir/'
+local_root_dir = '/Users/ehsan/Documents/MISR/'		# the path to downlaod directory
+local_download_dir = 'test_download/'		# name of download directory
+ftp_dir = '/PullDir/'  # name of remote/server directory
 
-ff_index = 1  		# either 0 or 1
-ff_list = ['xml' , 'hdf']
-file_format = ff_list[ ff_index ]
+#-- select MISR file type to download 
+
+
+
+#-- select file format 
+
+file_format_index = 1  		# either 0 or 1
+file_format_list = ['xml' , 'hdf']
+file_format = file_format_list[ file_format_index ]
 
 #-- setting for orders; list all order numbers in this list wraped in single quotation and seperated by comma (from email from NASA server)
 
@@ -73,14 +79,18 @@ for order_ID in order_ID_list :
 
 	order_dir = ftp_dir + order_ID
 
-	print(f'-> change dir to: {order_dir} on FTP')  # does not woek???
-	ftp_connection.cwd(order_dir) # cwd = change work directory to this dir on the server
-	#os.chdir(remote_order_dir)
+	print(f'-> change dir to: {order_dir} on FTP')  # does not work???
+
+	# change work directory to this dir on the server
+	ftp_connection.cwd(order_dir) 
+
+	# check where we are now
 	print(f'-> we are at dir: { ftp_connection.pwd() } ')
 
 	files_list = []  # for each loop inside a loop
 
-	ftp_connection.dir(files_list.append)  # Produces a directory listing; does it work anymore???
+	# Produces a directory listing
+	ftp_connection.dir(files_list.append)  
 
 	print(f'-> size of list: { len(files_list) }')
 
@@ -90,9 +100,23 @@ for order_ID in order_ID_list :
 		print( f'-> QA check on file:')
 		print( f' "{file_to_download}" ')
 
+		############# add QA quality check here based on file name/tag ...
+		# Q- what should be the quality assurance/checking criteria?
+		# NOTE: use a method to capture different file names for Ellipsoid, Terrain, Geometric - like fncatch...
+
+		###############
+
+		# first check the file format/ending
 		if (file_to_download.endswith(file_format)) :
 
-		############# add QA quality check here based on file name/tag ...
+			# now check the file name/type 
+			# here we decide what file to download ... Ellipsoid - Terrain - Geometric
+
+
+
+
+			#----- old
+
 			# index_of_path = file_to_download.index('_P')
 
 			# path = int( file_to_download[ index_of_path + 2 : index_of_path + 5 ] )
@@ -117,11 +141,22 @@ for order_ID in order_ID_list :
              #if (file_to_download.find('.f') > 0): continue
              #if (file_to_download.find('GMP') < 0): continue
 
-    ############# add QA quality check here based on file name/tag ...
+    # --------------- old
 
+
+
+
+    	# --- old ---- for now we just select based on the file name tag -- index is not a good method to find a file; use 
 			index_of_MISR = file_to_download.index('MISR_')
-	     
-			remote_file_name = file_to_download[ index_of_MISR : ]  # ???
+
+
+
+
+			# the end product of QA section will be this file ...
+			remote_file_name = file_to_download[ index_of_MISR : ]
+
+
+			############# end of QA quality check here based on file name/tag ...
 
 			if ( not os.path.exists( local_dir + remote_file_name ) ) :
 
