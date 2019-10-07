@@ -1,5 +1,17 @@
 #!/usr/bin/python3
+#-------------------------------------------------------------------------------------
+# author: Ehsan Mosadegh (emosadegh@nevada.unr.edu & ehsanm@dri.edu)
+# date: Oct 2, 2019
+#
+# purpose: 
+# to download MISR Ellipsoid data from NASA Langley server and QA check on downloaded data
+#
+# how to use: 
+# We use Python3, and ftplib library to communicate with the server.
+# change the setting on top of the script that says (USER) based on your local machine
 
+# future TO-DO tasks:
+#
 ##################################################################################################
 
 import os, os.path , glob
@@ -26,8 +38,8 @@ def main() :
 
 	file_name_index = 1 		# 0 for elliposid and 1 for geometric
 
-	# (USER-end) change these setting based on your local machine for downloading files from NASA server
 	# NOTE: user does NOT need to update or change other sections of this script.
+	# (USER-end) change these setting based on your local machine for downloading files from NASA server
 	#-----------------------------------------------------------------------------------------------
 
 	file_name_list = ['ellipsoid' , 'geometric']
