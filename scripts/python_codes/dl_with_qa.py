@@ -4,7 +4,7 @@
 # date: Oct 2, 2019
 #
 # purpose: 
-# to download MISR Ellipsoid data from NASA Langley server and QA check on downloaded data
+# to download MISR Ellipsoid and Geometric data from NASA Langley server and QA check on downloaded data
 #
 # how to use: 
 # We use Python3, and ftplib library to communicate with the server.
