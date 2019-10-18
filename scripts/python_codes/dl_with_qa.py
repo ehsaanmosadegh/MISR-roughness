@@ -11,7 +11,7 @@
 # change the setting on top of the script that says (USER) based on your local machine
 
 # future TO-DO tasks:
-#
+# # how get the file if starts with capital letter?
 ##################################################################################################
 
 import os, os.path , glob
