@@ -26,6 +26,8 @@
 //#define PNG_NSAMPLES 2048
 //#define ZOOM 64
 
+
+// Global variables
 char fname[3][256];
 //int PNG_NLINES, PNG_NSAMPLES, ZOOM;
 //int ZOOM = 16;
@@ -327,6 +329,7 @@ return 1;
 
 int readEllipsoidFile(char *fname)
 {
+
 MTKt_DataBuffer databuf = MTKT_DATABUFFER_INIT;
 MTKt_DataBuffer scalebuf = MTKT_DATABUFFER_INIT;
 MTKt_DataBuffer fillbuf = MTKT_DATABUFFER_INIT;
@@ -364,6 +367,7 @@ if (filetype != MTK_GRP_ELLIPSOID_GM)
 
 strcpy(gridName, "GeometricParameters"); 
 strcpy(fieldName, "SolarZenith");
+
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: grid=%s, field=%s\n", gridName, fieldName);
 status = MtkReadBlock(fname, gridName, fieldName, block, &szbuf);
 if (status != MTK_SUCCESS) 
@@ -502,12 +506,15 @@ if (cfbuf.nline != 8 || cfbuf.nsample != 32)
 	fprintf(stderr, "readEllipsoidFile: cfbuf is not 8x32: (%d, %d)\n", cfbuf.nline, cfbuf.nsample);
 	return 0;
 	}
+
 brfcf1 = (double *) malloc(8 * 32 * sizeof(double));
+
 if (!brfcf1)
 	{
 	fprintf(stderr, "readEllipsoidFile: brfcf malloc failed!!!\n");
 	return 0;
 	}
+
 n = 0;
 for (j = 0; j < 8; j ++)
 	for (i = 0; i < 32; i ++)
@@ -520,6 +527,7 @@ for (j = 0; j < 8; j ++)
 		else
 			brfcf1[i + j * 32] = NO_DATA;
 		}
+
 if (n != 256) 
 	if (VERBOSE) fprintf(stderr, "readEllipsoidFile: fewer than 256 valid in cfbuf: %d\n", n);
 if (n > 0)
@@ -556,6 +564,7 @@ if (!tmp)
 	fprintf(stderr, "readEllipsoidFile: tmp malloc failed!!!\n");
 	return 0;
 	}
+
 n = 0;
 for (j = 0; j < 8; j ++)
 	for (i = 0; i < 32; i ++)
@@ -567,6 +576,7 @@ for (j = 0; j < 8; j ++)
 			}
 		else tmp[i + j * 32] = NO_DATA;
 		}
+
 if (n != 256)
 	if (VERBOSE) fprintf(stderr, "readEllipsoidFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 if (n > 0)
@@ -620,7 +630,8 @@ for (j = 0; j < nlines; j ++)
 		}
 
 /* Minnaert Correction */
-if (minnaert) {
+if (minnaert)
+{
     for (j = 0; j < nlines; j ++)
 	for (i = 0; i < nsamples; i ++)
 		{
@@ -694,7 +705,13 @@ for (j = 0; j < nlines; j ++)
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: data is %d x %d\n", nlines, nsamples);
 
 return 1;
+
 }
+
+
+
+
+
 
 
 int getDataStats(double *data, int nlines, int nsamples)
@@ -1045,7 +1062,7 @@ int read_data(char *fname, double **data, int nlines, int nsamples)
 FILE *f;
 
 f = fopen(fname, "rb");
-if (!f)
+if (!f) // if (not T)
 	{
 	fprintf(stderr, "read_data: couldn't open %s\n", fname);
 	return 0;
@@ -1073,7 +1090,7 @@ int write_data(char *fname, double *data, int nlines, int nsamples)
 {
 FILE *f;
 
-f = fopen(fname, "wb");
+f = fopen(fname, "wb"); // f=stdout?
 if (!f)
 	{
 	fprintf(stderr, "write_data: couldn't open %s\n", fname);
@@ -1130,7 +1147,7 @@ return data2;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) { // return 0= success, return 1= error
 
 int i, j, i2, j2;
 char s[256];
@@ -1160,48 +1177,47 @@ strcpy(fname[2], argv[6]);		// str- image file
 
 
 
-// // E: delete?
+// E: delete?
 // if (!read_data("slope.dat", &slope, demlines, demsamples)) return 1;
 // if (!read_data("aspectN.dat", &aspect, demlines, demsamples)) return 1;
 
 
-// // start testing from here...
-// if (strstr(fname[0], "_P")) // look inside hdf file name for _P*
-// 	{
-// 	strncpy(s, strstr(fname[0], "_GM_P") + 5, 3);
-// 	s[3] = 0;
-// 	path = atoi(s);
-// 	}
-// else
-// 	{
-// 	fprintf(stderr, "No path info in file name\n");
-// 	return 1;
-// 	}
+if (strstr(fname[0], "_P")) // looks inside MISR hdf filename for _P* Note= path with capital P
+	{
+	strncpy(s, strstr(fname[0], "_GM_P") + 5, 3);  // input to s, hdf file name for ELLIPOSIND data that starts from GM_, move pointer+5 and get the next 3 characters from the whole str
+	s[3] = 0; // why?
+	path = atoi(s); // str to int
+	}
+else
+	{
+	fprintf(stderr, "No path info in file name\n");
+	return 1;
+	}
 
-// if (strstr(fname[0], "_O"))
-// 	{
-// 	strncpy(s, strstr(fname[0], "_O") + 2, 6);
-// 	s[6] = 0;
-// 	orbit = atoi(s);
-// 	}
-// else
-// 	{
-// 	fprintf(stderr, "No orbit info in file name\n");
-// 	return 1;
-// 	}
-	
-// if (strstr(fname[0], "_CF_")) camera = 1;
-// else if (strstr(fname[0], "_BF_")) camera = 2;
-// else if (strstr(fname[0], "_AF_")) camera = 3;
-// else if (strstr(fname[0], "_AN_")) camera = 4;
-// else if (strstr(fname[0], "_AA_")) camera = 5;
-// else if (strstr(fname[0], "_BA_")) camera = 6;
-// else if (strstr(fname[0], "_CA_")) camera = 7;
-// else
-// 	{
-// 	fprintf(stderr, "Unsupported camera\n");
-// 	return 1;
-// 	}
+if (strstr(fname[0], "_O")) // orbit with capital O inside fname[0]
+	{
+	strncpy(s, strstr(fname[0], "_O") + 2, 6); // returns str starting from _O + 2
+	s[6] = 0; // why?
+	orbit = atoi(s); // str to int
+	}
+else
+	{
+	fprintf(stderr, "No orbit info in file name\n");
+	return 1;
+	}
+	// how about camera D?
+if 			(strstr(fname[0], "_CF_")) camera = 1; // check if there if CF
+else if (strstr(fname[0], "_BF_")) camera = 2;
+else if (strstr(fname[0], "_AF_")) camera = 3;
+else if (strstr(fname[0], "_AN_")) camera = 4;
+else if (strstr(fname[0], "_AA_")) camera = 5;
+else if (strstr(fname[0], "_BA_")) camera = 6;
+else if (strstr(fname[0], "_CA_")) camera = 7;
+else
+	{
+	fprintf(stderr, "Unsupported camera\n");
+	return 1; // if camera not found= error= return 1
+	}
 
 // PNG_NLINES = 512;
 // PNG_NSAMPLES = 2048;
@@ -1213,20 +1229,29 @@ strcpy(fname[2], argv[6]);		// str- image file
 //     ZOOM = 16;
 //     }
 	
-// if (!readEllipsoidFile(fname[0])) return 1;
-// if (noData) return 0;
-// data = fix_dropouts(data, nlines, nsamples);
-// if (!data) return 1;
-// if (!getDataStats(data, nlines, nsamples)) return 1;
-// if (nvalid > 0)
-// 	{
-// 	printf("%03d  %06d  %03d  %s  %5d  %5d  %10d  %14.6f  %14.6f  %14.6f  %14.6f  %14.6f  %10d\n", 
-// 		path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??", 
-// 		nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ, ndropouts);
-// 	fflush(stdout);
-// 	if (!write_data(fname[1], data, nlines, nsamples)) return 1;
-// 	if (!write_png(fname[2], data2image(data, nlines, nsamples, 1), nlines, nsamples)) return 1;
-// 	}
+if (!readEllipsoidFile(fname[0])) return 1;
+
+if (noData) return 0; // why noData= return 0?
+
+
+data = fix_dropouts(data, nlines, nsamples);
+
+
+if (!data) return 1;
+
+if (!getDataStats(data, nlines, nsamples)) return 1;
+
+if (nvalid > 0)
+	{
+	printf("%03d  %06d  %03d  %s  %5d  %5d  %10d  %14.6f  %14.6f  %14.6f  %14.6f  %14.6f  %10d\n", 
+		path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??", 
+		nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ, ndropouts); // formatted output to stdout
+
+	fflush(stdout);
+
+	if (!write_data(fname[1], data, nlines, nsamples)) return 1;
+	// if (!write_png(fname[2], data2image(data, nlines, nsamples, 1), nlines, nsamples)) return 1;
+	}
 
 
 return 0; }
