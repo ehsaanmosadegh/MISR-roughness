@@ -11,8 +11,8 @@
 #include <fftw3.h>
 #include <png.h>
 // these two ???
-// #include <MisrToolkit.h>
-// #include <MisrError.h>
+#include <MisrToolkit.h>
+#include <MisrError.h>
 
 #define NO_DATA -999999.0
 #define BACKGROUND -999998.0
