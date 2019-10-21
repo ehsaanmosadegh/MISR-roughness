@@ -11,8 +11,8 @@
 #include <fftw3.h>
 #include <png.h>
 // these two ???
-#include <MisrToolkit.h>
-#include <MisrError.h>
+// #include <MisrToolkit.h>
+// #include <MisrError.h>
 
 #define NO_DATA -999999.0
 #define BACKGROUND -999998.0
@@ -1160,73 +1160,73 @@ strcpy(fname[2], argv[6]);		// str- image file
 
 
 
-// E: delete?
-if (!read_data("slope.dat", &slope, demlines, demsamples)) return 1;
-if (!read_data("aspectN.dat", &aspect, demlines, demsamples)) return 1;
+// // E: delete?
+// if (!read_data("slope.dat", &slope, demlines, demsamples)) return 1;
+// if (!read_data("aspectN.dat", &aspect, demlines, demsamples)) return 1;
 
 
-// start testing from here...
-if (strstr(fname[0], "_P")) // look inside hdf file name for _P*
-	{
-	strncpy(s, strstr(fname[0], "_GM_P") + 5, 3);
-	s[3] = 0;
-	path = atoi(s);
-	}
-else
-	{
-	fprintf(stderr, "No path info in file name\n");
-	return 1;
-	}
+// // start testing from here...
+// if (strstr(fname[0], "_P")) // look inside hdf file name for _P*
+// 	{
+// 	strncpy(s, strstr(fname[0], "_GM_P") + 5, 3);
+// 	s[3] = 0;
+// 	path = atoi(s);
+// 	}
+// else
+// 	{
+// 	fprintf(stderr, "No path info in file name\n");
+// 	return 1;
+// 	}
 
-if (strstr(fname[0], "_O"))
-	{
-	strncpy(s, strstr(fname[0], "_O") + 2, 6);
-	s[6] = 0;
-	orbit = atoi(s);
-	}
-else
-	{
-	fprintf(stderr, "No orbit info in file name\n");
-	return 1;
-	}
+// if (strstr(fname[0], "_O"))
+// 	{
+// 	strncpy(s, strstr(fname[0], "_O") + 2, 6);
+// 	s[6] = 0;
+// 	orbit = atoi(s);
+// 	}
+// else
+// 	{
+// 	fprintf(stderr, "No orbit info in file name\n");
+// 	return 1;
+// 	}
 	
-if (strstr(fname[0], "_CF_")) camera = 1;
-else if (strstr(fname[0], "_BF_")) camera = 2;
-else if (strstr(fname[0], "_AF_")) camera = 3;
-else if (strstr(fname[0], "_AN_")) camera = 4;
-else if (strstr(fname[0], "_AA_")) camera = 5;
-else if (strstr(fname[0], "_BA_")) camera = 6;
-else if (strstr(fname[0], "_CA_")) camera = 7;
-else
-	{
-	fprintf(stderr, "Unsupported camera\n");
-	return 1;
-	}
+// if (strstr(fname[0], "_CF_")) camera = 1;
+// else if (strstr(fname[0], "_BF_")) camera = 2;
+// else if (strstr(fname[0], "_AF_")) camera = 3;
+// else if (strstr(fname[0], "_AN_")) camera = 4;
+// else if (strstr(fname[0], "_AA_")) camera = 5;
+// else if (strstr(fname[0], "_BA_")) camera = 6;
+// else if (strstr(fname[0], "_CA_")) camera = 7;
+// else
+// 	{
+// 	fprintf(stderr, "Unsupported camera\n");
+// 	return 1;
+// 	}
 
-PNG_NLINES = 512;
-PNG_NSAMPLES = 2048;
-ZOOM = 64;
-if ((band != 2) && (camera != 4))
-    {
-    PNG_NLINES = 128;
-    PNG_NSAMPLES = 512;
-    ZOOM = 16;
-    }
+// PNG_NLINES = 512;
+// PNG_NSAMPLES = 2048;
+// ZOOM = 64;
+// if ((band != 2) && (camera != 4))
+//     {
+//     PNG_NLINES = 128;
+//     PNG_NSAMPLES = 512;
+//     ZOOM = 16;
+//     }
 	
-if (!readEllipsoidFile(fname[0])) return 1;
-if (noData) return 0;
-data = fix_dropouts(data, nlines, nsamples);
-if (!data) return 1;
-if (!getDataStats(data, nlines, nsamples)) return 1;
-if (nvalid > 0)
-	{
-	printf("%03d  %06d  %03d  %s  %5d  %5d  %10d  %14.6f  %14.6f  %14.6f  %14.6f  %14.6f  %10d\n", 
-		path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??", 
-		nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ, ndropouts);
-	fflush(stdout);
-	if (!write_data(fname[1], data, nlines, nsamples)) return 1;
-	if (!write_png(fname[2], data2image(data, nlines, nsamples, 1), nlines, nsamples)) return 1;
-	}
+// if (!readEllipsoidFile(fname[0])) return 1;
+// if (noData) return 0;
+// data = fix_dropouts(data, nlines, nsamples);
+// if (!data) return 1;
+// if (!getDataStats(data, nlines, nsamples)) return 1;
+// if (nvalid > 0)
+// 	{
+// 	printf("%03d  %06d  %03d  %s  %5d  %5d  %10d  %14.6f  %14.6f  %14.6f  %14.6f  %14.6f  %10d\n", 
+// 		path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??", 
+// 		nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ, ndropouts);
+// 	fflush(stdout);
+// 	if (!write_data(fname[1], data, nlines, nsamples)) return 1;
+// 	if (!write_png(fname[2], data2image(data, nlines, nsamples, 1), nlines, nsamples)) return 1;
+// 	}
 
 
 return 0; }
