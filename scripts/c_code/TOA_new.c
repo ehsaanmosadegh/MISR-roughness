@@ -5,10 +5,12 @@
 // Sky Coyote 18 Apr 09
 // Anne Nolin 11 Oct 2019
 
+// these inside /usr/include
 #include <stdlib.h>
 #include <math.h>
 #include <fftw3.h>
 #include <png.h>
+// these two ???
 #include <MisrToolkit.h>
 #include <MisrError.h>
 
@@ -1147,6 +1149,7 @@ if (argc < 6)
 	return 1;
 	}
 
+
 // E: we get the cmd line args from python script and chage them to input variables
 strcpy(fname[0], argv[1]);		// str- copy hdf file name to fname[0]
 block = atoi(argv[2]);	// int
@@ -1154,6 +1157,8 @@ band = atoi(argv[3]);		// int
 minnaert = atoi(argv[1]);		// int
 strcpy(fname[1], argv[5]);		// str- data file
 strcpy(fname[2], argv[6]);		// str- image file
+
+
 
 // E: delete?
 if (!read_data("slope.dat", &slope, demlines, demsamples)) return 1;
@@ -1222,6 +1227,7 @@ if (nvalid > 0)
 	if (!write_data(fname[1], data, nlines, nsamples)) return 1;
 	if (!write_png(fname[2], data2image(data, nlines, nsamples, 1), nlines, nsamples)) return 1;
 	}
+
 
 return 0; }
 
