@@ -1,0 +1,46 @@
+mare@stag348-unix2:~/Ehsan_lab/MISR-roughness/scripts/c_code$ !2221
+gcc -I/home/mare/Ehsan_lab/misr_include_dir -o toaEhsan TOA_new_updated_2.c 
+/tmp/ccoUXRi2.o: In function `ll2grid':
+TOA_new_updated_2.c:(.text+0xc0): undefined reference to `sin'
+TOA_new_updated_2.c:(.text+0xdb): undefined reference to `cos'
+TOA_new_updated_2.c:(.text+0xfc): undefined reference to `sin'
+TOA_new_updated_2.c:(.text+0x187): undefined reference to `rint'
+TOA_new_updated_2.c:(.text+0x1a7): undefined reference to `rint'
+/tmp/ccoUXRi2.o: In function `readEllipsoidFile':
+TOA_new_updated_2.c:(.text+0x38f): undefined reference to `MtkFileType'
+TOA_new_updated_2.c:(.text+0x47b): undefined reference to `MtkReadBlock'
+TOA_new_updated_2.c:(.text+0x848): undefined reference to `MtkReadBlock'
+TOA_new_updated_2.c:(.text+0x903): undefined reference to `MtkFillValueGet'
+TOA_new_updated_2.c:(.text+0x964): undefined reference to `MtkFileType'
+TOA_new_updated_2.c:(.text+0xa04): undefined reference to `MtkGridAttrGet'
+TOA_new_updated_2.c:(.text+0xc58): undefined reference to `MtkReadBlock'
+TOA_new_updated_2.c:(.text+0xf16): undefined reference to `MtkReadBlock'
+/tmp/ccoUXRi2.o: In function `getDataStats':
+TOA_new_updated_2.c:(.text+0x1909): undefined reference to `sqrt'
+/tmp/ccoUXRi2.o: In function `sinc':
+TOA_new_updated_2.c:(.text+0x1971): undefined reference to `sin'
+/tmp/ccoUXRi2.o: In function `convolve2d':
+TOA_new_updated_2.c:(.text+0x19bf): undefined reference to `fftw_malloc'
+TOA_new_updated_2.c:(.text+0x1a03): undefined reference to `fftw_malloc'
+TOA_new_updated_2.c:(.text+0x1a47): undefined reference to `fftw_malloc'
+TOA_new_updated_2.c:(.text+0x1a8b): undefined reference to `fftw_malloc'
+TOA_new_updated_2.c:(.text+0x1acf): undefined reference to `fftw_malloc'
+TOA_new_updated_2.c:(.text+0x1ba9): undefined reference to `fftw_plan_dft_r2c_2d'
+TOA_new_updated_2.c:(.text+0x1bb9): undefined reference to `fftw_execute'
+TOA_new_updated_2.c:(.text+0x1bc5): undefined reference to `fftw_destroy_plan'
+TOA_new_updated_2.c:(.text+0x1be0): undefined reference to `fftw_plan_dft_r2c_2d'
+TOA_new_updated_2.c:(.text+0x1bf0): undefined reference to `fftw_execute'
+TOA_new_updated_2.c:(.text+0x1bfc): undefined reference to `fftw_destroy_plan'
+TOA_new_updated_2.c:(.text+0x1d3e): undefined reference to `fftw_plan_dft_c2r_2d'
+TOA_new_updated_2.c:(.text+0x1d4e): undefined reference to `fftw_execute'
+TOA_new_updated_2.c:(.text+0x1d5a): undefined reference to `fftw_destroy_plan'
+TOA_new_updated_2.c:(.text+0x1e6b): undefined reference to `fftw_free'
+TOA_new_updated_2.c:(.text+0x1e77): undefined reference to `fftw_free'
+TOA_new_updated_2.c:(.text+0x1e83): undefined reference to `fftw_free'
+TOA_new_updated_2.c:(.text+0x1e8f): undefined reference to `fftw_free'
+TOA_new_updated_2.c:(.text+0x1e9b): undefined reference to `fftw_free'
+/tmp/ccoUXRi2.o: In function `zoom2d':
+TOA_new_updated_2.c:(.text+0x220a): undefined reference to `exp'
+TOA_new_updated_2.c:(.text+0x2234): undefined reference to `exp'
+collect2: error: ld returned 1 exit status
+
