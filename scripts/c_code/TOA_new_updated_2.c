@@ -62,7 +62,7 @@ double meanSZ;
 ////////// declaration of functions //////////
 char *data2image(double *data, int nlines, int nsamples, int mode);
 //int write_png(char *fname, char *image, int ny, int nx);
-// int pixel2grid(int path, int block, int line, int sample, int *j, int *i);
+int pixel2grid(int path, int block, int line, int sample, int *j, int *i); // needed: adds georeference info to data
 int ll2grid(double lat, double lon, int *j, int *i);
 //int getAspectSlope(int line, int sample, double *za, double *zs); AN
 int readEllipsoidFile(char *fname);
@@ -232,49 +232,49 @@ int read_data(char *fname, double **data, int nlines, int nsamples);
 // }
 ///////////////////////////////////// write_png ////////////////////////////////////////////
 
-///////////////////////////////////// pixel2grid ////////////////////////////////////////////
+/////////////////////////////////// pixel2grid ////////////////////////////////////////////
 
-// int pixel2grid(int path, int block, int line, int sample, int *j, int *i)
-// {
-// int status; // local variables
-// char *errs[] = MTK_ERR_DESC;
-// double lat, lon;
-// double r = 6371228.0;
-// double r2 = 2.0 * r;
-// double c = 626.688125;
-// double x0 = -2443770.3;
-// double y0 = -313657.41;
-// double x, y, z;
+int pixel2grid(int path, int block, int line, int sample, int *j, int *i)
+{
+int status; // local variables
+char *errs[] = MTK_ERR_DESC;
+double lat, lon;
+double r = 6371228.0;
+double r2 = 2.0 * r;
+double c = 626.688125;
+double x0 = -2443770.3;
+double y0 = -313657.41;
+double x, y, z;
 
-// status = MtkBlsToLatLon(path, 275, block, line * 1.0, sample * 1.0, &lat, &lon);
-// if (status != MTK_SUCCESS) 
-// 	{
-// 	fprintf(stderr, "pixel2grid: MtkBlsToLatLon failed!!!, status = %d (%s) %d %d %d %d\n", status, errs[status], path, block, line, sample);
-// 	return 0;
-// 	}
+status = MtkBlsToLatLon(path, 275, block, line * 1.0, sample * 1.0, &lat, &lon); // MISR blocks to LatLon
+if (status != MTK_SUCCESS) 
+	{
+	fprintf(stderr, "pixel2grid: MtkBlsToLatLon failed!!!, status = %d (%s) %d %d %d %d\n", status, errs[status], path, block, line, sample);
+	return 0;
+	}
 	
-// if (VERBOSE) fprintf(stderr, "pixel2grid: lat = %.6f, lon = %.6f\n", lat, lon);
+if (VERBOSE) fprintf(stderr, "pixel2grid: lat = %.6f, lon = %.6f\n", lat, lon);
 
-// lat *= M_PI / 180.0;
-// lon -= 90.0;
-// lon *= M_PI / 180.0;
-// z = sin(M_PI_4 - lat / 2.0);
-// x = r2 * cos(lon) * z;
-// y = r2 * sin(lon) * z;
-// if (VERBOSE) fprintf(stderr, "pixel2grid: absolute x = %.6f, y = %.6f\n", x, y);
-// x = x - x0 + c / 2.0;
-// y = y - y0 - c / 2.0;
-// if (VERBOSE) fprintf(stderr, "pixel2grid: relative x = %.6f, y = %.6f\n", x, y);
-// x = x / c;
-// y = y / c;
-// *i = rint(x);
-// *j = rint(-y);
+lat *= M_PI / 180.0;
+lon -= 90.0;
+lon *= M_PI / 180.0;
+z = sin(M_PI_4 - lat / 2.0);
+x = r2 * cos(lon) * z;
+y = r2 * sin(lon) * z;
+if (VERBOSE) fprintf(stderr, "pixel2grid: absolute x = %.6f, y = %.6f\n", x, y);
+x = x - x0 + c / 2.0;
+y = y - y0 - c / 2.0;
+if (VERBOSE) fprintf(stderr, "pixel2grid: relative x = %.6f, y = %.6f\n", x, y);
+x = x / c;
+y = y / c;
+*i = rint(x); // lon?
+*j = rint(-y); // lat?
 
-// if (VERBOSE) fprintf(stderr, "pixel2grid: scaled x = %.6f, y = %.6f\n", x, y);
+if (VERBOSE) fprintf(stderr, "pixel2grid: scaled x = %.6f, y = %.6f\n", x, y);
 
-// return 1;
-// }
-///////////////////////////////////// pixel2grid ////////////////////////////////////////////
+return 1;
+}
+/////////////////////////////////// pixel2grid ////////////////////////////////////////////
 
 ///////////////////////////////////// ll2grid ////////////////////////////////////////////
 int ll2grid(double lat, double lon, int *j, int *i)
@@ -300,8 +300,8 @@ y = y - y0 - c / 2.0;
 if (VERBOSE) fprintf(stderr, "ll2grid: relative x = %.6f, y = %.6f\n", x, y);
 x = x / c;
 y = y / c;
-*i = rint(x);
-*j = rint(-y);
+*i = rint(x); //
+*j = rint(-y); //
 
 if (VERBOSE) fprintf(stderr, "ll2grid: scaled x = %.6f, y = %.6f\n", x, y);
 fprintf(stderr, "ll2grid: j = %d, i = %d\n", *j, *i);
@@ -418,14 +418,16 @@ if (n > 0)
 	{
 	getDataStats(tmp, 8, 32);
 	meanSZ = mean;
-	/*if (meanSZ >= 80.0)
+
+	if (meanSZ >= 80.0)
 		{
 		noData = 1;
 		return 1;
-		}*/
-	//sz = zoomArray(tmp, 8, 32, 64);
-	// sz = zoomArray(tmp, 8, 32, ZOOM);		// for PSU cloudmask data ZOOM = 16 E:turnedoff
-	// if (!sz) return 0;
+		}
+
+	//sz = zoomArray(tmp, 8, 32, 64); // not needed
+	sz = zoomArray(tmp, 8, 32, ZOOM);		// for PSU cloudmask data ZOOM = 16  E: need this one to resample solar data to MISR image, 
+	if (!sz) return 0;
 	}
 else
 	{
