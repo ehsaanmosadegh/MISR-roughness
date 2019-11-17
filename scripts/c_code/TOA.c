@@ -4,7 +4,7 @@
 //   sz >= 80.0.
 // Sky Coyote 18 Apr 09
 // Anne Nolin 11 Oct 2019
-// Ehsan 11 Nov 2019
+// Ehsan 11 Nov 2019 - final version after editting
 
 // these inside /usr/include
 #include <stdlib.h>
