@@ -44,12 +44,11 @@ for each_dhf_file in list_of_misr_files :
 	# get the index of path and the path number
 	path_index = each_dhf_file.index('_P')
 	path = each_dhf_file[ path_index+1 : path_index+5 ]
-	# print(f'-> path= {path}')
+
 
 	# get the index of orbit and the orbit number
 	orbit_index = each_dhf_file.index('_O')
 	orbit = each_dhf_file[ orbit_index+1 : orbit_index+8]
-	# print(f'-> orbit = {orbit}')
 
 	# find the camera in the file name
 	if each_dhf_file.find('_CF') != -1 :
@@ -83,10 +82,3 @@ for each_dhf_file in list_of_misr_files :
 			sys.exit(1)
 
 print('->>> TOA SUCCESSFULLY FINISHED!')
-
-
-	# extract path, orbit, camera from each MISR hdf file --> done
-
-	# label toa_data_file and toa_image_file by (toa_dir, path , orbit , block , camera ) --> done
-
-	# cmd TOA3 processing_hdf_file, block, nband, minnaert, toa_data_file, toa_image_file
