@@ -228,9 +228,9 @@ int pearson(double *corr, double *corref, double *corr_ascend, double *corref_as
 int main(char argc, char *argv[])
 {
     FILE *fp;
-    char atmfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel_cloud_sorted.csv"; // ?
+    char atmfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel_cloud_sorted.csv"; // what s this?
     char outfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel2_r025.csv"; // Ehsan: output at this path; input to <misr2rms.c>
-    char razimuth[256] =  "/home/mare/Projects/MISR/Julienne/IceBridge2016/RelativeAzimuth_Jul2016_sorted.txt"; // ?
+    char razimuth[256] =  "/home/mare/Projects/MISR/Julienne/IceBridge2016/RelativeAzimuth_Jul2016_sorted.txt"; // what s this?
     char command[256];
     char wc_out[256];
     char *words;

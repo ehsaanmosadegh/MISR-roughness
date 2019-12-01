@@ -38,9 +38,9 @@ def main() :
 
 	file_name_index = 1 		# 0 for elliposid and 1 for geometric
 
-	# NOTE: user does NOT need to update or change other sections of this script.
 	# (USER-end) change these setting based on your local machine for downloading files from NASA server
 	#-----------------------------------------------------------------------------------------------
+	# NOTE: user does NOT need to update or change other sections of this script.
 
 	file_name_list = ['ellipsoid' , 'geometric']
 	file_name = file_name_list [ file_name_index ]

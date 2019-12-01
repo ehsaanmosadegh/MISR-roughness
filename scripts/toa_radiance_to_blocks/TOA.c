@@ -1,10 +1,17 @@
-// TOA3.c
+// TOA.c
 // Read ELLIPSOID radiance data, convert to TOA BRF, 
 //   save as data.  Discard files with
 //   sz >= 80.0.
 // Sky Coyote 18 Apr 09
 // Anne Nolin 11 Oct 2019
 // Ehsan 11 Nov 2019 - final version after editting
+// notes: 
+// this program receives each hdf file which includes surface-projected TOA radiance to the ellipsoid and processes each files.
+// each file has 180 blocks. This code allocates each GRP datafile to blocks.
+// todo:
+// input file format?
+// output???
+
 
 // these inside /usr/include
 #include <stdlib.h>
@@ -1200,7 +1207,7 @@ exit(1);*/
 //if (argc < 4)
 if (argc < 5) // this might happen later, cos I turnedoff fname[2]
 	{
-	fprintf(stderr, "Usage: TOA_exe_Ehsan input_misr_hdf_file block band minnaert toa_data_file \n"); // updated
+	fprintf(stderr, "Usage: TOA_exe, MISR_GRP_ELLIPSOID_file, block, band, minnaert, toa_data_file\n"); // updated
 	// fprintf(stderr, "Usage: TOA3 input-misr-file block band minnaert output-data-file output-image-file-Ehsan--noNeed\n"); old with image
 
 	return 1;
@@ -1260,10 +1267,10 @@ else
 	}
 
 // used inside readEllipsoidFile function??????
-PNG_NLINES = 512; // for error checking 
-PNG_NSAMPLES = 2048;
+PNG_NLINES = 512; // no of pixels in column; for error checking
+PNG_NSAMPLES = 2048; // no of pixels in each row of image
 ZOOM = 64;
-if ((band != 2) && (camera != 4)) // for this research?
+if ((band != 2) && (camera != 4)) // if not nadir==vertical camera...
     {
     PNG_NLINES = 128; // check these two
     PNG_NSAMPLES = 512;

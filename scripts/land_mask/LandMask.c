@@ -326,9 +326,9 @@ char *strsub(char *s, char *a, char *b)
 int main(int argc, char *argv[])
 {
     char s[256];
-    char idir0[256] = "/home3/mare/Nolin/2016/Surface3/Jul/";  // Ehsan: surf_ files for each month; surf_p078_o087995_b019_an.dat
-    char mfile0[256] = "/home3/mare/Nolin/SeaIce/LWData/MISR_LandSeaMask/lsmask_pP_bB.dat";  // Ehsan: mask file, output of rcticTileToGrid.c
-    char odir0[256] = "/home3/mare/Nolin/2016/Surface3_LandMasked/Jul/"; // output dir? make dir???? error here- 
+    char idir0[256] = "/home3/mare/Nolin/2016/Surface3/Jul/";  // Ehsan: surf_ files for each month; surf_p078_o087995_b019_an.dat; AN: replace surf with toa;atm data
+    char mfile0[256] = "/home3/mare/Nolin/SeaIce/LWData/MISR_LandSeaMask/lsmask_pP_bB.dat";  // Ehsan: mask file, output of <ArcticTileToGrid.c>
+    char odir0[256] = "/home3/mare/Nolin/2016/Surface3_LandMasked/Jul/"; // output dir; dat and png files
     char idir[256], mfile[256];
     char odir[256];
     char fname[256];

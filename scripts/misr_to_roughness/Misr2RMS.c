@@ -165,7 +165,7 @@ int main(char argc, char *argv[])
     FILE *fp;
     struct dirent *ent;
     char rms_dir[256] = 	"/home/mare/Nolin/data_2000_2016/2016/RMSBlocks/Jul2016_SeaIce_Model/Jul025"; // RMS file; output; MISR roughness
-    char misr_dir[256] = 	"/home/mare/Nolin/2016/Surface3_LandMasked/Jul/An"; // output of LandMask.c - LandMasked .dat file
+    char misr_dir[256] = 	"/home/mare/Nolin/2016/Surface3_LandMasked/Jul/An"; // output of LandMask.c - LandMasked .dat file; AN: should use toa instead
     char atmfile[256] = 	"/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel2_r025.csv"; // ATM csv file; use toa for it
     char razimuth[256] =  	"/home/mare/Projects/MISR/Julienne/IceBridge2016/RelativeAzimuth_Jul2016_sorted.txt"; // source from where?
     char command[256];

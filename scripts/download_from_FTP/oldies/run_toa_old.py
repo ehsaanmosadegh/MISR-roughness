@@ -5,17 +5,17 @@ import glob , os , sys
 
 
 ##################################################################
-MISR_root_dir = '/Volumes/MISR_REPO/MISR_root/'
+MISR_root_dir = '/media/mare/MISR_REPO/MISR_root/'
 download_directory_name = 'misr_test1/'
 toa_dir_name = 'toa_images/'
 download_dir = MISR_root_dir+download_directory_name
 TOA_directory = MISR_root_dir+toa_dir_name
 
 cwd = os.getcwd()
-print(f'-> we are at script dir= {cwd}')
+print('-> we are at script dir= %s' %cwd)
 os.chdir( download_dir )
 cwd = os.getcwd()
-print(f'-> chaged directoey and now we are at DL dir= {cwd}')
+print('-> chaged directoey and now we are at DL dir= %s' %cwd)
 
 
 bands = ['Red'] # why only red?
@@ -32,7 +32,7 @@ minnaert = 0
 misr_file_patern = 'MISR_AM1_GRP_ELLIPSOID_GM*.hdf' # for ELLIPSOID data
 
 list_of_misr_files = glob.glob( misr_file_patern )
-print(f'-> len of DL list= { len(list_of_misr_files)}')
+print('-> len of DL list= %s' %len(list_of_misr_files))
 
 for each_misr_file in list_of_misr_files :
 
@@ -55,10 +55,10 @@ for each_misr_file in list_of_misr_files :
 	elif each_misr_file.find('_AN') != -1 :
 		camera = 'an'
 	else:
-		print(f'-> WARNING: camera NOT found!')
+		print('-> WARNING: camera NOT found!')
 		sys.exit(1)
 
-	print(f'-> camera is= {camera}')
+	print('-> camera is= %s' %camera)
 
 	for each_block in range(1,43) :
 
@@ -71,7 +71,7 @@ for each_misr_file in list_of_misr_files :
 		# run the C-cmd program
 		cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(each_misr_file, each_block, nband, minnaert, fname2, fname3)
 		# print(cmd)
-
+		print(cmd)
 		if os.system(cmd) != 0 :
 			print('-> Error: cmd NOT found. Exiting...')
 			sys.exit(1)

@@ -52,19 +52,23 @@ if __name__ == '__main__':
 					for e in l:
 						if e[0] == path and e[1] == orbit and e[2] == block:
 							fname1 = os.path.join(d, f)
+
 							if camera == 'cf':
 								fname2 = '%ssurf_p%03d_o%06d_b%03d_%s.dat' % (dir1, path, orbit, block, camera)
 								fname3 = '%ssurf_p%03d_o%06d_b%03d_%s.png' % (dir1, path, orbit, block, camera)
+
 							if camera == 'ca':
 								fname2 = '%ssurf_p%03d_o%06d_b%03d_%s.dat' % (dir2, path, orbit, block, camera)
 								fname3 = '%ssurf_p%03d_o%06d_b%03d_%s.png' % (dir2, path, orbit, block, camera)
+
 							fname4 = 'MISR_AM1_GP_GMP_P%03d_O%06d_F03_0013' % (path, orbit)
 							found = False
+
 							for g in geops:
 								if g.startswith(fname4) and g.endswith('.hdf'):
 									found = True
 									#cmd = 'Surf %s %s %s %s' % (fname1, os.path.join(gdir, g), fname2, fname3)
-									cmd = 'Surf \"%s\" \"%s\" %s %s' % (fname1, os.path.join(gdir, g), fname2, fname3)
+									cmd = 'Surf \"%s\" \"%s\" %s %s' % (fname1, os.path.join(gdir, g), fname2, fname3) # band=? before fname2; bandshould be 2 similar to run_TOA.py
 									if n >= 0:
 										sys.stderr.write('%5d: %s\n' % (n + 1, cmd))
 										if os.system(cmd) != 0:
