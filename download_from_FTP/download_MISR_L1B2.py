@@ -10,7 +10,7 @@
 # We use Python3, and ftplib library to communicate with the server.
 # change the setting on top of the script that says (USER) based on your local machine
 
-# future TO-DO tasks:
+# TO-DO tasks:
 # # how get the file if starts with capital letter?
 ##################################################################################################
 
@@ -33,8 +33,8 @@ def main() :
 
 	#--- set local directory path
 
-	MISR_root_dir = '/Volumes/MISR_REPO/MISR_root/'
-	download_directory_name = 'misr_test1/'
+	MISR_email_dir = '/Users/ehsanmos/Documents/MISR/emails/'
+	MISR_download_dir = 'misr_download_test/'
 
 	file_name_index = 1 		# 0 for elliposid and 1 for geometric
 
@@ -46,7 +46,7 @@ def main() :
 	file_name = file_name_list [ file_name_index ]
 
 	# check the environment setting
-	list_of_txt_files , download_dir_fullpath = check_local_environment( MISR_root_dir , download_directory_name , file_name )
+	list_of_txt_files , download_dir_fullpath = check_local_environment( MISR_email_dir , MISR_download_dir , file_name )
 
 	print(f'-> connecting to FTP')
 	ftp_connection = FTP(ftp_host, username, password)
@@ -108,7 +108,7 @@ def check_local_environment( MISR_root_dir , download_directory_name , file_name
 	print(f'-> downloading data= {file_name} ')
 	print(f'-> current working directory= { os.getcwd() }')
 
-	if ( os.path.isdir( MISR_root_dir ) == False ) :
+	if not (os.path.isdir(MISR_root_dir)):
 		print('-> looks like you forgot to set the "MISR root directory". Please set the path and run the script again.')
 		raise SystemExit()
 
@@ -131,8 +131,9 @@ def check_local_environment( MISR_root_dir , download_directory_name , file_name
 	# define download dir
 	download_dir_fullpath = MISR_root_dir+download_directory_name
 	# check if download dir exists
-	if ( os.path.isdir( download_dir_fullpath ) == False ) :
-		os.mkdir( download_dir_fullpath )
+	if not (os.path.isdir(download_dir_fullpath)):
+		print('-> the download dir was not created, so we create the dir now!')
+		os.mkdir(download_dir_fullpath)
 
 	return list_of_txt_files , download_dir_fullpath
 
