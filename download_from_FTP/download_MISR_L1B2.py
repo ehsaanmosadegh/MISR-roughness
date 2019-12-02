@@ -12,7 +12,7 @@
 
 # TO-DO tasks:
 # how get the file if starts with capital letter?
-# a new constraint for finding the dir pattern on remote server, not DIR
+# a new constraint for finding the dir pattern on remote server, not DIR, e.g. sparse and get "PullDir" as keyword and get the next numbers which are the dir names
 ##################################################################################################
 
 import os, os.path , glob
