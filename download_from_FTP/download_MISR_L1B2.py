@@ -37,7 +37,7 @@ def main() :
 	MISR_email_dir = '/Users/ehsanmos/Documents/MISR/emails/'
 	MISR_download_dir = 'misr_download_test/'
 
-	file_name_index = 1 		# 0 for elliposid and 1 for geometric
+	file_name_index = 0 		# 0 = elliposid; 1 = geometric
 
 	# (USER-end) change these setting based on your local machine for downloading files from NASA server
 	#-----------------------------------------------------------------------------------------------
