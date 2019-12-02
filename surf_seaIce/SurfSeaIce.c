@@ -1,6 +1,11 @@
 // SurfSeaIce.c
 // Read TOA and GMP (Geometric Parameter) data, no (TOA) correction for atmosphere using SMAC, instead only do Rayleigh atmospheric correction, save as data (what data?) and PNG
 // Gene Mar 23 Nov 17
+//----------------------------
+// Ehsna Mosadegh (emosadegh@nevada.unr.edu)
+// 24 Dec 2019
+// notes:
+// to-do:
 
 #include <stdlib.h>
 #include <math.h>

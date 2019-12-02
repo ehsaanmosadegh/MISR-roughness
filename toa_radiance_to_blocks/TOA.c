@@ -8,7 +8,7 @@
 // notes: 
 // this program receives each hdf file which includes surface-projected TOA radiance to the ellipsoid and processes each files.
 // each file has 180 blocks. This code allocates each GRP datafile to blocks.
-// todo:
+// to-do:
 // input file format?
 // output???
 

@@ -3,7 +3,7 @@
 # by: Ehsna Mosadegh (emosadegh@nevada.unr.edu)
 # 24 Dec 2019
 # usage: 
-# todo: 
+# to-do: 
 
 import sys, os, os.path, signal
 

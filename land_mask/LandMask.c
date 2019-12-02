@@ -2,6 +2,8 @@
 // Read surface data files, mask and save
 // Gene Mar 25 Apr 18
 // Ehsan Nov 12 2019
+// notes:
+// to-do:
 
 #include <stdlib.h>
 #include <string.h>

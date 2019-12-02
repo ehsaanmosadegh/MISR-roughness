@@ -1,11 +1,11 @@
 #!/usr/bin/python3
-
+#
 # by: Ehsna Mosadegh (emosadegh@nevada.unr.edu)
 # 2 Nov 2019
 # usage: 
 # todo: 
-# implement everything in functions
-# a function for checking the directory, if its there -> ok, else makes the dir
+# - a new implementation: everything in functions
+# - a function for checking the directory, if its there -> ok, else makes the dir
 
 import glob , os , sys
 

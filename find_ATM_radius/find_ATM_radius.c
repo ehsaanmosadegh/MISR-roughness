@@ -1,3 +1,7 @@
+// Ehsan Mosadegh 10 Nov 2019
+// notes:
+// to-do: 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
