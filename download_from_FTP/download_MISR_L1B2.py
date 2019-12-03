@@ -34,10 +34,13 @@ def main() :
 
 	#--- set local directory path
 
-	MISR_email_dir = '/Users/ehsanmos/Documents/MISR/emails/'
-	MISR_download_dir = 'misr_download_test/'
+	MISR_email_dir_name = 'emails'
+	MISR_email_dir_path = '/home/mare/Ehsan_lab/MISR-roughness/'
 
-	file_name_index = 0 		# 0 = elliposid; 1 = geometric
+	MISR_download_dir_name = 'misr_dl_test'
+	MISR_download_dir_path = '/media/mare/MISR_REPO/MISR_root/'
+
+	file_name_index = 1 		# 0 = elliposid; 1 = geometric
 
 	# (USER-end) change these setting based on your local machine for downloading files from NASA server
 	#-----------------------------------------------------------------------------------------------
@@ -47,7 +50,7 @@ def main() :
 	file_name = file_name_list[file_name_index]
 
 	# check the environment setting
-	list_of_txt_files , download_dir_fullpath = check_local_environment(MISR_email_dir, MISR_download_dir, file_name)
+	list_of_txt_files , download_dir_fullpath = check_local_environment(MISR_email_dir_name, MISR_email_dir_path, MISR_download_dir_name, MISR_download_dir_path, file_name)
 
 	print('-> connecting to FTP')
 	ftp_connection = FTP(ftp_host, username, password)
@@ -58,7 +61,7 @@ def main() :
 
 		email_txt = list_of_txt_files[email_file]
 
-		email_file = os.path.join(MISR_email_dir, email_txt)
+		email_file = os.path.join(MISR_email_dir_path, email_txt)
 		print('-> processing email file= %s' %email_file)
 
 		#--- use function to get the lists of filenames and sizes
@@ -105,44 +108,62 @@ def main() :
 
 ##################################################################################################
 
-def check_local_environment( MISR_email_dir , download_directory_name , file_name ) :
+def check_local_environment(MISR_email_dir_name, MISR_email_dir_path, MISR_download_dir_name, MISR_download_dir_path, file_name):
 
 	# check if download file exists... mkdir the file first
 	print('-> downloading data= %s' %file_name)
 	print('-> current working directory= %s' %os.getcwd())
 
-	if not (os.path.isdir(MISR_email_dir)):
-		print('-> looks like you forgot to set the "MISR root directory". Please set the path and run the script again.')
+	email_dir = os.path.join(MISR_email_dir_path, MISR_email_dir_name)
+
+	if not (os.path.isdir(email_dir)):
+		print('-> looks like you forgot to set the "MISR email directory". Please set the path and run the script again.')
 		raise SystemExit()
 
-	print('-> change to local MISR root directory')
-	os.chdir(MISR_email_dir)
-	print('-> now we are at= %s' %os.getcwd())
+	### used to change dir to MISR email dir, but updated to os.path.join method
+	# print('-> change to local MISR email directory')
+	# os.chdir(MISR_email_dir)
+	# print('-> now we are at= %s' %os.getcwd())
 
 	# get the download file pattern
-	local_dir_file_pattern = file_name+'*.txt'
-	# check current dir for email text files
-	list_of_txt_files = glob.glob( local_dir_file_pattern ) # how get the file if starts with capital letter?
+	local_file_pattern = file_name+'*.txt'
+	# join path with file pattern and give it to glob(pathname+filePattern)
+	pattern_in_dir = os.path.join(email_dir, local_file_pattern)
+	print('-> we are looking for file pattern= %s' %pattern_in_dir)
 
-	if ( len( list_of_txt_files ) == 0 ) :
-		print('-> looks like you forgot to save the order emails. Please save the emails in <.txt> format in the following directory and run the script again.')
-		print(MISR_email_dir)
+	# check email dir for email text files; 
+	# we don't change dir anymore. we stay at script dir and look at the full path&file_names
+	list_of_txt_files = glob.glob(pattern_in_dir) # how get the file if starts with capital letter?
+
+	if (len(list_of_txt_files) == 0) :
+		print('-> we could not find the email files. Please save the emails in <.txt> format in the following directory and run the script again.')
+		print(MISR_email_dir_path)
 		raise SystemExit()
 
 	print('-> list of available txt files to process= %s' %list_of_txt_files)
 
 	# define download dir
-	download_dir_fullpath = MISR_email_dir+download_directory_name
-	# check if download dir exists
+	download_dir_fullpath = os.path.join(MISR_download_dir_path, MISR_download_dir_name)
+
+	# check if download path exists. if now we quit.
+	if not (os.path.isdir(MISR_download_dir_path)):
+		print('-> the download path is incorrect. Check/set the download dir path in setting! ')
+		raise SystemExit()
+
+	# check if download dir exists; if not we create it
 	if not (os.path.isdir(download_dir_fullpath)):
 		print('-> the download dir was not created, so we create the dir now!')
 		os.mkdir(download_dir_fullpath)
+
+	print(" ")
+	print('###################################### local environment checked! #######################################')
+	print(" ")
 
 	return list_of_txt_files , download_dir_fullpath
 
 ##################################################################################################
 
-def get_files( download_file_fullpath , remote_file_name , ftp_connection , list_index ) :
+def get_files(download_file_fullpath, remote_file_name, ftp_connection, list_index):
 
 	# use BINARY function as transfter mode
 	print('-> getting the file %s' %(list_index+1))
@@ -151,7 +172,7 @@ def get_files( download_file_fullpath , remote_file_name , ftp_connection , list
 	# Open the local file for writing in BINARY mode
 	with open ( download_file_fullpath , 'wb' ) as fileObject :
 		print('-> file created/opened: %s' %download_file_fullpath)
-		ftp_connection.retrbinary( f'RETR {remote_file_name}' , callback=fileObject.write )
+		ftp_connection.retrbinary('RETR %s' %remote_file_name, callback=fileObject.write )
 		fileObject.flush()
 
 	return download_file_fullpath
@@ -247,7 +268,7 @@ def email_order_processor(email_file) :
 
 ##################################################################################################
 
-def quality_assurance( FTP_dir_list , ftp_connection , MISR_file_list , MISR_size_list ) :
+def quality_assurance(FTP_dir_list, ftp_connection, MISR_file_list, MISR_size_list):
 
 	print('-> FTP directory is= %s' %FTP_dir_list)
 	# get the FTP dir path 
@@ -314,18 +335,18 @@ def download_from_ftp( downloadable_files , downloadable_sizes , download_dir_fu
 		remote_file_size = downloadable_sizes[ list_index ]
 
 		print(" ")
-		download_file_fullpath = download_dir_fullpath+remote_file_name
+		download_file_fullpath = os.path.join(download_dir_fullpath,remote_file_name)
 		filename, file_extension = os.path.splitext( remote_file_name )
 		# print( f'-> file is= { file_name }')
 		# print( f'-> file extension is= { file_extension }')
 
 
-		if ( file_extension == '.xml' ) :
+		if (file_extension == '.xml'):
 			# use ASCII function as transfter mode
-			download_file_fullpath = get_files( download_file_fullpath , remote_file_name , ftp_connection , list_index )
+			download_file_fullpath = get_files(download_file_fullpath , remote_file_name , ftp_connection , list_index)
 
 			# get the local file size after download
-			downloaded_file_size = os.path.getsize( download_file_fullpath )
+			downloaded_file_size = os.path.getsize(download_file_fullpath)
 
 			print('-> "%s" local size= %s bytes.' %(file_extension, downloaded_file_size))
 			print('-> "%s" remote size= %s bytes.' %(file_extension, remote_file_size))
