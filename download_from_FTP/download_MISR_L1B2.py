@@ -18,6 +18,7 @@
 import os, os.path , glob
 import ftplib
 from ftplib import FTP
+import datetime as dt
 
 ##################################################################################################
 
@@ -47,6 +48,8 @@ def main() :
 	#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	# NOTE: user does NOT need to update or change other sections of this script.
 	#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	start_time = dt.datetime.now()
+	print('-> start time: %s' %start_time)
 
 	file_name_list = ['ell', 'geo']
 	file_name = file_name_list[file_name_index]
@@ -173,25 +176,43 @@ def get_files(download_file_fullpath, remote_file_name, ftp_connection, list_ind
 	this function gets the name of the file we want to dwonald and creates a file, opens it,
 	 and writes the data to the file
 	"""
-	min_size = 100 # bytes
 	# use BINARY function as transfter mode
 	print('-> getting the file %s' %(list_index+1))
 	print(remote_file_name)
 
-	# check if file exists from previous downloadds
-	if os.path.isfile(download_file_fullpath):
-		size_available_file = os.path.getsize(download_file_fullpath)
-		if not (size_available_file <= min_size):
-			print('-> file is available on your local machine, so we skip downloading it!')
-			continue
-	else:
-		# Open the local file for writing in BINARY mode
-		with open ( download_file_fullpath , 'wb' ) as fileObject :
-			print('-> file created/opened: %s' %download_file_fullpath)
-			ftp_connection.retrbinary('RETR %s' %remote_file_name, callback=fileObject.write )
-			fileObject.flush()
+	# Open the local file for writing in BINARY mode
+	with open (download_file_fullpath , 'wb') as fileObject:
+		print('-> file created/opened: %s' %download_file_fullpath)
+		ftp_connection.retrbinary('RETR %s' %remote_file_name, callback=fileObject.write )
+		fileObject.flush()
 
 	return download_file_fullpath
+
+##################################################################################################
+
+def check_file_exists(download_file_fullpath, remote_file_size):
+	"""
+	check if file name and file size exists on your local machine
+	"""
+	print('-> file name= %s ' %(download_file_fullpath))
+	print('-> size should be= %s' %remote_file_size)
+	# check if file exists from previous downloadds
+	print('-> check if file exists on your machine...')
+	if os.path.isfile(download_file_fullpath):
+		# check the file size to make sure not empty
+		size_available_file = os.path.getsize(download_file_fullpath)
+		print('-> YES, available size is= %s' %size_available_file)
+		if (size_available_file == int(remote_file_size)): # in bytes
+			print('-> file available on your machine, size looks OK, skip downloading it!')
+			return 'True'
+		else:
+			print('-> file is there, but size NOT matched!')
+			return 'False'
+	else:
+		print('-> file NOT available on your machine')
+		return 'False'
+
+	
 
 ##################################################################################################
 
@@ -345,7 +366,7 @@ def download_from_ftp(downloadable_files, downloadable_sizes, download_dir_fullp
 	incomplete_size_list = []
 	diff_size_list = []
 
-	for list_index in range(len( downloadable_files )) :
+	for list_index in range(len(downloadable_files)) :
 
 		remote_file_name = downloadable_files[ list_index ]
 		remote_file_size = downloadable_sizes[ list_index ]
@@ -356,69 +377,76 @@ def download_from_ftp(downloadable_files, downloadable_sizes, download_dir_fullp
 		# print( f'-> file is= { file_name }')
 		# print( f'-> file extension is= { file_extension }')
 
-
-		if (file_extension == '.xml'):
-			# use ASCII function as transfter mode
-			download_file_fullpath = get_files(download_file_fullpath , remote_file_name , ftp_connection , list_index)
-
-			# get the local file size after download
-			downloaded_file_size = os.path.getsize(download_file_fullpath)
-
-			print('-> "%s" local size= %s bytes.' %(file_extension, downloaded_file_size))
-			print('-> "%s" remote size= %s bytes.' %(file_extension, remote_file_size))
-			# compare  file sizes
-			if ( downloaded_file_size == int(remote_file_size) ) :
-				print('-> file size MATCH!')
-
-			else:
-				print('-> WARNING: file size NOT match for= %s' %download_file_fullpath)
-				diff_size = abs(downloaded_file_size - int(remote_file_size))
-				print('-> diff size= %s bytes.' %diff_size)
-				# get the file name from download_file_fullpath
-				dl_file_with_issue = download_file_fullpath.split('/')[-1]
-				print('-> WARNING: we added the file to incomplete file list: %s' %dl_file_with_issue)
-
-				incomplete_files_list.append( dl_file_with_issue )
-				incomplete_size_list.append( downloaded_file_size )
-				diff_size_list.append( diff_size )
-
-
-		elif ( file_extension == '.hdf') :
-
-			# use BINARY function as transfter mode
-			download_file_fullpath = get_files( download_file_fullpath , remote_file_name , ftp_connection , list_index )
-
-			# get the local file size after download
-			downloaded_file_size = os.path.getsize( download_file_fullpath )
-
-			print('-> "%s" local size= %s bytes.' %(file_extension, downloaded_file_size))
-			print('-> "%s" remote size= %s bytes.' %(file_extension, remote_file_size))
-			# compare  file sizes
-			if ( downloaded_file_size == int(remote_file_size) ) :
-				print('-> file size MATCH!')
-
-			else:
-				print('-> WARNING: file downloaded, but size NOT match for= %s' %download_file_fullpath)
-				diff_size = abs(downloaded_file_size - int(remote_file_size))
-				print('-> diff size= %s bytes.' %diff_size)
-				# get the file name from download_file_fullpath
-				dl_file_with_issue = download_file_fullpath.split('/')[-1]
-				#print(f'-> WARNING: we added the file to incomplete file list: {dl_file_with_issue}')
-
-				incomplete_files_list.append( dl_file_with_issue )
-				incomplete_size_list.append( downloaded_file_size )
-				diff_size_list.append( diff_size )
+		if (check_file_exists(download_file_fullpath, remote_file_size)=='True'):
+			continue
 
 		else:
-			print('-> WARNING: problem with file extension or downloading for file= %s' %remote_file_name)
+			if (file_extension == '.xml'):
+				# use ASCII function as transfter mode
+				download_file_fullpath = get_files(download_file_fullpath , remote_file_name , ftp_connection , list_index)
+
+				# get the local file size after download
+				downloaded_file_size = os.path.getsize(download_file_fullpath)
+
+				print('-> "%s" local size= %s bytes.' %(file_extension, downloaded_file_size))
+				print('-> "%s" remote size= %s bytes.' %(file_extension, remote_file_size))
+				# compare  file sizes
+				if ( downloaded_file_size == int(remote_file_size)):
+					print('-> file size MATCH!')
+
+				else:
+					print('-> WARNING: file size NOT match for= %s' %download_file_fullpath)
+					diff_size = abs(downloaded_file_size - int(remote_file_size))
+					print('-> diff size= %s bytes.' %diff_size)
+					# get the file name from download_file_fullpath
+					dl_file_with_issue = download_file_fullpath.split('/')[-1]
+					print('-> WARNING: we added the file to incomplete file list: %s' %dl_file_with_issue)
+
+					incomplete_files_list.append( dl_file_with_issue )
+					incomplete_size_list.append( downloaded_file_size )
+					diff_size_list.append( diff_size )
+
+
+			elif ( file_extension == '.hdf') :
+
+				# use BINARY function as transfter mode
+				download_file_fullpath = get_files( download_file_fullpath , remote_file_name , ftp_connection , list_index )
+
+				# get the local file size after download
+				downloaded_file_size = os.path.getsize( download_file_fullpath )
+
+				print('-> "%s" local size= %s bytes.' %(file_extension, downloaded_file_size))
+				print('-> "%s" remote size= %s bytes.' %(file_extension, remote_file_size))
+				# compare  file sizes
+				if ( downloaded_file_size == int(remote_file_size) ) :
+					print('-> file size MATCH!')
+
+				else:
+					print('-> WARNING: file downloaded, but size NOT match for= %s' %download_file_fullpath)
+					diff_size = abs(downloaded_file_size - int(remote_file_size))
+					print('-> diff size= %s bytes.' %diff_size)
+					# get the file name from download_file_fullpath
+					dl_file_with_issue = download_file_fullpath.split('/')[-1]
+					#print(f'-> WARNING: we added the file to incomplete file list: {dl_file_with_issue}')
+
+					incomplete_files_list.append( dl_file_with_issue )
+					incomplete_size_list.append( downloaded_file_size )
+					diff_size_list.append( diff_size )
+
+			else:
+				print('-> WARNING: problem with file extension or downloading for file= %s' %remote_file_name)
 
 
 	return incomplete_files_list , incomplete_size_list , diff_size_list
 
 ##################################################################################################
 
-if __name__ == '__main__' :
+if __name__ == '__main__':
+	
 	main()
 
+	end_time = dt.datetime.now()
+	print('-> end time= %s' %end_time)
+	print('-> download duration= %s' %(end_time-start_time))
 ##################################################################################################
 
