@@ -9,8 +9,8 @@
 # how to use: 
 # We use Python3, and ftplib library to communicate with the server.
 # change the setting on top of the script that says (USER) based on your local machine
-
-# TO-DO tasks:
+#
+# to-do tasks:
 # how get the file if starts with capital letter?
 # a new constraint for finding the dir pattern on remote server, not DIR, e.g. sparse and get "PullDir" as keyword and get the next numbers which are the dir names
 ##################################################################################################
@@ -62,7 +62,6 @@ def main() :
 	for email_file in range(len(list_of_txt_files)):
 
 		email_txt = list_of_txt_files[email_file]
-
 		email_file = os.path.join(MISR_email_dir_path, email_txt)
 		print('-> processing email file= %s' %email_file)
 
@@ -74,7 +73,9 @@ def main() :
 		incomplete_files_list , incomplete_size_list , diff_size_list = download_from_ftp(downloadable_files, downloadable_sizes, download_dir_fullpath, ftp_connection)
 
 		if ( len(incomplete_files_list) == 0 ) :
-			print('-> DOWNLOAD FINISHED SUCCESSFULLY!')
+			print(" ")
+			print('###################################### DOWNLOAD FINISHED SUCCESSFULLY! #######################################')
+			print(" ")
 
 		else:
 
@@ -89,6 +90,8 @@ def main() :
 			print(missing_files)
 			print('-> list of missing sizes on the server:')
 			print(missing_sizes)
+			print(" ")
+
 
 	ftp_connection.close()
 
@@ -166,16 +169,27 @@ def check_local_environment(MISR_email_dir_name, MISR_email_dir_path, MISR_downl
 ##################################################################################################
 
 def get_files(download_file_fullpath, remote_file_name, ftp_connection, list_index):
-
+	"""
+	this function gets the name of the file we want to dwonald and creates a file, opens it,
+	 and writes the data to the file
+	"""
+	min_size = 100 # bytes
 	# use BINARY function as transfter mode
 	print('-> getting the file %s' %(list_index+1))
 	print(remote_file_name)
 
-	# Open the local file for writing in BINARY mode
-	with open ( download_file_fullpath , 'wb' ) as fileObject :
-		print('-> file created/opened: %s' %download_file_fullpath)
-		ftp_connection.retrbinary('RETR %s' %remote_file_name, callback=fileObject.write )
-		fileObject.flush()
+	# check if file exists from previous downloadds
+	if os.path.isfile(download_file_fullpath):
+		size_available_file = os.path.getsize(download_file_fullpath)
+		if not (size_available_file <= min_size):
+			print('-> file is available on your local machine, so we skip downloading it!')
+			continue
+	else:
+		# Open the local file for writing in BINARY mode
+		with open ( download_file_fullpath , 'wb' ) as fileObject :
+			print('-> file created/opened: %s' %download_file_fullpath)
+			ftp_connection.retrbinary('RETR %s' %remote_file_name, callback=fileObject.write )
+			fileObject.flush()
 
 	return download_file_fullpath
 
@@ -325,7 +339,7 @@ def quality_assurance(FTP_dir_list, ftp_connection, MISR_file_list, MISR_size_li
 
 ##################################################################################################
 
-def download_from_ftp( downloadable_files , downloadable_sizes , download_dir_fullpath , ftp_connection ) :
+def download_from_ftp(downloadable_files, downloadable_sizes, download_dir_fullpath, ftp_connection):
 
 	incomplete_files_list = []
 	incomplete_size_list = []
