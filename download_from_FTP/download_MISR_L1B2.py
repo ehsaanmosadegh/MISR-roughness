@@ -23,8 +23,9 @@ from ftplib import FTP
 
 def main() :
 
-	#-----------------------------------------------------------------------------------------------
+	#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	# (USER-start) change these setting based on your local machine for downloading files from NASA server
+	#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 	#--- set user pass info
 
@@ -40,11 +41,12 @@ def main() :
 	MISR_download_dir_name = 'misr_dl_test'
 	MISR_download_dir_path = '/media/mare/MISR_REPO/MISR_root/'
 
-	file_name_index = 1 		# 0 = elliposid; 1 = geometric
+	file_name_index = 0 		# 0 = elliposid; 1 = geometric
 
 	# (USER-end) change these setting based on your local machine for downloading files from NASA server
-	#-----------------------------------------------------------------------------------------------
+	#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	# NOTE: user does NOT need to update or change other sections of this script.
+	#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 	file_name_list = ['ell', 'geo']
 	file_name = file_name_list[file_name_index]
