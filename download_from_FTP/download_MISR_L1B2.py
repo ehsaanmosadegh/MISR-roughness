@@ -50,6 +50,7 @@ def main() :
 	#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	start_time = dt.datetime.now()
 	print('-> start time: %s' %start_time)
+	print(" ")
 
 	file_name_list = ['ell', 'geo']
 	file_name = file_name_list[file_name_index]
@@ -77,7 +78,7 @@ def main() :
 
 		if ( len(incomplete_files_list) == 0 ) :
 			print(" ")
-			print('###################################### DOWNLOAD FINISHED SUCCESSFULLY! #######################################')
+			print('##### downloading of email order finished completely for %s #####' %email_file) 
 			print(" ")
 
 		else:
@@ -148,7 +149,8 @@ def check_local_environment(MISR_email_dir_name, MISR_email_dir_path, MISR_downl
 		print(MISR_email_dir_path)
 		raise SystemExit()
 
-	print('-> list of available txt files to process= %s' %list_of_txt_files)
+	print('-> list of available txt files to process:')
+	print(list_of_txt_files)
 
 	# define download dir
 	download_dir_fullpath = os.path.join(MISR_download_dir_path, MISR_download_dir_name)
@@ -419,7 +421,7 @@ def download_from_ftp(downloadable_files, downloadable_sizes, download_dir_fullp
 				print('-> "%s" remote size= %s bytes.' %(file_extension, remote_file_size))
 				# compare  file sizes
 				if ( downloaded_file_size == int(remote_file_size) ) :
-					print('-> file size MATCH!')
+					print('-> file size comparison after download: MATCH!')
 
 				else:
 					print('-> WARNING: file downloaded, but size NOT match for= %s' %download_file_fullpath)
@@ -442,11 +444,12 @@ def download_from_ftp(downloadable_files, downloadable_sizes, download_dir_fullp
 ##################################################################################################
 
 if __name__ == '__main__':
-	
-	main()
 
+	main()
 	end_time = dt.datetime.now()
 	print('-> end time= %s' %end_time)
 	print('-> download duration= %s' %(end_time-start_time))
+	print('######################## PROGRAM COMPLETED SUCCESSFULLY ########################')
+
 ##################################################################################################
 

@@ -1,8 +1,10 @@
--> start time: 2019-12-04 15:28:30.560065
+-> start time: 2019-12-04 15:42:39.356748
+ 
 -> downloading data= ell
 -> current working directory= /home/mare/Ehsan_lab/MISR-roughness/download_from_FTP
 -> we are looking for file pattern= /home/mare/Ehsan_lab/MISR-roughness/emails/ell*.txt
--> list of available txt files to process= ['/home/mare/Ehsan_lab/MISR-roughness/emails/ell_05.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_06.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_07.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_08.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_09.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_10.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_11.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_12.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_13.txt']
+-> list of available txt files to process:
+['/home/mare/Ehsan_lab/MISR-roughness/emails/ell_05.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_06.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_07.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_08.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_09.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_10.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_11.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_12.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_13.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_01.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_02.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_03.txt', '/home/mare/Ehsan_lab/MISR-roughness/emails/ell_04.txt']
  
 ###################################### local environment checked! #######################################
  
@@ -669,7 +671,7 @@
 -> YES, available size is= 4738
 -> file available on your machine, size looks OK, skip downloading it!
  
-###################################### DOWNLOAD FINISHED SUCCESSFULLY! #######################################
+##### downloading of email order finished completely for /home/mare/Ehsan_lab/MISR-roughness/emails/ell_05.txt #####
  
 -> processing email file= /home/mare/Ehsan_lab/MISR-roughness/emails/ell_06.txt
 -> opening order: /home/mare/Ehsan_lab/MISR-roughness/emails/ell_06.txt
@@ -1333,7 +1335,7 @@
 -> YES, available size is= 4738
 -> file available on your machine, size looks OK, skip downloading it!
  
-###################################### DOWNLOAD FINISHED SUCCESSFULLY! #######################################
+##### downloading of email order finished completely for /home/mare/Ehsan_lab/MISR-roughness/emails/ell_06.txt #####
  
 -> processing email file= /home/mare/Ehsan_lab/MISR-roughness/emails/ell_07.txt
 -> opening order: /home/mare/Ehsan_lab/MISR-roughness/emails/ell_07.txt
@@ -1820,30 +1822,240 @@
 -> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P091_O088156_CF_F03_0024.hdf 
 -> size should be= 203896900
 -> check if file exists on your machine...
--> YES, available size is= 202791624
--> file is there, but size NOT matched!
--> getting the file 79
-MISR_AM1_GRP_ELLIPSOID_GM_P091_O088156_CF_F03_0024.hdf
--> file created/opened: /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P091_O088156_CF_F03_0024.hdf
--> ".hdf" local size= 203896900 bytes.
--> ".hdf" remote size= 203896900 bytes.
--> file size MATCH!
+-> YES, available size is= 203896900
+-> file available on your machine, size looks OK, skip downloading it!
  
 -> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P091_O088156_CF_F03_0024.hdf.xml 
 -> size should be= 4738
 -> check if file exists on your machine...
--> file NOT available on your machine
--> getting the file 80
-MISR_AM1_GRP_ELLIPSOID_GM_P091_O088156_CF_F03_0024.hdf.xml
--> file created/opened: /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P091_O088156_CF_F03_0024.hdf.xml
--> ".xml" local size= 4738 bytes.
--> ".xml" remote size= 4738 bytes.
--> file size MATCH!
+-> YES, available size is= 4738
+-> file available on your machine, size looks OK, skip downloading it!
  
 -> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P106_O088055_CA_F03_0024.hdf 
 -> size should be= 206549353
 -> check if file exists on your machine...
--> file NOT available on your machine
--> getting the file 81
-MISR_AM1_GRP_ELLIPSOID_GM_P106_O088055_CA_F03_0024.hdf
--> file created/opened: /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P106_O088055_CA_F03_0024.hdf
+-> YES, available size is= 206549353
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P106_O088055_CA_F03_0024.hdf.xml 
+-> size should be= 4738
+-> check if file exists on your machine...
+-> YES, available size is= 4738
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P089_O088185_CF_F03_0024.hdf 
+-> size should be= 201964889
+-> check if file exists on your machine...
+-> YES, available size is= 201964889
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P089_O088185_CF_F03_0024.hdf.xml 
+-> size should be= 4737
+-> check if file exists on your machine...
+-> YES, available size is= 4737
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P099_O088040_CA_F03_0024.hdf 
+-> size should be= 195947354
+-> check if file exists on your machine...
+-> YES, available size is= 195947354
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P099_O088040_CA_F03_0024.hdf.xml 
+-> size should be= 4737
+-> check if file exists on your machine...
+-> YES, available size is= 4737
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P107_O088157_CF_F03_0024.hdf 
+-> size should be= 202857434
+-> check if file exists on your machine...
+-> YES, available size is= 202857434
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P107_O088157_CF_F03_0024.hdf.xml 
+-> size should be= 4737
+-> check if file exists on your machine...
+-> YES, available size is= 4737
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P094_O087996_CF_F03_0024.hdf 
+-> size should be= 203984521
+-> check if file exists on your machine...
+-> YES, available size is= 203984521
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P094_O087996_CF_F03_0024.hdf.xml 
+-> size should be= 4738
+-> check if file exists on your machine...
+-> YES, available size is= 4738
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P109_O088128_CF_F03_0024.hdf 
+-> size should be= 198899349
+-> check if file exists on your machine...
+-> YES, available size is= 198899349
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P109_O088128_CF_F03_0024.hdf.xml 
+-> size should be= 4737
+-> check if file exists on your machine...
+-> YES, available size is= 4737
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P106_O088055_CF_F03_0024.hdf 
+-> size should be= 204765572
+-> check if file exists on your machine...
+-> YES, available size is= 204765572
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P106_O088055_CF_F03_0024.hdf.xml 
+-> size should be= 4737
+-> check if file exists on your machine...
+-> YES, available size is= 4737
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P097_O088069_CF_F03_0024.hdf 
+-> size should be= 198973531
+-> check if file exists on your machine...
+-> YES, available size is= 198973531
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P097_O088069_CF_F03_0024.hdf.xml 
+-> size should be= 4738
+-> check if file exists on your machine...
+-> YES, available size is= 4738
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P090_O088054_CF_F03_0024.hdf 
+-> size should be= 200631309
+-> check if file exists on your machine...
+-> YES, available size is= 200631309
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P090_O088054_CF_F03_0024.hdf.xml 
+-> size should be= 4738
+-> check if file exists on your machine...
+-> YES, available size is= 4738
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P089_O088185_AN_F03_0024.hdf 
+-> size should be= 610907862
+-> check if file exists on your machine...
+-> YES, available size is= 610907862
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P089_O088185_AN_F03_0024.hdf.xml 
+-> size should be= 4737
+-> check if file exists on your machine...
+-> YES, available size is= 4737
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P093_O088127_AN_F03_0024.hdf 
+-> size should be= 614277151
+-> check if file exists on your machine...
+-> YES, available size is= 614277151
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P093_O088127_AN_F03_0024.hdf.xml 
+-> size should be= 4737
+-> check if file exists on your machine...
+-> YES, available size is= 4737
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P090_O088054_AN_F03_0024.hdf 
+-> size should be= 601945265
+-> check if file exists on your machine...
+-> YES, available size is= 601945265
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P090_O088054_AN_F03_0024.hdf.xml 
+-> size should be= 4737
+-> check if file exists on your machine...
+-> YES, available size is= 4737
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P094_O087996_CA_F03_0024.hdf 
+-> size should be= 207394343
+-> check if file exists on your machine...
+-> YES, available size is= 207394343
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P094_O087996_CA_F03_0024.hdf.xml 
+-> size should be= 4738
+-> check if file exists on your machine...
+-> YES, available size is= 4738
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P095_O088098_CF_F03_0024.hdf 
+-> size should be= 203880804
+-> check if file exists on your machine...
+-> YES, available size is= 203880804
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P095_O088098_CF_F03_0024.hdf.xml 
+-> size should be= 4737
+-> check if file exists on your machine...
+-> YES, available size is= 4737
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+##### downloading of email order finished completely for /home/mare/Ehsan_lab/MISR-roughness/emails/ell_07.txt #####
+ 
+-> processing email file= /home/mare/Ehsan_lab/MISR-roughness/emails/ell_08.txt
+-> opening order: /home/mare/Ehsan_lab/MISR-roughness/emails/ell_08.txt
+-> dir path is= ['DIR:', '/PullDir/062876959591161']
+-> appending the path= /PullDir/062876959591161
+-> len of MISR file list is= 108
+-> len of MISR file size is= 108
+-> FTP dir is= ['/PullDir/062876959591161']
+-> FTP directory is= ['/PullDir/062876959591161']
+-> order dir= /PullDir/062876959591161
+-> we are at dir: /PullDir/062876959591161
+ 
+-> no. of remote hdf and xml files= 108
+-> no. of elements in file size list= 108
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P065_O088067_AN_F03_0024.hdf 
+-> size should be= 600431056
+-> check if file exists on your machine...
+-> YES, available size is= 600431056
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P065_O088067_AN_F03_0024.hdf.xml 
+-> size should be= 4739
+-> check if file exists on your machine...
+-> YES, available size is= 4739
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P071_O087980_AN_F03_0024.hdf 
+-> size should be= 595096665
+-> check if file exists on your machine...
+-> YES, available size is= 595096665
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P071_O087980_AN_F03_0024.hdf.xml 
+-> size should be= 4739
+-> check if file exists on your machine...
+-> YES, available size is= 4739
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P067_O088038_CA_F03_0024.hdf 
+-> size should be= 209377839
+-> check if file exists on your machine...
+-> YES, available size is= 209377839
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P067_O088038_CA_F03_0024.hdf.xml 
+-> size should be= 4739
+-> check if file exists on your machine...
+-> YES, available size is= 4739
+-> file available on your machine, size looks OK, skip downloading it!
+ 
+-> file name= /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P068_O088140_AN_F03_0024.hdf 
+-> size should be= 586597149
+-> check if file exists on your machine...
+-> YES, available size is= 39275280
+-> file is there, but size NOT matched!
+-> getting the file 7
+MISR_AM1_GRP_ELLIPSOID_GM_P068_O088140_AN_F03_0024.hdf
+-> file created/opened: /media/mare/MISR_REPO/MISR_root/misr_dl_test/MISR_AM1_GRP_ELLIPSOID_GM_P068_O088140_AN_F03_0024.hdf
