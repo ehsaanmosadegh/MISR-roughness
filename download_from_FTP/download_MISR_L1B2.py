@@ -203,7 +203,7 @@ def check_file_exists(download_file_fullpath, remote_file_size):
 	if os.path.isfile(download_file_fullpath):
 		# check the file size to make sure not empty
 		size_available_file = os.path.getsize(download_file_fullpath)
-		print('-> YES, available size is= %s' %size_available_file)
+		print('-> YES, local size is= %s' %size_available_file)
 		if (size_available_file == int(remote_file_size)): # in bytes
 			print('-> file available on your machine, size looks OK, skip downloading it!')
 			return 'True'
