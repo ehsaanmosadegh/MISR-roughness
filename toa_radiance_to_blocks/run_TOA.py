@@ -1,15 +1,21 @@
 #!/usr/bin/python3
-#
-# by: Ehsna Mosadegh (emosadegh@nevada.unr.edu)
-# 2 Nov 2019
-# usage: 
-# todo: 
+###############################################################################
+# run_TOA.py
+# author: Ehsna Mosadegh (emosadegh@nevada.unr.edu)
+# version history: 2 Nov 2019
+# usage:
+# data required:
+#	-
+# to do: 
 # - a new implementation: everything in functions
 # - a function for checking the directory, if its there -> ok, else makes the dir
-
+# notes: 
+#   - 
+# debugging:
+#	-
+###############################################################################
 import glob , os , sys
-
-##################################################################
+###############################################################################
 
 # update following 3 directories
 
@@ -17,7 +23,7 @@ MISR_root_dir = '/media/mare/MISR_REPO/MISR_root/' # '/Volumes/MISR_REPO/MISR_ro
 download_directory_name = 'misr_sample_download/' # dir with downloaded hdf data
 toa_processing_dir = 'toa_dir/' # output of TOA run
 
-##################################################################
+###############################################################################
 
 download_dir = MISR_root_dir+download_directory_name
 TOA_directory = MISR_root_dir+toa_processing_dir
