@@ -447,8 +447,9 @@ if __name__ == '__main__':
 	print(" ")
 	main()
 	end_time = dt.datetime.now()
-	print('-> end time= %s' %end_time)
-	print('-> download duration= %s' %(end_time-start_time))
+	print('-> end time: %s' %end_time)
+	print('-> download duration: %s' %(end_time-start_time))
+	print(" ")
 	print('######################## PROGRAM COMPLETED SUCCESSFULLY ########################')
 
 ##################################################################################################
