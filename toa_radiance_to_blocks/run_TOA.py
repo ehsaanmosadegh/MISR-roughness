@@ -6,7 +6,7 @@
 # usage:
 # receives each hdf (imagery?) file and allocates the data to each(?) block. each hdf file includes 180 blocks in a file.
 # data required:
-#	inputs: dhf files
+#	inputs: dhf Ellipsoid files
 #	outputs: toa_file_fullpath
 # to do: 
 # - add period labels to dir name tags
@@ -25,8 +25,10 @@ import datetime as dt
 # update following 3 directories
 MISR_download_dir_name = 'misr_dl_July_2016'
 MISR_download_dir_path = '/home/mare/Ehsan_lab/misr_proceesing_dir'  # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
-output_dir_path = 'toa_dir_July_2016'	# path to toa dir 
-output_dir_name = '/home/mare/Ehsan_lab/misr_proceesing_dir' # output of TOA run
+output_dir_name = 'toa_radiance_July_2016'	# path to toa dir 
+output_dir_path = '/home/mare/Ehsan_lab/misr_proceesing_dir' # output of TOA run
+
+exe_name = 'TOA'
 
 ###############################################################################
 
@@ -34,35 +36,58 @@ def main():
 	'''
 	passes a pair of argumenst to cmd to run TOA.c program
 	'''
-	list_of_misr_files_fullpath, output_dir, band_no, minnaert = local_file_setting(input_dir_path, input_dir_name, output_dir_path, output_dir_name)
+	list_of_misr_files_fullpath, output_dir, band_no, minnaert = local_file_setting(MISR_download_dir_path, MISR_download_dir_name, output_dir_path, output_dir_name)
 	for each_hdf_file in list_of_misr_files_fullpath:
+
 		path, orbit, camera = file_name_parser(each_hdf_file)
 
 		for each_block in range(1,43) : # why loop over 42 blocks in one hdf file
 
-			# toa output file names to CMD command
-			toa_file_fullpath = ('%stoa_%s_%s_b%s_%s.dat' %(output_dir, path, orbit, each_block, camera)) # will be written by TOA
-			print('-> TOA writes hdf data to file= %s' %toa_file_fullpath)
+			toa_file_fullpath = toa_file_producer(path, orbit, each_block, camera, output_dir)
+			# now run TOA from linux to process Ellipsoid data
+			cmd_runner(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath)
 
-			# this is removed from the original C code, so we do not need image anymore
-			# toa_image_file = '%stoa_%s_%s_b%s_%s.png' % (output_dir, path, orbit, each_block, camera)
-			# print(toa_image_file)
-
-			# run the C-cmd program
-			#cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath, toa_image_file) # old version
-			print('-> program-name	radiance-file-name	block 	band 	minnaert	path-to-toa-dataFile')
-			cmd = (' "TOA" "%s" %s %s %s \"%s\"' %(each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath))  # TOA writes data into toa_file_fullpath
-			print('-> runScript to TOA= %s' %cmd)
-
-			# if os.system(cmd) != 0 :
-			# run the cmd command
-			return_value_of_cmd = subprocess.call(cmd, shell=True)
-			print('-> return value= %s' %return_value_of_cmd)
-
-			if (return_value_of_cmd != 0):
-				print('-> ERROR: TOA exe NOT found in path. Exiting...')
-				raise SystemExit()
 	return 0
+
+###############################################################################
+
+def toa_file_producer(path, orbit, each_block, camera, output_dir):
+
+	if (each_block <= 9):
+		print('-> block was: %s' %each_block)
+		each_block = str(each_block).rjust(2, '0')
+		print('-> rjust performed: %s' %each_block)
+	else:
+		pass
+	# toa output file names to CMD command --> to do: make function for this section
+	toa_file_pattern = ('toa_%s_%s_b%s_%s.dat' %(path, orbit, each_block, camera)) # will be written by TOA
+	toa_file_fullpath = os.path.join(output_dir, toa_file_pattern)
+	print('-> TOA writes hdf data to file= %s' %toa_file_fullpath)
+
+	return toa_file_fullpath
+
+###############################################################################
+
+def cmd_runner(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath):
+
+	# this is removed from the original C code, so we do not need image anymore
+	# toa_image_file = '%stoa_%s_%s_b%s_%s.png' % (output_dir, path, orbit, each_block, camera)
+	# print(toa_image_file)
+
+	# run the C-cmd program
+	#cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath, toa_image_file) # old version
+	print('-> program-name	radiance-file-name	block 	band 	minnaert	path-to-toa-dataFile')
+	cmd = (' "%s" "%s" %s %s %s \"%s\"' %(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath))  # TOA writes data into toa_file_fullpath
+	print('-> runScript to %s= %s' %(exe_name, cmd))	# run the cmd command.
+
+	# if os.system(cmd) != 0 :
+	# run the cmd command
+	return_value_of_cmd = subprocess.call(cmd, shell=True)
+	#print('-> return value= %s' %return_value_of_cmd)
+
+	if (return_value_of_cmd != 0):
+		print('-> ERROR: TOA exe NOT found in path. Exiting...')
+		raise SystemExit() 
 
 ###############################################################################
 
@@ -73,7 +98,7 @@ def local_file_setting(input_dir_path, input_dir_name, output_dir_path, output_d
 
 	download_dir = os.path.join(MISR_download_dir_path, MISR_download_dir_name)
 	output_dir = os.path.join(output_dir_path, output_dir_name)
-
+	print('-> output dir: %s' %output_dir)
 	# check if directories exist
 	if not (os.path.isdir(download_dir)):
 		print('-> download directory NOT exist!')
