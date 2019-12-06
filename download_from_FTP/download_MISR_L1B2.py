@@ -39,7 +39,7 @@ def main() :
 	MISR_email_dir_name = 'emails'
 	MISR_email_dir_path = '/home/mare/Ehsan_lab/MISR-roughness/'
 
-	MISR_download_dir_name = 'misr_dl_test'
+	MISR_download_dir_name = 'misr_dl_July2016' # put period label on it
 	MISR_download_dir_path = '/media/mare/MISR_REPO/MISR_root/'
 
 	file_name_index = 0 		# 0 = elliposid; 1 = geometric

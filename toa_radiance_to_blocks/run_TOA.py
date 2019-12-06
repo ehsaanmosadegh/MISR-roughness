@@ -9,21 +9,24 @@
 #	inputs: dhf files
 #	outputs: toa_file_fullpath
 # to do: 
-# - a new implementation: everything in functions
-# - a function for checking the directory, if its there -> ok, else makes the dir
+# - add period labels to dir name tags
+# - 
 # notes: 
 #   - 
 # debugging:
 #	-
 ###############################################################################
-import glob , os , sys, subprocess
-###############################################################################
 
+import glob, os, subprocess
+import datetime as dt
+
+###############################################################################
+# directory path setting
 # update following 3 directories
-input_dir_path = '/media/mare/MISR_REPO/MISR_root/' # '/Volumes/MISR_REPO/MISR_root/' # path to hdf files reflectance (GRP_ELLIPSOID) files, where we downloaded files
-input_dir_name = 
-output_dir_path = # path to toa dir 
-output_dir_name = 'output_direct/' # output of TOA run
+MISR_download_dir_name = 'misr_dl_July_2016'
+MISR_download_dir_path = '/home/mare/Ehsan_lab/misr_proceesing_dir'  # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
+output_dir_path = 'toa_dir_July_2016'	# path to toa dir 
+output_dir_name = '/home/mare/Ehsan_lab/misr_proceesing_dir' # output of TOA run
 
 ###############################################################################
 
@@ -31,17 +34,15 @@ def main():
 	'''
 	passes a pair of argumenst to cmd to run TOA.c program
 	'''
-	list_of_misr_files_fullpath, output_dir = check_local_files(input_dir_path, input_dir_name, output_dir_path, output_dir_name)
-
+	list_of_misr_files_fullpath, output_dir, band_no, minnaert = local_file_setting(input_dir_path, input_dir_name, output_dir_path, output_dir_name)
 	for each_hdf_file in list_of_misr_files_fullpath:
-
 		path, orbit, camera = file_name_parser(each_hdf_file)
 
 		for each_block in range(1,43) : # why loop over 42 blocks in one hdf file
 
 			# toa output file names to CMD command
 			toa_file_fullpath = ('%stoa_%s_%s_b%s_%s.dat' %(output_dir, path, orbit, each_block, camera)) # will be written by TOA
-			print(f'-> TOA writes hdf data to file= {toa_file_fullpath}')
+			print('-> TOA writes hdf data to file= %s' %toa_file_fullpath)
 
 			# this is removed from the original C code, so we do not need image anymore
 			# toa_image_file = '%stoa_%s_%s_b%s_%s.png' % (output_dir, path, orbit, each_block, camera)
@@ -49,7 +50,7 @@ def main():
 
 			# run the C-cmd program
 			#cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath, toa_image_file) # old version
-			print('-> program-name	hdf-file-name	block 	band 	minnaert	path-to-toa-dataFile')
+			print('-> program-name	radiance-file-name	block 	band 	minnaert	path-to-toa-dataFile')
 			cmd = (' "TOA" "%s" %s %s %s \"%s\"' %(each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath))  # TOA writes data into toa_file_fullpath
 			print('-> runScript to TOA= %s' %cmd)
 
@@ -65,12 +66,12 @@ def main():
 
 ###############################################################################
 
-def check_local_files(input_dir_path, input_dir_name, output_dir_path, output_dir_name):
+def local_file_setting(input_dir_path, input_dir_name, output_dir_path, output_dir_name):
 	'''
 	reads dir paths and check if they exist, lists all ellipsoid files and returns a list of files w/ fullpath
 	'''
 
-	download_dir = os.path.join(input_dir_path, input_dir_name)
+	download_dir = os.path.join(MISR_download_dir_path, MISR_download_dir_name)
 	output_dir = os.path.join(output_dir_path, output_dir_name)
 
 	# check if directories exist
@@ -101,7 +102,7 @@ def check_local_files(input_dir_path, input_dir_name, output_dir_path, output_di
 	list_of_misr_files_fullpath = glob.glob(os.path.join(download_dir, misr_file_patern))
 	print('-> no. of hdf files found= %s' %len(list_of_misr_files_fullpath))
 
-	return list_of_misr_files_fullpath, output_dir
+	return list_of_misr_files_fullpath, output_dir, band_no, minnaert
 
 ###############################################################################
 
@@ -126,8 +127,8 @@ def file_name_parser(each_hdf_file):
 	elif each_hdf_file.find('_AN') != -1 :
 		camera = 'an'
 	else:
-		print('-> WARNING: camera NOT found!')
-		sys.exit(1)
+		print('-> ERROR: camera NOT found!')
+		raise SystemExit()
 
 	print('-> camera is= %s' %camera)
 
@@ -144,6 +145,7 @@ if __name__ == '__main__':
 	end_time = dt.datetime.now()
 	print('-> end time= %s' %end_time)
 	print('-> runtime duration= %s' %(end_time-start_time))
+	print(" ")
 	print('######################## TOA COMPLETED SUCCESSFULLY ########################')
 
 ###############################################################################
