@@ -39,24 +39,24 @@ if __name__ == '__main__':
 
 	#geo_param_dir = '../GeometricParameters/'
 	geo_param_dir = '/media/WD1TB (ntfs)/Nolin/2007/GeometricParameters/'
-	geometric_param_files_list = sorted(os.listdir(geo_param_dir))
+	geometric_param_fullpath_list = sorted(os.listdir(geo_param_dir))
 	
-	#dirs = ['../TOA/Cf/', '../TOA/Ca/']
-	dirs = ['/media/WD1TB (ntfs)/Nolin/2007/TOA/Cf/', '/media/WD1TB (ntfs)/Nolin/2007/TOA/Ca/'] # toa files here
+	#toa_dir = ['../TOA/Cf/', '../TOA/Ca/']
+	toa_dir = ['/media/WD1TB (ntfs)/Nolin/2007/TOA/Cf/', '/media/WD1TB (ntfs)/Nolin/2007/TOA/Ca/'] # toa toa_list_fullpath here
 	
 
 	some_cte = 0
 
-	for each_toa_dir in dirs: # dir of toa files
-		files = sorted(os.listdir(d))
+	for each_toa_dir in toa_dir: # dir of toa toa_list_fullpath
+		toa_list_fullpath = sorted(os.listdir(each_toa_dir))
 
 
 ############################################	main algorithm		############################################
 
-########### parse function toa.dat files
+########### parse function toa.dat toa_list_fullpath
 
 		# pick each toa file and parse p,o,b
-		for toa_file in files: # f= loop for each toa file
+		for toa_file in toa_list_fullpath: # f= loop for each toa file
 			# extract p,o,b
 			if toa_file.endswith('.dat'):  
 				i = toa_file.index('_p')
@@ -73,16 +73,22 @@ if __name__ == '__main__':
 					camera = 'cf'
 				elif toa_file.find('_ca') > -1:
 					camera = 'ca'
-				if camera == 'cf' or camera == 'ca':
 
 ########################################################################################################################
 
+				if camera == 'cf' or camera == 'ca':
 					for domain_pob in study_domain_pob_list:  # l=?????; study_domain_pob_list, Q- for specific region??? does study_domain_pob_list define our study domain? how to obtain POB for the a study region?
+
+
+
+############################################## def POB cross checker ###################################################
 
 						# now cross-check p/o/b with the list/ if toa_pob matches with the domain:
 						if (domain_pob[0] == toa_path and domain_pob[1] == toa_orbit and domain_pob[2] == toa_block):
 
 							toa_file_fullpath = os.path.join(each_toa_dir, toa_file) # if toa file in the list is availabe in the dir, then pich the toa.dat -> fname1 = toa.dat
+
+############################################## def POB cross checker ###################################################
 
 							# do we have to seperte surf_file_fullpath and surf_img_fullpath for each camera? do they get similar? -> camera diferenciates them
 							if camera == 'cf':
@@ -94,22 +100,24 @@ if __name__ == '__main__':
 								surf_img_fullpath = '%ssurf_p%03d_o%06d_b%03d_%s.png' % (dir2, toa_path, toa_orbit, toa_block, camera)
 
 
-							fname4 = 'MISR_AM1_GP_GMP_P%03d_O%06d_F03_0013' % (toa_path, toa_orbit)
-							found = False
-
 ########################################################################################################################
 
-							for each_GP_file in geometric_param_files_list:
+							GP_file_pattern = ('MISR_AM1_GP_GMP_P%03d_O%06d_F03_0013' %(toa_path, toa_orbit))
+							found = False
 
-								if each_GP_file.startswith(fname4) and each_GP_file.endswith('.hdf'):
+							for each_GP_file in geometric_param_fullpath_list:
+
+								# if thats the file we are looking for:
+								if each_GP_file.startswith(GP_file_pattern) and each_GP_file.endswith('.hdf'):
 									found = True
 									#cmd = 'Surf %s %s %s %s' % (toa_file_fullpath, os.path.join(geo_param_dir, g), surf_file_fullpath, surf_img_fullpath)
 
 									# from C code: SurfSeaIce_exe, toa_data_file, GP_GMP_file_fullpath, band, output_data_file, output_image_file
 									GP_GMP_file_fullpath = os.path.join(geo_param_dir, each_GP_file)
 
-									cmd = 'SurfSeaIce \"%s\" \"%s\" %s %s' % (toa_file_fullpath, GP_GMP_file_fullpath, nband=missing , surf_file_fullpath, surf_img_fullpath) # band=? before surf_file_fullpath; bandshould be 2 similar to run_TOA.py
+########################################################################################################################
 
+									cmd = 'SurfSeaIce \"%s\" \"%s\" %s %s' % (toa_file_fullpath, GP_GMP_file_fullpath, nband=missing , surf_file_fullpath, surf_img_fullpath) # band=? before surf_file_fullpath; bandshould be 2 similar to run_TOA.py
 
 ####################################################################################   ???????????????
 									if some_cte >= 0:
