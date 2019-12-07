@@ -21,6 +21,7 @@ import glob, os, subprocess
 import datetime as dt
 
 ###############################################################################
+
 # directory path setting
 # update following 3 directories
 MISR_download_dir_name = 'misr_dl_July_2016'
@@ -29,6 +30,7 @@ output_dir_name = 'toa_radiance_July_2016'	# path to toa dir
 output_dir_path = '/home/mare/Ehsan_lab/misr_proceesing_dir' # output of TOA run
 
 exe_name = 'TOA'
+block_range = [1,43]
 
 ###############################################################################
 
@@ -37,21 +39,22 @@ def main():
 	passes a pair of argumenst to cmd to run TOA.c program
 	'''
 	list_of_misr_files_fullpath, output_dir, band_no, minnaert = local_file_setting(MISR_download_dir_path, MISR_download_dir_name, output_dir_path, output_dir_name)
+	
 	for each_hdf_file in list_of_misr_files_fullpath:
 
-		path, orbit, camera = file_name_parser(each_hdf_file)
+		path, orbit, camera = parse_file_names(each_hdf_file)
 
-		for each_block in range(1,43) : # why loop over 42 blocks in one hdf file
+		for each_block in range(block_range) : # why loop over 42 blocks in one hdf file
 
-			toa_file_fullpath = toa_file_producer(path, orbit, each_block, camera, output_dir)
+			toa_file_fullpath = define_toa_files(path, orbit, each_block, camera, output_dir)
 			# now run TOA from linux to process Ellipsoid data
-			cmd_runner(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath)
+			run_from_cmd(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath)
 
 	return 0
 
 ###############################################################################
 
-def toa_file_producer(path, orbit, each_block, camera, output_dir):
+def define_toa_files(path, orbit, each_block, camera, output_dir):
 
 	if (each_block <= 9):
 		print('-> block was: %s' %each_block)
@@ -68,7 +71,7 @@ def toa_file_producer(path, orbit, each_block, camera, output_dir):
 
 ###############################################################################
 
-def cmd_runner(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath):
+def run_from_cmd(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath):
 
 	# this is removed from the original C code, so we do not need image anymore
 	# toa_image_file = '%stoa_%s_%s_b%s_%s.png' % (output_dir, path, orbit, each_block, camera)
@@ -86,7 +89,7 @@ def cmd_runner(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_file_
 	#print('-> return value= %s' %return_value_of_cmd)
 
 	if (return_value_of_cmd != 0):
-		print('-> ERROR: TOA exe NOT found in path. Exiting...')
+		print('-> ERROR: %s.exe NOT found in path. Exiting...' %exe_name)
 		raise SystemExit() 
 
 ###############################################################################
@@ -131,7 +134,7 @@ def local_file_setting(input_dir_path, input_dir_name, output_dir_path, output_d
 
 ###############################################################################
 
-def file_name_parser(each_hdf_file):
+def parse_file_names(each_hdf_file):
 
 	print('-> hdf file is= %s' %each_hdf_file)
 
