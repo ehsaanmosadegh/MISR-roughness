@@ -44,7 +44,7 @@ def main():
 
 		path, orbit, camera = parse_file_names(each_hdf_file)
 
-		for each_block in range(block_range) : # why loop over 42 blocks in one hdf file
+		for each_block in block_range: # why loop over 42 blocks in one hdf file
 
 			toa_file_fullpath = define_toa_files(path, orbit, each_block, camera, output_dir)
 			# now run TOA from linux to process Ellipsoid data

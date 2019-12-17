@@ -106,10 +106,10 @@ double som_x, som_y;
 status = MtkBlsToLatLon(path, 275, block, line * 1.0, sample * 1.0, &lat, &lon);
 if (status != MTK_SUCCESS) 
 	{
-	fprintf(stderr, "pixel2grid: MtkBlsToLatLon failed!!!, status = %d (%s)\n", status, errs[status]);
+	fprintf(stderr, "C: pixel2grid: MtkBlsToLatLon failed!!!, status = %d (%s)\n", status, errs[status]);
 	return 0;
 	}
-if (VERBOSE) fprintf(stderr, "pixel2grid: lat = %.6f, lon = %.6f\n", lat, lon);
+if (VERBOSE) fprintf(stderr, "C: pixel2grid: lat = %.6f, lon = %.6f\n", lat, lon);
 
 lat *= M_PI / 180.0;
 lon -= 90.0;
@@ -117,16 +117,16 @@ lon *= M_PI / 180.0;
 z = sin(M_PI_4 - lat / 2.0);
 x = r2 * cos(lon) * z;
 y = r2 * sin(lon) * z;
-if (VERBOSE) fprintf(stderr, "pixel2grid: absolute x = %.6f, y = %.6f\n", x, y);
+if (VERBOSE) fprintf(stderr, "C: pixel2grid: absolute x = %.6f, y = %.6f\n", x, y);
 x = x - x0 + c / 2.0;
 y = y - y0 - c / 2.0;
-if (VERBOSE) fprintf(stderr, "pixel2grid: relative x = %.6f, y = %.6f\n", x, y);
+if (VERBOSE) fprintf(stderr, "C: pixel2grid: relative x = %.6f, y = %.6f\n", x, y);
 x = x / c;
 y = y / c;
 *i = rint(x);
 *j = rint(-y);
 
-if (VERBOSE) fprintf(stderr, "pixel2grid: scaled x = %.6f, y = %.6f\n", x, y);
+if (VERBOSE) fprintf(stderr, "C: pixel2grid: scaled x = %.6f, y = %.6f\n", x, y);
 
 return 1;
 }
@@ -269,7 +269,7 @@ if (smac_coefs == 0)
  smac_coefs = (coef_atmos *)malloc(sizeof(coef_atmos));
  if (!smac_coefs)
  	{
- 	fprintf(stderr, "SMAC: couldn't malloc smac_coefs\n");
+ 	fprintf(stderr, "C: SMAC: couldn't malloc smac_coefs\n");
  	return 0;
  	}
 
@@ -279,7 +279,7 @@ if (smac_coefs == 0)
 	fcoef=fopen(fichier_wl,"r");
 	if (!fcoef)
 		{
-		fprintf(stderr, "SMAC: erreur d'ouverture du fichier de coefficients: %s\n", fichier_wl);
+		fprintf(stderr, "C: SMAC: erreur d'ouverture du fichier de coefficients: %s\n", fichier_wl);
 		return 0;
 		}
 
@@ -475,7 +475,7 @@ else
 		}
 	if (max == -1.0e23)
 		{
-		if (VERBOSE) fprintf(stderr, "data2image: no valid data\n");
+		if (VERBOSE) fprintf(stderr, "C: data2image: no valid data\n");
 		max = 0.0;
 		//return 0;
 		}
@@ -491,21 +491,21 @@ else
 			}
 		if (min == 1.0e23)
 			{
-			if (VERBOSE) fprintf(stderr, "data2image: no valid data\n");
+			if (VERBOSE) fprintf(stderr, "C: data2image: no valid data\n");
 			min = 0.0;
 			//return 0;
 			}
 		}
 	else min = 0.0;
 	}
-if (VERBOSE) fprintf(stderr, "data2image: min=%.3f, max=%.3f\n", min, max);
+if (VERBOSE) fprintf(stderr, "C: data2image: min=%.3f, max=%.3f\n", min, max);
 if (max != min) dz =  255.0 / (max - min);
 else dz = 0.0;
 
 image = (char *) malloc(nlines * nsamples);
 if (!image)
 	{
-	fprintf(stderr, "data2image: couldn't malloc image\n");
+	fprintf(stderr, "C: data2image: couldn't malloc image\n");
 	return 0;
 	}
 
@@ -534,14 +534,14 @@ int j;
 
 if (!image)
 	{
-	fprintf(stderr, "write_png: null image\n");
+	fprintf(stderr, "C: write_png: null image\n");
 	return 0;
 	}
 
 row_ptrs = (png_bytepp) malloc(ny * sizeof(png_bytep));
 if (!row_ptrs)
 	{
-	fprintf(stderr, "write_png: couldn't malloc row_ptrs\n");
+	fprintf(stderr, "C: write_png: couldn't malloc row_ptrs\n");
 	return 0;
 	}
 for (j = 0; j < ny; j ++) row_ptrs[j] = (png_bytep)(image + j * nx);
@@ -549,7 +549,7 @@ for (j = 0; j < ny; j ++) row_ptrs[j] = (png_bytep)(image + j * nx);
 fp = fopen(fname, "wb");
 if (!fp)
 	{
-	fprintf(stderr, "write_png: couldn't open %s\n", fname);
+	fprintf(stderr, "C: write_png: couldn't open %s\n", fname);
 	return 0;
 	}
 
@@ -558,7 +558,7 @@ png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
 if (!png_ptr)
 	{
 	fclose(fp);
-	fprintf(stderr, "write_png: png_create_write_struct failed\n");
+	fprintf(stderr, "C: write_png: png_create_write_struct failed\n");
 	return 0;
 	}
 
@@ -567,7 +567,7 @@ if (!info_ptr)
 	{
 	png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
 	fclose(fp);
-	fprintf(stderr, "write_png: png_create_info_struct failed\n");
+	fprintf(stderr, "C: write_png: png_create_info_struct failed\n");
 	return 0;
 	}
 
@@ -575,7 +575,7 @@ if (setjmp(png_jmpbuf(png_ptr)))
 	{
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 	fclose(fp);
-	fprintf(stderr, "write_png: longjmp from png error\n");
+	fprintf(stderr, "C: write_png: longjmp from png error\n");
 	return 0;
 	}
 
@@ -623,49 +623,49 @@ double sum;
 //int zoom = 64, wrap = 0;
 int wrap = 0;
 
-if (VERBOSE) fprintf(stderr, "\n readGmpFile: fname=%s, block=%d, band=%i \n", fname, block, band);
+if (VERBOSE) fprintf(stderr, "\n C: readGmpFile: fname=%s, block=%d, band=%i \n", fname, block, band);
 
 status = MtkFileType(fname, &filetype);
 if (status != MTK_SUCCESS) 
 	{
-	fprintf(stderr, "readGmpFile: MtkFileType failed!!!, status = %d (%s)\n", status, errs[status]);
+	fprintf(stderr, "C: readGmpFile: MtkFileType failed!!!, status = %d (%s)\n", status, errs[status]);
 	return 0;
 	}
 	
 if (filetype != MTK_GP_GMP)
 	{
-	fprintf(stderr, "readGmpFile: only L1B2 Geometric Parameters files are supported!!!\n");
+	fprintf(stderr, "C: readGmpFile: only L1B2 Geometric Parameters files are supported!!!\n");
 	return 0;
 	}
 
 strcpy(gridName, "GeometricParameters"); 
 strcpy(fieldName, "SolarAzimuth");
-if (VERBOSE) fprintf(stderr, "readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
+if (VERBOSE) fprintf(stderr, "C: readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
 status = MtkReadBlock(fname, gridName, fieldName, block, &tmpbuf1);
 if (status != MTK_SUCCESS) 
 	{
-	fprintf(stderr, "readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
+	fprintf(stderr, "C: readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
 	return 0;
 	}
-if (VERBOSE) fprintf(stderr, "readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
+if (VERBOSE) fprintf(stderr, "C: readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
 	tmpbuf1.nline, tmpbuf1.nsample, tmpbuf1.datasize, tmpbuf1.datatype, types[tmpbuf1.datatype]);
 if (tmpbuf1.nline != 8 || tmpbuf1.nsample != 32)
 	{
-	fprintf(stderr, "readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf1.nline, tmpbuf1.nsample);
+	fprintf(stderr, "C: readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf1.nline, tmpbuf1.nsample);
 	return 0;
 	}
 
 saz = (double *) malloc(8 * 32 * sizeof(double));
 if (!saz)
 	{
-	fprintf(stderr, "readGmpFile: saz malloc failed!!!\n");
+	fprintf(stderr, "C: readGmpFile: saz malloc failed!!!\n");
 	return 0;
 	}
 
 tmp = (double *) malloc(8 * 32 * sizeof(double));
 if (!tmp)
 	{
-	fprintf(stderr, "readGmpFile: tmp malloc failed!!!\n");
+	fprintf(stderr, "C: readGmpFile: tmp malloc failed!!!\n");
 	return 0;
 	}
 n = 0;
@@ -686,7 +686,7 @@ for (j = 0; j < 8; j ++)
 		}
 if (n != 256)
 	{
-	if (VERBOSE) fprintf(stderr, "readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 	//return 0;
 	}
 //getDataStats(tmp, 8, 32);
@@ -731,24 +731,24 @@ if (tmp) free(tmp);
 
 strcpy(gridName, "GeometricParameters"); 
 strcpy(fieldName, "SolarZenith");
-if (VERBOSE) fprintf(stderr, "readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
+if (VERBOSE) fprintf(stderr, "C: readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
 status = MtkReadBlock(fname, gridName, fieldName, block, &tmpbuf2);
 if (status != MTK_SUCCESS) 
 	{
-	fprintf(stderr, "readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
+	fprintf(stderr, "C: readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
 	return 0;
 	}
-if (VERBOSE) fprintf(stderr, "readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
+if (VERBOSE) fprintf(stderr, "C: readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
 	tmpbuf2.nline, tmpbuf2.nsample, tmpbuf2.datasize, tmpbuf2.datatype, types[tmpbuf2.datatype]);
 if (tmpbuf2.nline != 8 || tmpbuf2.nsample != 32)
 	{
-	fprintf(stderr, "readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf2.nline, tmpbuf2.nsample);
+	fprintf(stderr, "C: readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf2.nline, tmpbuf2.nsample);
 	return 0;
 	}
 tmp = (double *) malloc(8 * 32 * sizeof(double));
 if (!tmp)
 	{
-	fprintf(stderr, "readGmpFile: tmp malloc failed!!!\n");
+	fprintf(stderr, "C: readGmpFile: tmp malloc failed!!!\n");
 	return 0;
 	}
 n = 0;
@@ -764,7 +764,7 @@ for (j = 0; j < 8; j ++)
 		}
 if (n != 256)
 	{
-	if (VERBOSE) fprintf(stderr, "readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 	//return 0;
 	}
 //getDataStats(tmp, 8, 32, "sz1");
@@ -792,38 +792,38 @@ if (camera == 1)
 	{
 	strcpy(gridName, "GeometricParameters"); 
 	strcpy(fieldName, "CfAzimuth");
-	if (VERBOSE) fprintf(stderr, "readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
 	status = MtkReadBlock(fname, gridName, fieldName, block, &tmpbuf3);
 	if (status != MTK_SUCCESS) 
 		{
-		fprintf(stderr, "readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
+		fprintf(stderr, "C: readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
 		return 0;
 		}
-	if (VERBOSE) fprintf(stderr, "readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
 		tmpbuf3.nline, tmpbuf3.nsample, tmpbuf3.datasize, tmpbuf3.datatype, types[tmpbuf3.datatype]);
 	if (tmpbuf3.nline != 8 || tmpbuf3.nsample != 32)
 		{
-		fprintf(stderr, "readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf3.nline, tmpbuf3.nsample);
+		fprintf(stderr, "C: readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf3.nline, tmpbuf3.nsample);
 		return 0;
 		}
 
 	raz = (double *) malloc(8 * 32 * sizeof(double));
 	if (!raz)
 		{
-		fprintf(stderr, "readGmpFile: raz malloc failed!!!\n");
+		fprintf(stderr, "C: readGmpFile: raz malloc failed!!!\n");
 		return 0;
 		}
 	cfaz = (double *) malloc(8 * 32 * sizeof(double));
 	if (!cfaz)
 		{
-		fprintf(stderr, "readGmpFile: cfaz malloc failed!!!\n");
+		fprintf(stderr, "C: readGmpFile: cfaz malloc failed!!!\n");
 		return 0;
 		}
 
 	tmp = (double *) malloc(8 * 32 * sizeof(double));
 	if (!tmp)
 		{
-		fprintf(stderr, "readGmpFile: tmp malloc failed!!!\n");
+		fprintf(stderr, "C: readGmpFile: tmp malloc failed!!!\n");
 		return 0;
 		}
 	n = 0;
@@ -846,7 +846,7 @@ if (camera == 1)
 			}
 	if (n != 256)
 		{
-		if (VERBOSE) fprintf(stderr, "readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
+		if (VERBOSE) fprintf(stderr, "C: readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 		//return 0;
 		}
 /***
@@ -920,24 +920,24 @@ if (camera == 1)
 	
 	strcpy(gridName, "GeometricParameters"); 
 	strcpy(fieldName, "CfZenith");
-	if (VERBOSE) fprintf(stderr, "readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
 	status = MtkReadBlock(fname, gridName, fieldName, block, &tmpbuf4);
 	if (status != MTK_SUCCESS) 
 		{
-		fprintf(stderr, "readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
+		fprintf(stderr, "C: readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
 		return 0;
 		}
 	if (VERBOSE) fprintf(stderr, "readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
 		tmpbuf4.nline, tmpbuf4.nsample, tmpbuf4.datasize, tmpbuf4.datatype, types[tmpbuf4.datatype]);
 	if (tmpbuf4.nline != 8 || tmpbuf4.nsample != 32)
 		{
-		fprintf(stderr, "readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf4.nline, tmpbuf4.nsample);
+		fprintf(stderr, "C: readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf4.nline, tmpbuf4.nsample);
 		return 0;
 		}
 	tmp = (double *) malloc(8 * 32 * sizeof(double));
 	if (!tmp)
 		{
-		fprintf(stderr, "readGmpFile: tmp malloc failed!!!\n");
+		fprintf(stderr, "C: readGmpFile: tmp malloc failed!!!\n");
 		return 0;
 		}
 	n = 0;
@@ -953,7 +953,7 @@ if (camera == 1)
 			}
 	if (n != 256)
 		{
-		if (VERBOSE) fprintf(stderr, "readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
+		if (VERBOSE) fprintf(stderr, "C: readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 		//return 0;
 		}
 	//getDataStats(tmp, 8, 32, "cfz1");
@@ -980,24 +980,24 @@ if (camera == 4)
 	{
 	strcpy(gridName, "GeometricParameters"); 
 	strcpy(fieldName, "AnAzimuth");
-	if (VERBOSE) fprintf(stderr, "readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
 	status = MtkReadBlock(fname, gridName, fieldName, block, &tmpbuf7);
 	if (status != MTK_SUCCESS) 
 		{
-		fprintf(stderr, "readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
+		fprintf(stderr, "C: readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
 		return 0;
 		}
-	if (VERBOSE) fprintf(stderr, "readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
 		tmpbuf7.nline, tmpbuf7.nsample, tmpbuf7.datasize, tmpbuf7.datatype, types[tmpbuf7.datatype]);
 	if (tmpbuf7.nline != 8 || tmpbuf7.nsample != 32)
 		{
-		fprintf(stderr, "readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf7.nline, tmpbuf7.nsample);
+		fprintf(stderr, "C: readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf7.nline, tmpbuf7.nsample);
 		return 0;
 		}
 	tmp = (double *) malloc(8 * 32 * sizeof(double));
 	if (!tmp)
 		{
-		fprintf(stderr, "readGmpFile: tmp malloc failed!!!\n");
+		fprintf(stderr, "C: readGmpFile: tmp malloc failed!!!\n");
 		return 0;
 		}
 	n = 0;
@@ -1013,7 +1013,7 @@ if (camera == 4)
 			}
 	if (n != 256)
 		{
-		if (VERBOSE) fprintf(stderr, "readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
+		if (VERBOSE) fprintf(stderr, "C: readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 		//return 0;
 		}
 	//getDataStats(tmp, 8, 32, "cfa1");
@@ -1055,24 +1055,24 @@ if (camera == 4)
 	
 	strcpy(gridName, "GeometricParameters"); 
 	strcpy(fieldName, "AnZenith");
-	if (VERBOSE) fprintf(stderr, "readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
 	status = MtkReadBlock(fname, gridName, fieldName, block, &tmpbuf8);
 	if (status != MTK_SUCCESS) 
 		{
-		fprintf(stderr, "readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
+		fprintf(stderr, "C: readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
 		return 0;
 		}
-	if (VERBOSE) fprintf(stderr, "readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
 		tmpbuf8.nline, tmpbuf8.nsample, tmpbuf8.datasize, tmpbuf8.datatype, types[tmpbuf8.datatype]);
 	if (tmpbuf8.nline != 8 || tmpbuf8.nsample != 32)
 		{
-		fprintf(stderr, "readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf8.nline, tmpbuf8.nsample);
+		fprintf(stderr, "C: readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf8.nline, tmpbuf8.nsample);
 		return 0;
 		}
 	tmp = (double *) malloc(8 * 32 * sizeof(double));
 	if (!tmp)
 		{
-		fprintf(stderr, "readGmpFile: tmp malloc failed!!!\n");
+		fprintf(stderr, "C: readGmpFile: tmp malloc failed!!!\n");
 		return 0;
 		}
 	n = 0;
@@ -1088,7 +1088,7 @@ if (camera == 4)
 			}
 	if (n != 256)
 		{
-		if (VERBOSE) fprintf(stderr, "readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
+		if (VERBOSE) fprintf(stderr, "C: readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 		//return 0;
 		}
 	//getDataStats(tmp, 8, 32, "cfz1");
@@ -1115,38 +1115,38 @@ if (camera == 7)
 	{
 	strcpy(gridName, "GeometricParameters"); 
 	strcpy(fieldName, "CaAzimuth");
-	if (VERBOSE) fprintf(stderr, "readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
 	status = MtkReadBlock(fname, gridName, fieldName, block, &tmpbuf5);
 	if (status != MTK_SUCCESS) 
 		{
-		fprintf(stderr, "readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
+		fprintf(stderr, "C: readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
 		return 0;
 		}
-	if (VERBOSE) fprintf(stderr, "readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
 		tmpbuf5.nline, tmpbuf5.nsample, tmpbuf5.datasize, tmpbuf5.datatype, types[tmpbuf5.datatype]);
 	if (tmpbuf5.nline != 8 || tmpbuf5.nsample != 32)
 		{
-		fprintf(stderr, "readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf5.nline, tmpbuf5.nsample);
+		fprintf(stderr, "C: readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf5.nline, tmpbuf5.nsample);
 		return 0;
 		}
 
 	raz = (double *) malloc(8 * 32 * sizeof(double));
 	if (!raz)
 		{
-		fprintf(stderr, "readGmpFile: raz malloc failed!!!\n");
+		fprintf(stderr, "C: readGmpFile: raz malloc failed!!!\n");
 		return 0;
 		}
 	caaz = (double *) malloc(8 * 32 * sizeof(double));
 	if (!caaz)
 		{
-		fprintf(stderr, "readGmpFile: caaz malloc failed!!!\n");
+		fprintf(stderr, "C: readGmpFile: caaz malloc failed!!!\n");
 		return 0;
 		}
 
 	tmp = (double *) malloc(8 * 32 * sizeof(double));
 	if (!tmp)
 		{
-		fprintf(stderr, "readGmpFile: tmp malloc failed!!!\n");
+		fprintf(stderr, "C: readGmpFile: tmp malloc failed!!!\n");
 		return 0;
 		}
 	n = 0;
@@ -1169,7 +1169,7 @@ if (camera == 7)
 			}
 	if (n != 256)
 		{
-		if (VERBOSE) fprintf(stderr, "readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
+		if (VERBOSE) fprintf(stderr, "C: readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 		//return 0;
 		}
 /***
@@ -1241,24 +1241,24 @@ if (camera == 7)
 	
 	strcpy(gridName, "GeometricParameters"); 
 	strcpy(fieldName, "CaZenith");
-	if (VERBOSE) fprintf(stderr, "readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: grid=%s, field=%s\n", gridName, fieldName);
 	status = MtkReadBlock(fname, gridName, fieldName, block, &tmpbuf6);
 	if (status != MTK_SUCCESS) 
 		{
-		fprintf(stderr, "readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
+		fprintf(stderr, "C: readGmpFile: MtkReadBlock failed!!!, status = %d (%s)\n", status, errs[status]);
 		return 0;
 		}
-	if (VERBOSE) fprintf(stderr, "readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
+	if (VERBOSE) fprintf(stderr, "C: readGmpFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
 		tmpbuf6.nline, tmpbuf6.nsample, tmpbuf6.datasize, tmpbuf6.datatype, types[tmpbuf6.datatype]);
 	if (tmpbuf6.nline != 8 || tmpbuf6.nsample != 32)
 		{
-		fprintf(stderr, "readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf6.nline, tmpbuf6.nsample);
+		fprintf(stderr, "C: readGmpFile: %s is not 8x32: (%d, %d)\n", fieldName, tmpbuf6.nline, tmpbuf6.nsample);
 		return 0;
 		}
 	tmp = (double *) malloc(8 * 32 * sizeof(double));
 	if (!tmp)
 		{
-		fprintf(stderr, "readGmpFile: tmp malloc failed!!!\n");
+		fprintf(stderr, "C: readGmpFile: tmp malloc failed!!!\n");
 		return 0;
 		}
 	n = 0;
@@ -1274,7 +1274,7 @@ if (camera == 7)
 			}
 	if (n != 256)
 		{
-		if (VERBOSE) fprintf(stderr, "readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
+		if (VERBOSE) fprintf(stderr, "C: readGmpFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 		//return 0;
 		}
 	//getDataStats(tmp, 8, 32, "caz1");
@@ -1369,48 +1369,48 @@ n2 = (nsamples / 2 + 1) * nlines;
 rbuf1 = (double *) fftw_malloc(n * sizeof(double));
 if (!rbuf1)
 	{
-	fprintf(stderr, "convolve2d: couldn't malloc rbuf1\n");
+	fprintf(stderr, "C convolve2d: couldn't malloc rbuf1\n");
 	return 0;
 	}
 rbuf2 = (double *) fftw_malloc(n * sizeof(double));
 if (!rbuf2)
 	{
-	fprintf(stderr, "convolve2d: couldn't malloc rbuf2\n");
+	fprintf(stderr, "C convolve2d: couldn't malloc rbuf2\n");
 	return 0;
 	}
 cbuf1 = (fftw_complex *) fftw_malloc(n2 * sizeof(fftw_complex));
 if (!cbuf1)
 	{
-	fprintf(stderr, "convolve2d: couldn't malloc cbuf1\n");
+	fprintf(stderr, "C convolve2d: couldn't malloc cbuf1\n");
 	return 0;
 	}
 cbuf2 = (fftw_complex *) fftw_malloc(n2 * sizeof(fftw_complex));
 if (!cbuf2)
 	{
-	fprintf(stderr, "convolve2d: couldn't malloc cbuf2\n");
+	fprintf(stderr, "C convolve2d: couldn't malloc cbuf2\n");
 	return 0;
 	}
 cbuf3 = (fftw_complex *) fftw_malloc(n2 * sizeof(fftw_complex));
 if (!cbuf3)
 	{
-	fprintf(stderr, "convolve2d: couldn't malloc cbuf3\n");
+	fprintf(stderr, "C convolve2d: couldn't malloc cbuf3\n");
 	return 0;
 	}
 
 for (i = 0; i < n; i ++) rbuf1[i] = data[i];
 for (i = 0; i < n; i ++) rbuf2[i] = filter[i];
 
-if (VERBOSE > 1) fprintf(stderr, "fftw_plan_dft_r2c_2d\n");	
+if (VERBOSE > 1) fprintf(stderr, "C fftw_plan_dft_r2c_2d\n");	
 p = fftw_plan_dft_r2c_2d(nlines, nsamples, rbuf1, cbuf1, FFTW_ESTIMATE);
 if (VERBOSE > 1) fprintf(stderr, "fftw_execute\n");	
 fftw_execute(p);
 fftw_destroy_plan(p);
 
-if (VERBOSE > 1) fprintf(stderr, "fftw_plan_dft_r2c_2d\n");	
+if (VERBOSE > 1) fprintf(stderr, "C fftw_plan_dft_r2c_2d\n");	
 p = fftw_plan_dft_r2c_2d(nlines, nsamples, rbuf2, cbuf2, FFTW_ESTIMATE);
-if (VERBOSE > 1) fprintf(stderr, "fftw_execute\n");	
+if (VERBOSE > 1) fprintf(stderr, "C fftw_execute\n");	
 fftw_execute(p);
-if (VERBOSE > 1) fprintf(stderr, "fftw_destroy_plan\n");	
+if (VERBOSE > 1) fprintf(stderr, "C fftw_destroy_plan\n");	
 fftw_destroy_plan(p);
 
 for (i = 0; i < n2; i ++)
@@ -1419,17 +1419,17 @@ for (i = 0; i < n2; i ++)
 	cbuf3[i][1] = cbuf1[i][0] * cbuf2[i][1] + cbuf1[i][1] * cbuf2[i][0];
 	}
 
-if (VERBOSE > 1) fprintf(stderr, "fftw_plan_dft_c2r_2d\n");	
+if (VERBOSE > 1) fprintf(stderr, "C fftw_plan_dft_c2r_2d\n");	
 p = fftw_plan_dft_c2r_2d(nlines, nsamples, cbuf3, rbuf1, FFTW_ESTIMATE);
-if (VERBOSE > 1) fprintf(stderr, "fftw_execute\n");	
+if (VERBOSE > 1) fprintf(stderr, "C fftw_execute\n");	
 fftw_execute(p);
-if (VERBOSE > 1) fprintf(stderr, "fftw_destroy_plan\n");	
+if (VERBOSE > 1) fprintf(stderr, "C fftw_destroy_plan\n");	
 fftw_destroy_plan(p);
 
 result = (double *) malloc(nsamples * nlines * sizeof(double));
 if (!result)
 	{
-	fprintf(stderr, "convolve2d: couldn't malloc result\n");
+	fprintf(stderr, "C convolve2d: couldn't malloc result\n");
 	return 0;
 	}
 	
@@ -1457,12 +1457,12 @@ double *zoom2d(double *data, int nlines, int nsamples, int zoom)
 double dx, dy, *data2, *result, dd2 = DAMPING * DAMPING;
 int i, j, i0, j0, nlines2 = nlines * zoom, nsamples2 = nsamples * zoom;
 
-if (VERBOSE) fprintf(stderr, "zoom2d: nlines=%d, nsamples=%d, zoom=%d\n", nlines, nsamples, zoom);
+if (VERBOSE) fprintf(stderr, "C zoom2d: nlines=%d, nsamples=%d, zoom=%d\n", nlines, nsamples, zoom);
 
 data2 = (double *) malloc(nlines2 * nsamples2 * sizeof(double));
 if (!data2)
 	{
-	fprintf(stderr, "zoom2d: couldn't malloc data2\n");
+	fprintf(stderr, "C zoom2d: couldn't malloc data2\n");
 	return 0;
 	}
 	
@@ -1478,7 +1478,7 @@ if (filter == 0)
 	filter = (double *) malloc(nsamples2 * nlines2 * sizeof(double));
 	if (!filter)
 		{
-		fprintf(stderr, "zoom2d: couldn't malloc filter\n");
+		fprintf(stderr, "C zoom2d: couldn't malloc filter\n");
 		return 0;
 		}
 		
@@ -1507,12 +1507,12 @@ double *extendArray(double *data, int nlines, int nsamples, int border)
 double *data2;
 int k, j, i, nlines2 = nlines + 2 * border, nsamples2 = nsamples + 2 * border;
 
-if (VERBOSE) fprintf(stderr, "extendArray: nlines=%d, nsamples=%d, border=%d\n", nlines, nsamples, border);
+if (VERBOSE) fprintf(stderr, "C extendArray: nlines=%d, nsamples=%d, border=%d\n", nlines, nsamples, border);
 
 data2 = (double *) malloc(nlines2 * nsamples2 * sizeof(double));
 if (!data2)
 	{
-	fprintf(stderr, "extendArray: couldn't malloc data2\n");
+	fprintf(stderr, "C extendArray: couldn't malloc data2\n");
 	return 0;
 	}
 	
@@ -1561,7 +1561,7 @@ for (i = 0; i < nsamples2; i ++)
 for (i = 0; i < nlines2 * nsamples2; i ++) 
 	if (data2[i] == NO_DATA)
 		{
-		fprintf(stderr, "extendArray: holes in GMP data array\n");
+		fprintf(stderr, "C extendArray: holes in GMP data array\n");
 		//return 0;
 		data2[i] = TDROPOUT;
 		}
@@ -1575,12 +1575,12 @@ double *extractArray(double *data, int nlines, int nsamples, int border)
 double *data2;
 int j, i, nlines2 = nlines - 2 * border, nsamples2 = nsamples - 2 * border;
 
-if (VERBOSE) fprintf(stderr, "extractArray: nlines=%d, nsamples=%d, border=%d\n", nlines, nsamples, border);
+if (VERBOSE) fprintf(stderr, "C extractArray: nlines=%d, nsamples=%d, border=%d\n", nlines, nsamples, border);
 
 data2 = (double *) malloc(nlines2 * nsamples2 * sizeof(double));
 if (!data2)
 	{
-	fprintf(stderr, "extractArray: couldn't malloc data2\n");
+	fprintf(stderr, "C extractArray: couldn't malloc data2\n");
 	return 0;
 	}
 	
@@ -1602,7 +1602,7 @@ int *mask;
 mask = (int *) malloc(nlines * nsamples * sizeof(int));
 if (!mask)
 	{
-	fprintf(stderr, "zoomArray: couldn't malloc mask\n");
+	fprintf(stderr, "C zoomArray: couldn't malloc mask\n");
 	return 0;
 	}
 for (j = 0; j < nlines; j ++) 
@@ -1624,12 +1624,12 @@ nlines4 = nlines3 - 2 * zoom * BORDER;
 nsamples4 = nsamples3 - 2 * zoom * BORDER;
 if (nlines4 != nlines * zoom)
 	{
-	fprintf(stderr, "zoomArray: zoomed nlines mismatch: %d, %d\n", nlines4, nlines * zoom);
+	fprintf(stderr, "C zoomArray: zoomed nlines mismatch: %d, %d\n", nlines4, nlines * zoom);
 	return 0;
 	}
 if (nsamples4 != nsamples * zoom)
 	{
-	fprintf(stderr, "zoomArray: zoomed nsamples mismatch: %d, %d\n", nsamples4, nsamples * zoom);
+	fprintf(stderr, "C zoomArray: zoomed nsamples mismatch: %d, %d\n", nsamples4, nsamples * zoom);
 	return 0;
 	}
 
@@ -1651,13 +1651,13 @@ FILE *f;
 f = fopen(fname, "wb");
 if (!f)
 	{
-	fprintf(stderr, "write_data: couldn't open %s\n", fname);
+	fprintf(stderr, "C write_data: couldn't open %s\n", fname);
 	return 0;
 	}
 	
 if (fwrite(data, sizeof(double), nlines * nsamples, f) != nlines * nsamples)
 	{
-	fprintf(stderr, "write_data: couldn't write data\n");
+	fprintf(stderr, "C write_data: couldn't write data\n");
 	return 0;
 	}
 	
@@ -1673,20 +1673,20 @@ FILE *f;
 f = fopen(fname, "rb");
 if (!f)
 	{
-	fprintf(stderr, "read_data: couldn't open %s\n", fname);
+	fprintf(stderr, "C: read_data: couldn't open %s\n", fname);
 	return 0;
 	}
 	
 *data = (double *) malloc(nlines * nsamples * sizeof(double));
 if (!*data)
 	{
-	fprintf(stderr, "read_data: couldn't malloc data\n");
+	fprintf(stderr, "C: read_data: couldn't malloc data\n");
 	return 0;
 	}
 	
 if (fread(*data, sizeof(double), nlines * nsamples, f) != nlines * nsamples)
 	{
-	fprintf(stderr, "read_data: couldn't read data %s\n", fname);
+	fprintf(stderr, "C: read_data: couldn't read data %s\n", fname);
 	return 0;
 	}
 	
@@ -1699,7 +1699,8 @@ return 1;
 int main(int argc, char *argv[])
 {
 int i;
-char s[256];
+char pattern_str[256]; // s=pattern_str
+//char* pattern_str[]=malloc(256); // s=pattern_str
 
 if (argc < 6)
 	{
@@ -1713,48 +1714,56 @@ band = 		atoi(argv[3]);
 strcpy(fname[2], argv[4]);
 strcpy(fname[3], argv[5]);
 
-if (strstr(fname[0], "_p"))
+printf("processing fname[0]: %s\n", fname[0]);
+
+if (strstr(fname[0], "_P"))
 	{
-	strncpy(s, strstr(fname[0], "_p") + 2, 3);
-	s[3] = 0;
-	path = atoi(s);
+	strncpy(pattern_str, strstr(fname[0], "_P")+2, 3); // strstr: points to begining of"_p"+2
+	pattern_str[3] = 0;
+	printf("path: %s\n", pattern_str);
+	path = atoi(pattern_str);
+	//pattern_str = null;
+	//printf("path: %d\n", path);
 	}
 else
 	{
-	fprintf(stderr, "No path info in file name\n");
+	fprintf(stderr, "C: No path info in file name \n"); // %(fname[0]));
 	return 1;
 	}
 
-if (strstr(fname[0], "_o"))
+if (strstr(fname[0], "_O"))
 	{
-	strncpy(s, strstr(fname[0], "_o") + 2, 6);
-	s[6] = 0;
-	orbit = atoi(s);
+	strncpy(pattern_str, strstr(fname[0], "_O")+2, 6); // based on pointer; move pointer 2 characters forward and copy 6 characters to s
+	printf("orbit: %s\n", pattern_str);
+	pattern_str[6] = 0;
+	orbit = atoi(pattern_str);
 	}
 else
 	{
-	fprintf(stderr, "No orbit info in file name\n");
+	fprintf(stderr, "C: No orbit info in file name %s\n", fname[0]);
 	return 1;
 	}
 
-if (strstr(fname[0], "_b"))
+if (strstr(fname[0], "_b")) // if finds "_b" pattern
 	{
-	strncpy(s, strstr(fname[0], "_b") + 2, 3);
-	s[3] = 0;
-	block = atoi(s);
+	strncpy(pattern_str, strstr(fname[0], "_b")+2, 3);
+	printf("block: %s\n", pattern_str);
+	pattern_str[3] = 0;
+	block = atoi(pattern_str);
+	printf("now block is: %d", block);
 	}
 else
 	{
-	fprintf(stderr, "No block info in file name\n");
+	fprintf(stderr, "C: No block info in file name \n"); //%(fname[0]));
 	return 1;
 	}
 
-if (strstr(fname[0], "_cf")) camera = 1;
+if 		(strstr(fname[0], "_cf")) camera = 1;
 else if (strstr(fname[0], "_an")) camera = 4;
 else if (strstr(fname[0], "_ca")) camera = 7;
 else
 	{
-	fprintf(stderr, "Unsupported camera\n");
+	fprintf(stderr, "C: Unsupported camera\n");
 	return 1;
 	}
 

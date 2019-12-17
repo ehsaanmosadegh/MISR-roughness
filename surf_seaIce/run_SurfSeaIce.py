@@ -4,15 +4,15 @@
 # author: Ehsna Mosadegh (emosadegh@nevada.unr.edu)
 # version history: 2 Dec 2019
 # usage:
-#
+# - 
 # data required:
 #	inputs: 
 #	outputs: 
 # to do: 
-# - 
+# - define study domain in terms of path-block
 # - 
 # notes: 
-#   - 
+#   - use python3
 # debugging:
 #	-
 ###############################################################################
@@ -22,17 +22,21 @@ import os, subprocess
 ###############################################################################
 # directory path setting
 
-toa_dir_name = 'toa_radiance_July_2016'
+# path to TOA radiance data
 toa_dir_path = '/home/mare/Ehsan_lab/misr_proceesing_dir' 	# path to toa dir 
-surf_dir_name = 'toa_radiance_July_2016'
-surf_dir_path = toa_dir_path
-
-study_domain_POB_file = 'study_domain_POB.txt'
+toa_dir_name = 'toa_radiance_July_2016' # should be defined for each project
+# path to txt file - we are not uing it anymore
 study_domain_POB_path = toa_dir_path
-
+study_domain_POB_file = 'study_domain_POB.txt'
+# path to downloaded GP GMP geometric files
 geometric_param_dir_name = 'misr_dl_July_2016'
 geometric_param_dir_path = '/home/mare/Ehsan_lab/misr_proceesing_dir'  # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
 
+# define output directory==surface reflectance data
+surf_refl_dir_path = toa_dir_path
+surf_refl_dir_name = 'surf_reflectance_July_2016'
+
+# other settings - do not change 
 nband = 2 # dtype?
 exe_name = 'SurfSeaIce'
 
@@ -42,33 +46,34 @@ def main():
 	# create a list of POB from the POB list
 	# study_domain_POB_list = domain_POB_list_maker(study_domain_POB_path, study_domain_POB_file)
 	# print(study_domain_POB_list)
+
 	# make a list of all available toa files
-	toa_file_list, toa_dir = make_toa_list(toa_dir_path, toa_dir_name)
+	toa_file_list, toa_dir = check_toa_files(toa_dir_path, toa_dir_name)
 	# pick each toa file and parse P,O,B
 	for toa_file in toa_file_list:
 		print('-> for toa file: %s' %toa_file)
-		toa_path, toa_orbit, toa_block, camera = parse_this_toa_file(toa_file)
+		toa_path, toa_orbit, toa_block, camera = parse_toa_files(toa_file)
 		# # check if toa_file is inside domain, else continue to next toa_file
 		# if not (is_toa_inside_domain(study_domain_POB_list, toa_path, toa_orbit, toa_block)):
 		# 	continue # to next toa_file to check if the next one is inside of domain or not
-		return_val = check_for_GP_files(toa_path, toa_orbit, geometric_param_dir_path, geometric_param_dir_name)
+		return_val = check_GP_files(toa_path, toa_orbit, geometric_param_dir_path, geometric_param_dir_name)
 		if (return_val == False):
 			continue
 		else:
 			GP_GMP_file_fullpath = return_val
 
 		# define output files for C code; to do: include GP file also
-		toa_file_fullpath, surf_file_fullpath, surf_img_fullpath = define_output_files(surf_dir_path, surf_dir_name, toa_path, toa_orbit, toa_block, camera, toa_dir, toa_file)
+		toa_file_fullpath, surf_file_fullpath, surf_img_fullpath = define_output_files(surf_refl_dir_path, surf_refl_dir_name, toa_path, toa_orbit, toa_block, camera, toa_dir, toa_file)
 
-		# run the C code
-		run_from_cmd(exe_name, toa_file_fullpath, GP_GMP_file_fullpath, nband, surf_file_fullpath, surf_img_fullpath)
+		# run the C program
+		run_C_exe_from_cmd(exe_name, toa_file_fullpath, GP_GMP_file_fullpath, nband, surf_file_fullpath, surf_img_fullpath)
 	
 
 	return 0
 
 ###############################################################################
 
-def make_toa_list(toa_dir_path, toa_dir_name):
+def check_toa_files(toa_dir_path, toa_dir_name):
 	'''
 	looks at the toa dir and make a list of the available files from there
 	to do: check directory exists: toa_dir
@@ -82,31 +87,38 @@ def make_toa_list(toa_dir_path, toa_dir_name):
 
 ###############################################################################
 
-def parse_this_toa_file(toa_file):
+def parse_toa_files(toa_file):
 	#print('-> toa file is: %s' %toa_file)
 
 	# extract p,o,b
-	if toa_file.endswith('.dat'):  
+	if toa_file.endswith('.dat'):
+
+		# define toa path 
 		i = toa_file.index('_P')
 		#print('i is: %s' %i)
 		toa_path = int(toa_file[i + 2: i + 5])
 		#print('path: %s' %toa_path)
 
+		# define toa orbit
 		i = toa_file.index('_O')
 		toa_orbit = int(toa_file[i + 2: i + 8])
 		#print('orbit: %s' %toa_orbit)
 
-
+		# define toa block
 		i = toa_file.index('_b')
 		#print('index of block: %s' %i)
 		toa_block = int(toa_file[i + 2: i + 4])
 		#print('block: %s' %toa_block)
 
+		# define camera
 		camera = '??'
 		if toa_file.find('_cf') > -1:
 			camera = 'cf'
 		elif toa_file.find('_ca') > -1:
 			camera = 'ca'
+		# how about camera==an???
+		elif toa_file.find('_an') > -1:
+			camera = 'an'
 
 	return toa_path, toa_orbit, toa_block, camera
 
@@ -156,22 +168,26 @@ def parse_this_toa_file(toa_file):
 
 ###############################################################################
 
-def define_output_files(surf_dir_path, surf_dir_name, toa_path, toa_orbit, toa_block, camera, toa_dir, toa_file):
+def define_output_files(surf_refl_dir_path, surf_refl_dir_name, toa_path, toa_orbit, toa_block, camera, toa_dir, toa_file):
 	# to do: include GP file pattern,
 
 	toa_file_fullpath = os.path.join(toa_dir, toa_file) # if toa file in the list is availabe in the dir, then pich the toa.dat -> fname1 = toa.dat
 	print('-> toa fullpath for C program: %s' %toa_file_fullpath)
 
-	# add toa file fullpath
-	output_dir = os.path.join(surf_dir_path, surf_dir_name)
-	surf_file_fullpath = ('%ssurf_p%03d_o%06d_b%03d_%s.dat' % (output_dir, toa_path, toa_orbit, toa_block, camera)) # dir1 and dir2 = output dir for surface reflectance
-	surf_img_fullpath = ('%ssurf_p%03d_o%06d_b%03d_%s.png' % (output_dir, toa_path, toa_orbit, toa_block, camera))	# if camera is cf, it goes to dir1
+	# define output dir- add toa file fullpath
+	output_dir = os.path.join(surf_refl_dir_path, surf_refl_dir_name)
+	# define output files
+	surf_file_name = ('surf_refl_p%03d_o%06d_b%03d_%s.dat' % (toa_path, toa_orbit, toa_block, camera)) # dir1 and dir2 = output dir for surface reflectance
+	surf_img_name = ('surf_refl_p%03d_o%06d_b%03d_%s.png' % (toa_path, toa_orbit, toa_block, camera))	# if camera is cf, it goes to dir1
+	# join data file names and paths now 
+	surf_file_fullpath = os.path.join(output_dir, surf_file_name)
+	surf_img_fullpath = os.path.join(output_dir, surf_img_name)
 
 	return toa_file_fullpath, surf_file_fullpath, surf_img_fullpath
 
 ###############################################################################
 
-def check_for_GP_files(toa_path, toa_orbit, geometric_param_dir_path, geometric_param_dir_name):
+def check_GP_files(toa_path, toa_orbit, geometric_param_dir_path, geometric_param_dir_name):
 	'''
 	looks for a geometric parameter file that matches the path-orbit,
 	if finds the GP file returns a GP full path, else returns False
@@ -182,6 +198,7 @@ def check_for_GP_files(toa_path, toa_orbit, geometric_param_dir_path, geometric_
 	# to do: edit download script to seperate files to 2 folders for ellipoid and geometric, 
 	# here refer to only geometric dir and make a list only from geometric files
 	geo_param_dir = os.path.join(geometric_param_dir_path, geometric_param_dir_name)
+	#print('-> geo param dir= %s' % geo_param_dir)
 	geometric_param_fullpath_list = sorted(os.listdir(geo_param_dir))
 	#print('list of GP files:')
 	#print(geometric_param_fullpath_list)
@@ -192,7 +209,7 @@ def check_for_GP_files(toa_path, toa_orbit, geometric_param_dir_path, geometric_
 		# if thats the file we are looking for:
 		if each_GP_file.startswith(GP_file_pattern) and each_GP_file.endswith('.hdf'):
 		
-			GP_GMP_file_fullpath = os.path.join(geometric_param_dir_path, each_GP_file)
+			GP_GMP_file_fullpath = os.path.join(geo_param_dir, each_GP_file)
 			print('-> GP file found: %s' %GP_GMP_file_fullpath)
 			return GP_GMP_file_fullpath
 
@@ -202,7 +219,7 @@ def check_for_GP_files(toa_path, toa_orbit, geometric_param_dir_path, geometric_
 
 ###############################################################################
 
-def run_from_cmd(exe_name, toa_file, GP_GMP_file_fullpath, nband, surf_file_fullpath, surf_img_fullpath):
+def run_C_exe_from_cmd(exe_name, toa_file, GP_GMP_file_fullpath, nband, surf_file_fullpath, surf_img_fullpath):
 
 	cmd = ('%s %s \"%s\" \"%s\" %s %s' %(exe_name, toa_file, GP_GMP_file_fullpath, nband, surf_file_fullpath, surf_img_fullpath)) # band=? before surf_file_fullpath; bandshould be 2 similar to run_TOA.py
 	# run the cmd command
@@ -210,7 +227,7 @@ def run_from_cmd(exe_name, toa_file, GP_GMP_file_fullpath, nband, surf_file_full
 	print('-> return value of cmd= %s' %return_value_of_cmd)
 
 	if (return_value_of_cmd != 0):
-		print('-> ERROR: %s.exe NOT found in path. Exiting...' %exe_name) 
+		print('-> ERROR: %s.exe NOT found in $PATH. Exiting...' %exe_name) 
 		raise SystemExit()
 
 

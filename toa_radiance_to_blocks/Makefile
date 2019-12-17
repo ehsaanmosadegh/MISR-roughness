@@ -1,4 +1,4 @@
-Exe = /home/mare/Ehsan_lab/MISR-roughness/scripts/exe_dir
+Exe = /home/mare/Ehsan_lab/MISR-roughness/exe_dir
 program = TOA
 src = TOA.c
 

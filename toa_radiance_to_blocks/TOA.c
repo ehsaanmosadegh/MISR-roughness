@@ -1231,9 +1231,12 @@ strcpy(fname[1], argv[5]);		// str- fname[1]= toa data file
 
 if (strstr(fname[0], "_P")) // looks inside MISR hdf filename for _P* Note= path with capital P
 	{
+	printf("fining path from %s\n", fname[0]);
 	strncpy(s, strstr(fname[0], "_GM_P") + 5, 3);  // input to s, hdf file name for ELLIPOSIND data that starts from GM_, move pointer+5 and get the next 3 characters from the whole str
 	s[3] = 0; // why?
+	//printf("path string: %s\n", s);
 	path = atoi(s); // str to int
+	//printf("path: %d\n", path);
 	}
 else
 	{
@@ -1296,7 +1299,7 @@ if (nvalid > 0)
 	// 	nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ, ndropouts); // formatted output to stdout
 
 	printf("%s %03d  %06d  %03d  %s  %5d  %5d  %10d  %14.6f  %14.6f  %14.6f  %14.6f  %14.6f \n", 
-		"-> TOA program:", path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??", 
+		"-> from TOA program:", path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??", 
 		nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ); // Ehsan - removed ndropouts, %10d from output
 
 	fflush(stdout); // flush to clean it
