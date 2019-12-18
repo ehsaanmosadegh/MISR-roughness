@@ -116,7 +116,7 @@ def parse_toa_files(toa_file):
 			camera = 'cf'
 		elif toa_file.find('_ca') > -1:
 			camera = 'ca'
-		# how about camera==an???
+		# Ehsan: how about camera==an??? I added here
 		elif toa_file.find('_an') > -1:
 			camera = 'an'
 
@@ -226,10 +226,13 @@ def run_C_exe_from_cmd(exe_name, toa_file, GP_GMP_file_fullpath, nband, surf_fil
 	return_value_of_cmd = subprocess.call(cmd, shell=True)
 	print('-> return value of cmd= %s' %return_value_of_cmd)
 
-	if (return_value_of_cmd != 0):
+	if (return_value_of_cmd < 0): # what it means?
 		print('-> ERROR: %s.exe NOT found in $PATH. Exiting...' %exe_name) 
 		raise SystemExit()
 
+	if (return_value_of_cmd == 1): # what it means?
+		print('-> ERROR: something went wrong. Exiting...') 
+		raise SystemExit()
 
 ###############################################################################
 

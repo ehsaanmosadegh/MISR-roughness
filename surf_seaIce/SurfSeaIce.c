@@ -1,10 +1,11 @@
 // SurfSeaIce.c
-// Read TOA and GMP (Geometric Parameter) data, no (TOA) correction for atmosphere using SMAC, instead only do Rayleigh atmospheric correction, save as data (what data?) and PNG
+// Read TOA and GMP (Geometric Parameter) data, no (TOA) correction for atmosphere using SMAC,
+// instead only do Rayleigh atmospheric correction, save as data (what data?) and PNG
 // Gene Mar 23 Nov 17
 //----------------------------
 // Ehsan Mosadegh (emosadegh@nevada.unr.edu)
-// 24 Dec 2019
-// notes:
+// 24 Nov 2019
+// notes: from directory: /home/mare/Projects/MISR/Tools
 // to-do:
 
 #include <stdlib.h>
@@ -279,7 +280,7 @@ if (smac_coefs == 0)
 	fcoef=fopen(fichier_wl,"r");
 	if (!fcoef)
 		{
-		fprintf(stderr, "C: SMAC: erreur d'ouverture du fichier de coefficients: %s\n", fichier_wl);
+		fprintf(stderr, "C: SMAC: erreur d'ouverture du fichier de coefficients (E: error opening the coefficient file): %s\n", fichier_wl);
 		return 0;
 		}
 
@@ -1300,6 +1301,7 @@ if (camera == 7)
 return 1;
 }
 
+//#####################################################################################################
 
 int getDataStats(double *data, int nlines, int nsamples)
 {
@@ -1347,6 +1349,7 @@ if (nvalid > 0)
 return 1;
 }
 
+//#####################################################################################################
 
 double sinc(double x)
 {
@@ -1355,6 +1358,7 @@ x *= M_PI;
 return sin(x) / x;
 }
 
+//#####################################################################################################
 
 double *convolve2d(double *data, double *filter, int nlines, int nsamples)
 {
@@ -1449,6 +1453,7 @@ fftw_free(cbuf3);
 return result;
 }
 
+//#####################################################################################################
 
 double *filter = 0;
 
@@ -1501,6 +1506,7 @@ if (data2) free(data2);
 return result;
 }
 
+//#####################################################################################################
 
 double *extendArray(double *data, int nlines, int nsamples, int border)
 {
@@ -1569,6 +1575,7 @@ for (i = 0; i < nlines2 * nsamples2; i ++)
 return data2;
 }
 
+//#####################################################################################################
 
 double *extractArray(double *data, int nlines, int nsamples, int border)
 {
@@ -1591,6 +1598,7 @@ for (j = 0; j < nlines2; j ++)
 return data2;
 }
 
+//#####################################################################################################
 
 double *zoomArray(double *data, int nlines, int nsamples, int zoom)
 {
@@ -1643,6 +1651,7 @@ if (mask) free(mask);
 return data4;
 }
 
+//#####################################################################################################
 
 int write_data(char *fname, double *data, int nlines, int nsamples)
 {
@@ -1665,15 +1674,18 @@ fclose(f);
 return 1;
 }
 
+//#####################################################################################################
 
-int read_data(char *fname, double **data, int nlines, int nsamples)
+int read_data(char *fname, double **data, int nlines, int nsamples) // define a dynamic array=fname
 {
-FILE *f;
+FILE *f; // FILE structure, declare ptr
+
+printf("processing fname[22]: %s\n", fname);
 
 f = fopen(fname, "rb");
 if (!f)
 	{
-	fprintf(stderr, "C: read_data: couldn't open %s\n", fname);
+	fprintf(stderr, "C: read_data2: couldn't open %s\n", fname);
 	return 0;
 	}
 	
@@ -1699,8 +1711,8 @@ return 1;
 int main(int argc, char *argv[])
 {
 int i;
-char pattern_str[256]; // s=pattern_str
-//char* pattern_str[]=malloc(256); // s=pattern_str
+char tmp_str[256]; // s=tmp_str
+//char* tmp_str[]=malloc(256); // s=tmp_str
 
 if (argc < 6)
 	{
@@ -1718,11 +1730,11 @@ printf("processing fname[0]: %s\n", fname[0]);
 
 if (strstr(fname[0], "_P"))
 	{
-	strncpy(pattern_str, strstr(fname[0], "_P")+2, 3); // strstr: points to begining of"_p"+2
-	pattern_str[3] = 0;
-	printf("path: %s\n", pattern_str);
-	path = atoi(pattern_str);
-	//pattern_str = null;
+	strncpy(tmp_str, strstr(fname[0], "_P")+2, 3); // strstr: points to begining of"_p"+2
+	tmp_str[3] = 0;
+	printf("path: %s\n", tmp_str);
+	path = atoi(tmp_str);
+	memset(tmp_str, '\0', sizeof tmp_str);
 	//printf("path: %d\n", path);
 	}
 else
@@ -1733,10 +1745,11 @@ else
 
 if (strstr(fname[0], "_O"))
 	{
-	strncpy(pattern_str, strstr(fname[0], "_O")+2, 6); // based on pointer; move pointer 2 characters forward and copy 6 characters to s
-	printf("orbit: %s\n", pattern_str);
-	pattern_str[6] = 0;
-	orbit = atoi(pattern_str);
+	strncpy(tmp_str, strstr(fname[0], "_O")+2, 6); // based on pointer; move pointer 2 characters forward and copy 6 characters to s
+	printf("orbit: %s\n", tmp_str);
+	tmp_str[6] = 0;
+	orbit = atoi(tmp_str);
+	memset(tmp_str, '\0', sizeof tmp_str);
 	}
 else
 	{
@@ -1746,11 +1759,12 @@ else
 
 if (strstr(fname[0], "_b")) // if finds "_b" pattern
 	{
-	strncpy(pattern_str, strstr(fname[0], "_b")+2, 3);
-	printf("block: %s\n", pattern_str);
-	pattern_str[3] = 0;
-	block = atoi(pattern_str);
-	printf("now block is: %d", block);
+	strncpy(tmp_str, strstr(fname[0], "_b")+2, 2); // if in future we get 3-digit blocks, update it
+	printf("block: %s\n", tmp_str);
+	tmp_str[3] = 0;
+	block = atoi(tmp_str);
+	memset(tmp_str, '\0', sizeof tmp_str);
+	//printf("now block is: %d\n", block)	
 	}
 else
 	{
@@ -1767,16 +1781,20 @@ else
 	return 1;
 	}
 
+// printf("processing &fname[0]: %p\n", &fname[0]);
+// printf("processing &fname[1]: %p\n", &fname[1]);
+// printf("processing *fname[0]: %s\n", *fname[0]);
+
 nlines = 512;
 nsamples = 2048;
 zoom = 64;
+
 if ((band != 2) && (camera != 4))
     {
     nlines = 128;
     nsamples = 512;
     zoom = 16;
     }
-	
 
 if (!read_data(fname[0], &data, nlines, nsamples)) return 1;
 if (!readGmpFile(fname[1])) return 1;
@@ -1793,4 +1811,3 @@ if (nvalid > 0)
 
 return 0;
 }
-

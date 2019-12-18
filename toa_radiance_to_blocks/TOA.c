@@ -1231,7 +1231,7 @@ strcpy(fname[1], argv[5]);		// str- fname[1]= toa data file
 
 if (strstr(fname[0], "_P")) // looks inside MISR hdf filename for _P* Note= path with capital P
 	{
-	printf("fining path from %s\n", fname[0]);
+	//printf("fining path from %s\n", fname[0]);
 	strncpy(s, strstr(fname[0], "_GM_P") + 5, 3);  // input to s, hdf file name for ELLIPOSIND data that starts from GM_, move pointer+5 and get the next 3 characters from the whole str
 	s[3] = 0; // why?
 	//printf("path string: %s\n", s);
@@ -1281,7 +1281,7 @@ if ((band != 2) && (camera != 4)) // if not nadir==vertical camera...
     }
 	
 if (!readEllipsoidFile(fname[0])) return 1; // read hdf file
-// from here
+
 if (noData) return 0; // why noData= return 0? what does it mean?
 
 
