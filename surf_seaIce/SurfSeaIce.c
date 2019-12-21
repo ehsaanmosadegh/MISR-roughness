@@ -1,6 +1,6 @@
 // SurfSeaIce.c
 // Read TOA and GMP (Geometric Parameter) data, no (TOA) correction for atmosphere using SMAC,
-// instead only do Rayleigh atmospheric correction, save as data (what data?) and PNG
+// instead only do Rayleigh atmospheric correction, save as data and PNG
 // Gene Mar 23 Nov 17
 //----------------------------
 // Ehsan Mosadegh (emosadegh@nevada.unr.edu)
@@ -90,9 +90,11 @@ double *zoomArray(double *data, int nlines, int nsamples, int zoom);
 int write_data(char *fname, double *data, int nlines, int nsamples);
 int read_data(char *fname, double **data, int nlines, int nsamples);
 
+//#####################################################################################################
 
 int pixel2grid(int path, int block, int line, int sample, int *j, int *i)
 {
+//printf("we're inside pixel2grid\n");
 int status;
 char *errs[] = MTK_ERR_DESC;
 double lat, lon;
@@ -132,28 +134,27 @@ if (VERBOSE) fprintf(stderr, "C: pixel2grid: scaled x = %.6f, y = %.6f\n", x, y)
 return 1;
 }
 
+//#####################################################################################################
 
 int getPressure(int path, int block, int line, int sample, 
 	double *ps, double *uw, double *uo3)
 {
+//printf("we're inside gerPressure\n");
 int i, j;
 
 if (psdata == 0)
 	{
-	if (!read_data("ps.dat", 
-		&psdata, demlines, demsamples)) return 0;
+	if (!read_data("ps.dat", &psdata, demlines, demsamples)) return 0;
 	}
 if (uwdata == 0)
 	{
-	if (!read_data("uw.dat", 
-		&uwdata, demlines, demsamples)) return 0;
+	if (!read_data("uw.dat", &uwdata, demlines, demsamples)) return 0;
 	}
 if (uo3data == 0)
 	{
-	if (!read_data("uo3.dat", 
-		&uo3data, demlines, demsamples)) return 0;
+	if (!read_data("uo3.dat", &uo3data, demlines, demsamples)) return 0;
 	}
-	
+//printf("go inside pixel2grid\n");
 if (!pixel2grid(path, block, line, sample, &j, &i)) return 0;
 
 if (j < 0 || j >= demlines || i < 0 || i >= demsamples)
@@ -172,12 +173,14 @@ if (j < 0 || j >= demlines || i < 0 || i >= demsamples)
 return 1;
 }
 
+//#####################################################################################################
 
 int toa2surf(void)
 {
 int j, i;
 double toa, sunAz, sunZen, camAz, camZen, press, tau, h2o, o3, surf;
 char fname[256];
+int indx;
 
 if (noData)
 	{
@@ -191,13 +194,23 @@ tau = 0.05;
 for (j = 0; j < nlines; j ++)
 	for (i = 0; i < nsamples; i ++)
 		{
-		toa = data[i + j * nsamples];
+		indx = i + j * nsamples; // why index is thia?
+		//printf("toa2surf: for j, lines= %d, i, samples= %d, nsamples= %d, nlines= %d, index is: %d\n", j, i, nsamples, nlines, indx);
+		toa = data[i + j * nsamples]; // ??? how iterates inside index? // what is toa? refl OR rad? // toa=is each pixel digital number// what is surf?
+		//printf("toa: %lf\n", toa);
 		sunAz = sa[i + j * nsamples];
 		sunAz -= 180.0;
-		if (sunAz < 0.0) sunAz += 360.0;
+		// E:
+		if (sunAz < 0.0)
+		{
+		//printf("sunAz condition\n"); 
+		sunAz += 360.0;
 		sunZen = sz[i + j * nsamples];
+		}
+		// E:
 		if (camera == 1)
 			{
+			//printf("camera\n");
 			camAz = cfa[i + j * nsamples];
 			camZen = cfz[i + j * nsamples];
 			}
@@ -211,17 +224,24 @@ for (j = 0; j < nlines; j ++)
 			camAz = caa[i + j * nsamples];
 			camZen = caz[i + j * nsamples];
 			}
-			
-		if (toa == NO_DATA || sunAz == NO_DATA || sunZen == NO_DATA 
-			|| camAz == NO_DATA || camZen == NO_DATA)
+		// E: to deal with no data
+		if (toa == NO_DATA || sunAz == NO_DATA || sunZen == NO_DATA || camAz == NO_DATA || camZen == NO_DATA)
+			{
+			//printf("no data\n");
 			data[i + j * nsamples] = NO_DATA;
+			}
+		// E: to deal with train dropout
 		else if (toa == TDROPOUT)
+			{
+			//printf("toa\n");
 			data[i + j * nsamples] = TDROPOUT;
+			}
 		else
 			{
+			//printf("go inside getPressur\n");
 			if (!getPressure(path, block, j, i, &press, &h2o, &o3)) return 0;
-			if (!SMAC(sunZen, camZen, sunAz, camAz, h2o, o3, tau, press, toa, 
-				&surf, fname)) return 0;
+			//printf("now go inside SMAC\n");
+			if (!SMAC(sunZen, camZen, sunAz, camAz, h2o, o3, tau, press, toa, &surf, fname)) return 0;
 			if (surf < 0.0) surf = 0.0;
 			data[i + j * nsamples] = surf;
 			}
@@ -230,10 +250,21 @@ for (j = 0; j < nlines; j ++)
 return 1;
 }
 
+//#####################################################################################################
 
 int SMAC(double tetas, double tetav, double phis, double phiv, double uh2o, double uo3, 
-	double taup550, double pression, double r_toa, double *r_surf, char *fichier_wl) 
+	double taup550, double pression, double r_toa, double* r_surf, char* fichier_wl) 
 {
+//printf("we're inside SMAC\n");
+printf("r_toa : %lf\n", r_toa);
+printf("r_surf: %lf\n", r_surf);
+// if(r_toa == r_surf){
+// printf("equal");
+// }
+// else{
+// 	printf("false");
+// }
+
 /* Declarations SMAC */
 /*-------------------*/
 double  cksi;
@@ -446,12 +477,15 @@ tg      = th2o * to3 * to2 * tco2 * tch4* tco * tno2 ;
 /*------------------------*/
   //*r_surf = r_toa - (atm_ref * tg) ;
   //*r_surf = *r_surf / ( (tg * ttetas * ttetav) + (*r_surf * s) ) ;
-  if (band != 3) *r_surf = r_toa - ray_ref;
-  else *r_surf = r_toa;
+  if (band != 3) {
+  	*r_surf = r_toa - ray_ref;} // r_toa is input to this function
+  else {
+  	*r_surf = r_toa;}
   
 return 1;
 }    
 
+//#####################################################################################################
 
 char *data2image(double *data, int nlines, int nsamples, int mode)
 {
@@ -526,6 +560,7 @@ for (i = 0; i < nlines * nsamples; i ++)
 return image;
 }
 
+//#####################################################################################################
 
 int write_png(char *fname, char *image, int ny, int nx)
 {
@@ -596,6 +631,7 @@ if (row_ptrs) free(row_ptrs);
 return 1;
 }
 
+//#####################################################################################################
 
 int readGmpFile(char *fname)
 {
@@ -1679,8 +1715,8 @@ return 1;
 int read_data(char *fname, double **data, int nlines, int nsamples) // define a dynamic array=fname
 {
 FILE *f; // FILE structure, declare ptr
-
-printf("processing fname[22]: %s\n", fname);
+//printf("inside read_data...\n");
+//printf("processing fname: %s\n", fname);
 
 f = fopen(fname, "rb");
 if (!f)
