@@ -402,7 +402,7 @@ to2 = 1. ;
 tco2= 1. ;
 tch4= 1. ;
  
-uo2= pow (Peq , (smac_coefs->po2));
+uo2=  pow (Peq , (smac_coefs->po2));
 uco2= pow (Peq , (smac_coefs->pco2));
 uch4= pow (Peq , (smac_coefs->pch4));
 uno2= pow (Peq , (smac_coefs->pno2));
@@ -488,6 +488,7 @@ Res_6s= ( (smac_coefs->Rest1) + (smac_coefs->Rest2) * ( tautot * m *cksi )
         + (smac_coefs->Rest3) * pow( (tautot*m*cksi),2) ) + (smac_coefs->Rest4) * pow( (tautot*m*cksi),3);
 
 /*------  11) total atmospheric reflectance */
+
 atm_ref = ray_ref - Res_ray + aer_ref - Res_aer + Res_6s;
 
 /*-------- reflectance at toa*/
@@ -500,6 +501,7 @@ tg      = th2o * to3 * to2 * tco2 * tch4* tco * tno2 ;
   //*r_surf = *r_surf / ( (tg * ttetas * ttetav) + (*r_surf * s) ) ;
   if (band != 3) {
   	*r_surf = r_toa - ray_ref;} // r_toa is input to this function
+  	
   else {
   	*r_surf = r_toa;}
   
