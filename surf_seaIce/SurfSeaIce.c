@@ -204,14 +204,14 @@ for (j = 0; j < nlines; j ++)
 		printf("new index: %d\n", indx);
 		printf("before update\n");
 		printf("toa : %f \n", toa);
-		printf("surf: %f \n", &surf);
+		printf("surf: %f \n", surf);
 		//printf("toa2surf: for j, lines= %d, i, samples= %d, nsamples= %d, nlines= %d, index is: %d\n", j, i, nsamples, nlines, indx);
 		toa = data[i + j * nsamples]; // ??? how iterates inside index? // what is toa? refl OR rad? // toa=is each pixel digital number// what is surf?
 
 		printf("\n");
 		printf("toa updates\n");
 		printf("toa : %f \n", toa);
-		printf("surf: %f \n", &surf);
+		printf("surf: %f \n", surf);
 
 		sunAz = sa[i + j * nsamples];
 		sunAz -= 180.0;
@@ -256,15 +256,16 @@ for (j = 0; j < nlines; j ++)
 			printf("\n");
 			printf("before getPressure\n");
 			printf("toa : %f \n", toa);
-			printf("surf: %f \n", &surf);
+			printf("surf: %f \n", surf);
 
 			//printf("go inside getPressur\n");
 			if (!getPressure(path, block, j, i, &press, &h2o, &o3)) return 0;
 
 			printf("\n");
-			printf("after getPressure toa=surface\n");
-			printf("toa : %f \n", toa);
-			printf("surf: %f \n", &surf);
+			printf("before SMAC toa=surface\n");
+			printf("toa  : %f \n", toa);
+			printf("surf : %f \n", surf);
+			printf("&surf: %f\n", &surf);
 
 			if (!SMAC(sunZen, camZen, sunAz, camAz, h2o, o3, tau, press, toa, &surf, fname)) return 0; // Q- where surf is coming from?
 			if (surf < 0.0) surf = 0.0;
@@ -281,13 +282,13 @@ int SMAC(double tetas, double tetav, double phis, double phiv, double uh2o, doub
 	double taup550, double pression, double r_toa, double* r_surf, char* fichier_wl) 
 { // start with r_surf==r_toa
 printf("\n");
-printf("inside SMAC\n");
+printf("in to SMAC\n");
 printf("toa : %lf\n", r_toa);
 printf("surf: %lf\n", r_surf);
 
 /* Declarations SMAC */
 /*-------------------*/
-double  cksi;
+double cksi;
 double s;
 double m;
 double tg;
@@ -502,6 +503,11 @@ tg      = th2o * to3 * to2 * tco2 * tch4* tco * tno2 ;
   else {
   	*r_surf = r_toa;}
   
+printf("\n");
+printf("out of SMAC\n");
+printf("toa : %lf\n", r_toa);
+printf("surf: %lf\n", r_surf);
+
 return 1;
 }    
 
