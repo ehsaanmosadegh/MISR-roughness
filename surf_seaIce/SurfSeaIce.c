@@ -136,8 +136,7 @@ return 1;
 
 //#####################################################################################################
 
-int getPressure(int path, int block, int line, int sample, 
-	double *ps, double *uw, double *uo3)
+int getPressure(int path, int block, int line, int sample, double *ps, double *uw, double *uo3)
 {
 //printf("we're inside gerPressure\n");
 int i, j;
@@ -180,7 +179,8 @@ int toa2surf(void)
 int j, i;
 double toa, sunAz, sunZen, camAz, camZen, press, tau, h2o, o3, surf;
 char fname[256];
-int indx;
+int indx; //me
+
 
 if (noData)
 	{
@@ -188,16 +188,31 @@ if (noData)
 	return 1;
 	}
 
+printf("\n");
+printf("before loop\n");
+printf("toa : %f \n", toa);
+printf("surf: %f \n", surf);
+
 strcpy(fname, "coef_MISR3_CONT.dat");
 tau = 0.05;
 
 for (j = 0; j < nlines; j ++)
 	for (i = 0; i < nsamples; i ++)
 		{
-		indx = i + j * nsamples; // why index is thia?
+		indx = i + j * nsamples; // why index is this?
+		printf("\n");
+		printf("new index: %d\n", indx);
+		printf("before update\n");
+		printf("toa : %f \n", toa);
+		printf("surf: %f \n", &surf);
 		//printf("toa2surf: for j, lines= %d, i, samples= %d, nsamples= %d, nlines= %d, index is: %d\n", j, i, nsamples, nlines, indx);
 		toa = data[i + j * nsamples]; // ??? how iterates inside index? // what is toa? refl OR rad? // toa=is each pixel digital number// what is surf?
-		//printf("toa: %lf\n", toa);
+
+		printf("\n");
+		printf("toa updates\n");
+		printf("toa : %f \n", toa);
+		printf("surf: %f \n", &surf);
+
 		sunAz = sa[i + j * nsamples];
 		sunAz -= 180.0;
 		// E:
@@ -238,10 +253,20 @@ for (j = 0; j < nlines; j ++)
 			}
 		else
 			{
+			printf("\n");
+			printf("before getPressure\n");
+			printf("toa : %f \n", toa);
+			printf("surf: %f \n", &surf);
+
 			//printf("go inside getPressur\n");
 			if (!getPressure(path, block, j, i, &press, &h2o, &o3)) return 0;
-			//printf("now go inside SMAC\n");
-			if (!SMAC(sunZen, camZen, sunAz, camAz, h2o, o3, tau, press, toa, &surf, fname)) return 0;
+
+			printf("\n");
+			printf("after getPressure toa=surface\n");
+			printf("toa : %f \n", toa);
+			printf("surf: %f \n", &surf);
+
+			if (!SMAC(sunZen, camZen, sunAz, camAz, h2o, o3, tau, press, toa, &surf, fname)) return 0; // Q- where surf is coming from?
 			if (surf < 0.0) surf = 0.0;
 			data[i + j * nsamples] = surf;
 			}
@@ -254,16 +279,11 @@ return 1;
 
 int SMAC(double tetas, double tetav, double phis, double phiv, double uh2o, double uo3, 
 	double taup550, double pression, double r_toa, double* r_surf, char* fichier_wl) 
-{
-//printf("we're inside SMAC\n");
-printf("r_toa : %lf\n", r_toa);
-printf("r_surf: %lf\n", r_surf);
-// if(r_toa == r_surf){
-// printf("equal");
-// }
-// else{
-// 	printf("false");
-// }
+{ // start with r_surf==r_toa
+printf("\n");
+printf("inside SMAC\n");
+printf("toa : %lf\n", r_toa);
+printf("surf: %lf\n", r_surf);
 
 /* Declarations SMAC */
 /*-------------------*/
@@ -1712,9 +1732,9 @@ return 1;
 
 //#####################################################################################################
 
-int read_data(char *fname, double **data, int nlines, int nsamples) // define a dynamic array=fname
+int read_data(char* fname, double** data, int nlines, int nsamples) // define a dynamic array=fname
 {
-FILE *f; // FILE structure, declare ptr
+FILE *f; // FILE structure, declare ptr 
 //printf("inside read_data...\n");
 //printf("processing fname: %s\n", fname);
 
@@ -1724,8 +1744,9 @@ if (!f)
 	fprintf(stderr, "C: read_data2: couldn't open %s\n", fname);
 	return 0;
 	}
-	
+// 
 *data = (double *) malloc(nlines * nsamples * sizeof(double));
+
 if (!*data)
 	{
 	fprintf(stderr, "C: read_data: couldn't malloc data\n");
@@ -1824,7 +1845,7 @@ else
 nlines = 512;
 nsamples = 2048;
 zoom = 64;
-
+// if band != red, based on data files
 if ((band != 2) && (camera != 4))
     {
     nlines = 128;
