@@ -74,7 +74,7 @@ double *psdata = 0, *uwdata = 0, *uo3data = 0;
 double solarZenith = -1.0;
 
 int SMAC(double tetas, double tetav, double phis, double phiv, double uh2o, double uo3, 
-	double taup550, double pression, double r_toa, double *r_surf, char *fichier_wl);
+	double taup550, double pression, double rad_toa, double *r_surf, char *fichier_wl);
 int toa2surf(void);
 int pixel2grid(int path, int block, int line, int sample, int *j, int *i);
 char *data2image(double *data, int ny, int nx, int mode);
@@ -94,7 +94,7 @@ int read_data(char *fname, double **data, int nlines, int nsamples);
 
 int pixel2grid(int path, int block, int line, int sample, int *j, int *i)
 {
-//printf("we're inside pixel2grid\n");
+//printf("we're inside pixel2grid\n"); //Ehsan
 int status;
 char *errs[] = MTK_ERR_DESC;
 double lat, lon;
@@ -138,7 +138,7 @@ return 1;
 
 int getPressure(int path, int block, int line, int sample, double *ps, double *uw, double *uo3)
 {
-//printf("we're inside gerPressure\n");
+//printf("we're inside gerPressure\n"); //Ehsan
 int i, j;
 
 if (psdata == 0)
@@ -158,7 +158,7 @@ if (!pixel2grid(path, block, line, sample, &j, &i)) return 0;
 
 if (j < 0 || j >= demlines || i < 0 || i >= demsamples)
 	{
-	//fprintf(stderr, "getPressure: j = %d, i = %d, out of range\n", j, i);
+	//fprintf(stderr, "getPressure: j = %d, i = %d, out of range\n", j, i); //Ehsan
 	*ps = 1010.0;
 	*uw = 0.098750;
 	*uo3 = 0.091667;
@@ -179,7 +179,7 @@ int toa2surf(void)
 int j, i;
 double toa, sunAz, sunZen, camAz, camZen, press, tau, h2o, o3, surf;
 char fname[256];
-int indx; //me
+int indx; //Ehsan
 
 
 if (noData)
@@ -199,7 +199,7 @@ tau = 0.05;
 for (j = 0; j < nlines; j ++)
 	for (i = 0; i < nsamples; i ++)
 		{
-		indx = i + j * nsamples; // why index is this?
+		indx = i + j * nsamples; // E: why index is this?
 		printf("\n");
 		printf("new index: %d\n", indx);
 		printf("before update\n");
@@ -218,14 +218,14 @@ for (j = 0; j < nlines; j ++)
 		// E:
 		if (sunAz < 0.0)
 		{
-		//printf("sunAz condition\n"); 
+		//printf("sunAz condition\n"); //Ehsan
 		sunAz += 360.0;
 		sunZen = sz[i + j * nsamples];
 		}
 		// E:
 		if (camera == 1)
 			{
-			//printf("camera\n");
+			//printf("camera\n"); //Ehsan
 			camAz = cfa[i + j * nsamples];
 			camZen = cfz[i + j * nsamples];
 			}
@@ -248,7 +248,7 @@ for (j = 0; j < nlines; j ++)
 		// E: to deal with train dropout
 		else if (toa == TDROPOUT)
 			{
-			//printf("toa\n");
+			//printf("toa\n"); //Ehsan
 			data[i + j * nsamples] = TDROPOUT;
 			}
 		else
@@ -258,7 +258,7 @@ for (j = 0; j < nlines; j ++)
 			printf("toa : %f \n", toa);
 			printf("surf: %f \n", surf);
 
-			//printf("go inside getPressur\n");
+			//printf("go inside getPressur\n"); //Ehsan
 			if (!getPressure(path, block, j, i, &press, &h2o, &o3)) return 0;
 
 			printf("\n");
@@ -279,11 +279,11 @@ return 1;
 //#####################################################################################################
 
 int SMAC(double tetas, double tetav, double phis, double phiv, double uh2o, double uo3, 
-	double taup550, double pression, double r_toa, double* r_surf, char* fichier_wl) 
-{ // start with r_surf==r_toa
+	double taup550, double pression, double rad_toa, double* r_surf, char* fichier_wl) 
+{ // start with r_surf==rad_toa // Ehsan
 printf("\n");
 printf("in to SMAC\n");
-printf("toa : %lf\n", r_toa);
+printf("toa : %lf\n", rad_toa);
 printf("surf: %lf\n", r_surf);
 
 /* Declarations SMAC */
@@ -493,21 +493,27 @@ atm_ref = ray_ref - Res_ray + aer_ref - Res_aer + Res_6s;
 
 /*-------- reflectance at toa*/
 
-tg      = th2o * to3 * to2 * tco2 * tch4* tco * tno2 ;
+tg      = th2o * to3 * to2 * tco2 * tch4* tco * tno2;
 
  /* reflectance at surface */
 /*------------------------*/
-  //*r_surf = r_toa - (atm_ref * tg) ;
-  //*r_surf = *r_surf / ( (tg * ttetas * ttetav) + (*r_surf * s) ) ;
-  if (band != 3) {
-  	*r_surf = r_toa - ray_ref;} // r_toa is input to this function
-  	
-  else {
-  	*r_surf = r_toa;}
+// E: what is tg?
+// E: r_surf?==rad or refl?
+*r_surf = rad_toa - (atm_ref * tg);
+// E: what is going on here? rad_surf to refl_surf???
+*r_surf = *r_surf / ( (tg * ttetas * ttetav) + (*r_surf * s) );
+
+// E: commented the below lines, and used the above lines
+
+  // if (band != 3) {
+  // 	*r_surf = rad_toa - ray_ref;} // rad_toa is input to this function
+
+  // else {
+  // 	*r_surf = rad_toa;}
   
 printf("\n");
 printf("out of SMAC\n");
-printf("toa : %lf\n", r_toa);
+printf("toa : %lf\n", rad_toa);
 printf("surf: %lf\n", r_surf);
 
 return 1;
@@ -1846,7 +1852,7 @@ else
 	return 1;
 	}
 
-// printf("processing &fname[0]: %p\n", &fname[0]);
+// printf("processing &fname[0]: %p\n", &fname[0]); //Ehsan
 // printf("processing &fname[1]: %p\n", &fname[1]);
 // printf("processing *fname[0]: %s\n", *fname[0]);
 
@@ -1868,8 +1874,8 @@ if (!getDataStats(data, nlines, nsamples)) return 1;
 if (nvalid > 0)
 	{
 	printf("%03d  %06d  %03d  %s  %5d  %5d  %10d  %14.6f  %14.6f  %14.6f  %14.6f  %14.6f  %10d\n", 
-		path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : "??", 
-		nlines, nsamples, nvalid, min, max, mean, stddev, solarZenith, ndropouts);
+		path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : "??", nlines, nsamples, nvalid, min, max, mean, stddev, solarZenith, ndropouts);
+	
 	if (!write_data(fname[2], data, nlines, nsamples)) return 1;
 	if (!write_png(fname[3], data2image(data, nlines, nsamples, 1), nlines, nsamples)) return 1;
 	}

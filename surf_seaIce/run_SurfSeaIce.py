@@ -25,22 +25,21 @@ import os, subprocess
 # path of root dir that inclides all prcessingdirectories
 root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir' # path to root directory for processing files
 
+### inputs
+
 # path to TOA radiance data
-#root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir' 	
 toa_dir_name = 'toa_radiance_July_2016' # path to toa dir; should be defined for each project
 
 # path to downloaded GP GMP geometric files
 geometric_param_dir_name = 'misr_dl_July_2016' # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
-#root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir'  
 
 # path to txt file (we are not uing it anymore)
-#root_dir = root_dir
 study_domain_POB_file = 'study_domain_POB.txt'
 
 
+### output
 
 # define output directory==surface reflectance data
-#root_dir = root_dir
 surf_refl_dir_name = 'surf_reflectance_July_2016'
 
 # other settings - do not change 

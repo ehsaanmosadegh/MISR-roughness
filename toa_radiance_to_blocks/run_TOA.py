@@ -112,10 +112,10 @@ def local_file_setting(input_dir_path, input_dir_name, output_dir_path, output_d
 		raise SystemExit()
 
 	# some constants
-	bands = ['Red'] # why only red?
-	for band in bands :
+	band_list = ['Red'] # why only red?
+	for band in band_list :
 		if (band == 'Red') :
-			band_no = 2  # what is band_no?
+			band_no = 3  # red band=3
 		else:
 			print('-> WARNING: band is NOT set correctly.')
 	print('-> band= %s' %band_no)
