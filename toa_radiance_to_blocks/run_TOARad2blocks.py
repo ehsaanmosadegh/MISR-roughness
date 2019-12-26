@@ -54,12 +54,12 @@ def main():
 
 		path, orbit, camera = parse_file_names(each_ellipsoid_file)
 
-		for each_block in range(block_range[0], block_range[1], 1): # why loop over 42 blocks in one hdf file
+		for each_block in range(block_range[0], block_range[1]+1, 1): # why loop over 42 blocks in one hdf file
 
 			toa_file_fullpath = define_toa_rad_files(path, orbit, each_block, camera, output_dir)
 
 			# now run TOA from linux to process Ellipsoid data
-			#run_from_cmd(exe_name, each_ellipsoid_file, each_block, band_no, minnaert, toa_file_fullpath)
+			run_from_cmd(exe_name, each_ellipsoid_file, each_block, band_no, minnaert, toa_file_fullpath)
 
 	return 0
 
@@ -91,11 +91,12 @@ def run_from_cmd(exe_name, each_ellipsoid_file, each_block, band_no, minnaert, t
 
 	# run the C-cmd program
 	#cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(each_ellipsoid_file, each_block, band_no, minnaert, toa_file_fullpath, toa_image_file) # old version
-	print('-> program-name	radiance-file-name	block 	band 	minnaert	path-to-toa-dataFile')
+	print('-> program-name	Ellipsoid-rad-file	block 	band 	minnaert	path-to-toa-dataFile')
 	cmd = (' "%s" "%s" %s %s %s \"%s\"' %(exe_name, each_ellipsoid_file, each_block, band_no, minnaert, toa_file_fullpath))  # TOA writes data into toa_file_fullpath
-	print('-> runScript to %s= %s' %(exe_name, cmd))	# run the cmd command.
+	print('-> python= %s' % (cmd))	# run the cmd command.
 
-	# if os.system(cmd) != 0 :
+	# return_value_of_cmd = 0 # for debug 
+
 	# run the cmd command
 	return_value_of_cmd = subprocess.call(cmd, shell=True)
 	#print('-> return value= %s' %return_value_of_cmd)

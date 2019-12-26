@@ -1217,7 +1217,7 @@ if (argc < 5) // this might happen later, cos I turnedoff fname[2]
 // Ehsan - we get the cmd line args from python script and chage them to input variables
 strcpy(fname[0], argv[1]);		// str- copy hdf file name to fname[0]
 block = atoi(argv[2]);	// int
-band = atoi(argv[3]);		// int
+band = atoi(argv[3]);		// int; band=3 for red
 minnaert = atoi(argv[1]);		// int
 strcpy(fname[1], argv[5]);		// str- fname[1]= toa data file
 // strcpy(fname[2], argv[6]);		// str- image file; Ehsan - turnedoff 
@@ -1269,11 +1269,12 @@ else
 	return 1; // if camera not found= error= return 1
 	}
 
-// used inside readEllipsoidFile function??????
+// for band=3; is set based on band number
 PNG_NLINES = 512; // no of pixels in column; for error checking
 PNG_NSAMPLES = 2048; // no of pixels in each row of image
 ZOOM = 64;
-if ((band != 2) && (camera != 4)) // if not nadir==vertical camera...
+// for band !=3
+if ((band != 3) && (camera != 4)) // if not nadir==vertical camera... E: should we check camera too? or just band is enough?
     {
     PNG_NLINES = 128; // check these two
     PNG_NSAMPLES = 512;
@@ -1299,7 +1300,7 @@ if (nvalid > 0)
 	// 	nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ, ndropouts); // formatted output to stdout
 
 	printf("%s %03d  %06d  %03d  %s  %5d  %5d  %10d  %14.6f  %14.6f  %14.6f  %14.6f  %14.6f \n", 
-		"-> from TOA program:", path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??", 
+		"-> TOARad2blocks:", path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??", 
 		nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ); // Ehsan - removed ndropouts, %10d from output
 
 	fflush(stdout); // flush to clean it
