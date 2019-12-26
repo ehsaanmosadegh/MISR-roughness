@@ -21,24 +21,34 @@ import glob, os, subprocess
 import datetime as dt
 
 ###############################################################################
+# directory path setting - by USER
 
-# directory path setting
+# path of root dir that inclides all prcessing directories
+root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir'
 # update following 3 directories
-MISR_download_dir_name = 'misr_dl_July_2016'
-MISR_download_dir_path = '/home/mare/Ehsan_lab/misr_proceesing_dir'  # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
-output_dir_name = 'toa_radiance_July_2016'	# path to toa dir 
-output_dir_path = '/home/mare/Ehsan_lab/misr_proceesing_dir' # output of TOA run
+MISR_download_dir_name = 'misr_dl_July_2016/test1'
+#root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir'  # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
+output_dir_name = 'toa_radiance_July_2016/test1'	# path to toa dir 
+#root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir' # output of TOA run
 
-exe_name = 'TOA'
-block_range = [1,43]
+# directory path setting - by USER
+###############################################################################
+# other settings - do not change
 
+exe_name = 'TOARad2blocks'
+block_range = [1,43] # should match with block range in downloading step
+band_list = ['Red']
+band_num = 3
+# minnert = is set inside the program
+
+# other settings - do not change
 ###############################################################################
 
 def main():
 	'''
 	passes a pair of argumenst to cmd to run TOA.c program
 	'''
-	list_of_misr_files_fullpath, output_dir, band_no, minnaert = local_file_setting(MISR_download_dir_path, MISR_download_dir_name, output_dir_path, output_dir_name)
+	list_of_misr_files_fullpath, output_dir, band_no, minnaert = local_file_setting(root_dir, MISR_download_dir_name, root_dir, output_dir_name, band_list)
 	
 	for each_hdf_file in list_of_misr_files_fullpath:
 
@@ -48,7 +58,7 @@ def main():
 
 			toa_file_fullpath = define_toa_files(path, orbit, each_block, camera, output_dir)
 			# now run TOA from linux to process Ellipsoid data
-			run_from_cmd(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath)
+			#run_from_cmd(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_file_fullpath)
 
 	return 0
 
@@ -59,13 +69,13 @@ def define_toa_files(path, orbit, each_block, camera, output_dir):
 	if (each_block <= 9):
 		print('-> block was: %s' %each_block)
 		each_block = str(each_block).rjust(2, '0')
-		print('-> rjust performed: %s' %each_block)
+		print('-> rjust performed, block is: %s' %each_block)
 	else:
 		pass
 	# toa output file names to CMD command --> to do: make function for this section
-	toa_file_pattern = ('toa_%s_%s_b%s_%s.dat' %(path, orbit, each_block, camera)) # will be written by TOA
+	toa_file_pattern = ('toa_rad_%s_%s_B%s_%s.dat' %(path, orbit, each_block, camera)) # will be written by TOA
 	toa_file_fullpath = os.path.join(output_dir, toa_file_pattern)
-	print('-> TOA writes hdf data to file= %s' %toa_file_fullpath)
+	print('-> %s program writes toa radiance data to file= %s' % (exe_name, toa_file_fullpath))
 
 	return toa_file_fullpath
 
@@ -94,13 +104,13 @@ def run_from_cmd(exe_name, each_hdf_file, each_block, band_no, minnaert, toa_fil
 
 ###############################################################################
 
-def local_file_setting(input_dir_path, input_dir_name, output_dir_path, output_dir_name):
+def local_file_setting(input_dir_path, input_dir_name, root_dir, output_dir_name, band_list):
 	'''
 	reads dir paths and check if they exist, lists all ellipsoid files and returns a list of files w/ fullpath
 	'''
 
-	download_dir = os.path.join(MISR_download_dir_path, MISR_download_dir_name)
-	output_dir = os.path.join(output_dir_path, output_dir_name)
+	download_dir = os.path.join(root_dir, MISR_download_dir_name)
+	output_dir = os.path.join(root_dir, output_dir_name)
 	print('-> output dir: %s' %output_dir)
 	# check if directories exist
 	if not (os.path.isdir(download_dir)):
@@ -111,13 +121,12 @@ def local_file_setting(input_dir_path, input_dir_name, output_dir_path, output_d
 		print('-> output directory NOT exist!')
 		raise SystemExit()
 
-	# some constants
-	band_list = ['Red'] # why only red?
-	for band in band_list :
-		if (band == 'Red') :
-			band_no = 3  # red band=3
+	# checking some constants
+	for band in band_list:
+		if (band == 'Red'):
+			band_no = band_num  # red band=3
 		else:
-			print('-> WARNING: band is NOT set correctly.')
+			print('-> WARNING: band is NOT set correctly, we only work woth RED band.')
 	print('-> band= %s' %band_no)
 
 	# correction
