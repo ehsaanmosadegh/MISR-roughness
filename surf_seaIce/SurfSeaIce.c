@@ -188,10 +188,10 @@ if (noData)
 	return 1;
 	}
 
-printf("\n");
-printf("before loop\n");
-printf("toa : %f \n", toa);
-printf("surf: %f \n", surf);
+// printf("\n");
+// printf("before loop\n");
+// printf("toa : %f \n", toa);
+// printf("surf: %f \n", surf);
 
 strcpy(fname, "coef_MISR3_CONT.dat");
 tau = 0.05;
@@ -199,19 +199,19 @@ tau = 0.05;
 for (j = 0; j < nlines; j ++)
 	for (i = 0; i < nsamples; i ++)
 		{
-		indx = i + j * nsamples; // E: why index is this?
-		printf("\n");
-		printf("new index: %d\n", indx);
-		printf("before update\n");
-		printf("toa : %f \n", toa);
-		printf("surf: %f \n", surf);
+		// indx = i + j * nsamples; // E: why index is this?
+		// printf("\n");
+		// printf("new index: %d\n", indx);
+		// printf("before update\n");
+		// printf("toa : %f \n", toa);
+		// printf("surf: %f \n", surf);
 		//printf("toa2surf: for j, lines= %d, i, samples= %d, nsamples= %d, nlines= %d, index is: %d\n", j, i, nsamples, nlines, indx);
 		toa = data[i + j * nsamples]; // ??? how iterates inside index? // what is toa? refl OR rad? // toa=is each pixel digital number// what is surf?
 
-		printf("\n");
-		printf("toa updates\n");
-		printf("toa : %f \n", toa);
-		printf("surf: %f \n", surf);
+		// printf("\n");
+		// printf("toa updates\n");
+		// printf("toa : %f \n", toa);
+		// printf("surf: %f \n", surf);
 
 		sunAz = sa[i + j * nsamples];
 		sunAz -= 180.0;
@@ -253,19 +253,19 @@ for (j = 0; j < nlines; j ++)
 			}
 		else
 			{
-			printf("\n");
-			printf("before getPressure\n");
-			printf("toa : %f \n", toa);
-			printf("surf: %f \n", surf);
+			// printf("\n");
+			// printf("before getPressure\n");
+			// printf("toa : %f \n", toa);
+			// printf("surf: %f \n", surf);
 
 			//printf("go inside getPressur\n"); //Ehsan
 			if (!getPressure(path, block, j, i, &press, &h2o, &o3)) return 0;
 
-			printf("\n");
-			printf("before SMAC toa=surface\n");
-			printf("toa  : %f \n", toa);
-			printf("surf : %f \n", surf);
-			printf("&surf: %f\n", &surf);
+			// printf("\n");
+			// printf("before SMAC toa=surface\n");
+			// printf("toa  : %f \n", toa);
+			// printf("surf : %f \n", surf);
+			// printf("&surf: %f\n", &surf);
 
 			if (!SMAC(sunZen, camZen, sunAz, camAz, h2o, o3, tau, press, toa, &surf, fname)) return 0; // Q- where surf is coming from?
 			if (surf < 0.0) surf = 0.0;
@@ -281,10 +281,10 @@ return 1;
 int SMAC(double tetas, double tetav, double phis, double phiv, double uh2o, double uo3, 
 	double taup550, double pression, double rad_toa, double* r_surf, char* fichier_wl) 
 { // start with r_surf==rad_toa // Ehsan
-printf("\n");
-printf("in to SMAC\n");
-printf("toa : %lf\n", rad_toa);
-printf("surf: %lf\n", r_surf);
+// printf("\n");
+// printf("in to SMAC\n");
+// printf("toa : %lf\n", rad_toa);
+// printf("surf: %lf\n", r_surf);
 
 /* Declarations SMAC */
 /*-------------------*/
@@ -491,14 +491,14 @@ Res_6s= ( (smac_coefs->Rest1) + (smac_coefs->Rest2) * ( tautot * m *cksi )
 
 atm_ref = ray_ref - Res_ray + aer_ref - Res_aer + Res_6s;
 
-/*-------- reflectance at toa*/
+/*-------- reflectance at toa*/ //gaseus transmitance
 
 tg      = th2o * to3 * to2 * tco2 * tch4* tco * tno2;
 
  /* reflectance at surface */
 /*------------------------*/
 // E: what is tg?
-// E: r_surf?==rad or refl?
+// E: r_surf?== is it rad or refl for the surf?
 *r_surf = rad_toa - (atm_ref * tg);
 // E: what is going on here? rad_surf to refl_surf???
 *r_surf = *r_surf / ( (tg * ttetas * ttetav) + (*r_surf * s) );
@@ -511,10 +511,10 @@ tg      = th2o * to3 * to2 * tco2 * tch4* tco * tno2;
   // else {
   // 	*r_surf = rad_toa;}
   
-printf("\n");
-printf("out of SMAC\n");
-printf("toa : %lf\n", rad_toa);
-printf("surf: %lf\n", r_surf);
+// printf("\n");
+// printf("out of SMAC \n");
+// printf("toa : %lf \n", rad_toa);
+// printf("surf refl: %lf \n", r_surf);
 
 return 1;
 }    
@@ -1787,7 +1787,7 @@ char tmp_str[256]; // s=tmp_str
 
 if (argc < 6)
 	{
-	fprintf(stderr, "Usage: SurfSeaIce_exe, toa_data_file, GP_GMP_file, band, output_data_file, output_image_file\n");
+	fprintf(stderr, "Usage: SurfSeaIce_exe, toa_data_file, GP_GMP_file, band, output_data_file, output_image_file \n");
 	return 1;
 	}
 	
@@ -1797,13 +1797,13 @@ band = 		atoi(argv[3]);
 strcpy(fname[2], argv[4]);
 strcpy(fname[3], argv[5]);
 
-printf("processing fname[0]: %s\n", fname[0]);
+//printf("processing fname[0]: %s\n", fname[0]);
 
 if (strstr(fname[0], "_P"))
 	{
 	strncpy(tmp_str, strstr(fname[0], "_P")+2, 3); // strstr: points to begining of"_p"+2
 	tmp_str[3] = 0;
-	printf("path: %s\n", tmp_str);
+	//printf("path: %s\n", tmp_str);
 	path = atoi(tmp_str);
 	memset(tmp_str, '\0', sizeof tmp_str);
 	//printf("path: %d\n", path);
@@ -1817,7 +1817,7 @@ else
 if (strstr(fname[0], "_O"))
 	{
 	strncpy(tmp_str, strstr(fname[0], "_O")+2, 6); // based on pointer; move pointer 2 characters forward and copy 6 characters to s
-	printf("orbit: %s\n", tmp_str);
+	//printf("orbit: %s\n", tmp_str);
 	tmp_str[6] = 0;
 	orbit = atoi(tmp_str);
 	memset(tmp_str, '\0', sizeof tmp_str);
@@ -1828,10 +1828,10 @@ else
 	return 1;
 	}
 
-if (strstr(fname[0], "_b")) // if finds "_b" pattern
+if (strstr(fname[0], "_B")) // if finds "_b" pattern
 	{
-	strncpy(tmp_str, strstr(fname[0], "_b")+2, 2); // if in future we get 3-digit blocks, update it
-	printf("block: %s\n", tmp_str);
+	strncpy(tmp_str, strstr(fname[0], "_B")+2, 2); // if in future we get 3-digit blocks, update it
+	//printf("block: %s \n", tmp_str);
 	tmp_str[3] = 0;
 	block = atoi(tmp_str);
 	memset(tmp_str, '\0', sizeof tmp_str);
