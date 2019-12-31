@@ -38,7 +38,7 @@ output_dir_name = 'toa_radiance_July_2016/test1'	# path to toa dir
 exe_name = 'TOARad2blocks'
 block_range = [1,43] # [start, stop]; should match with block range in downloading step
 band_list = ['Red']
-band_num = 3
+band_num = 2
 # minnert = is set inside the program
 
 # other settings - do not change
@@ -48,7 +48,7 @@ def main():
 	'''
 	passes a pair of argumenst to cmd to run TOA.c program
 	'''
-	list_of_misr_files_fullpath, output_dir, band_no, minnaert = dir_n_file_setting(root_dir, MISR_download_dir_name, root_dir, output_dir_name, band_list)
+	list_of_misr_files_fullpath, output_dir, band_no, minnaert = dir_file_setting(root_dir, MISR_download_dir_name, root_dir, output_dir_name, band_list)
 	
 	for each_ellipsoid_file in list_of_misr_files_fullpath:
 
@@ -70,14 +70,14 @@ def define_toa_rad_files(path, orbit, each_block, camera, output_dir):
 	if (each_block <= 9):
 		#print('-> block was: %s' %each_block)
 		each_block = str(each_block).rjust(2, '0')
-		print('-> rjust performed, block is: %s' %each_block)
+		#print('-> rjust performed, block is: %s' %each_block)
 	# else:
 	# 	pass
 
 	# toa output file names to CMD command --> to do: make function for this section
 	toa_file_pattern = ('toa_rad_%s_%s_B%s_%s.dat' %(path, orbit, each_block, camera)) # will be written by TOA
 	toa_file_fullpath = os.path.join(output_dir, toa_file_pattern)
-	print('-> %s writes toa radiance data to file= %s' % (exe_name, toa_file_fullpath))
+	#print('-> toa radiance file= %s' % (toa_file_fullpath))
 
 	return toa_file_fullpath
 
@@ -91,9 +91,10 @@ def run_from_cmd(exe_name, each_ellipsoid_file, each_block, band_no, minnaert, t
 
 	# run the C-cmd program
 	#cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(each_ellipsoid_file, each_block, band_no, minnaert, toa_file_fullpath, toa_image_file) # old version
-	print('-> program-name	Ellipsoid-rad-file	block 	band 	minnaert	path-to-toa-dataFile')
+	print(" ")
+	print('-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file')
 	cmd = (' "%s" "%s" %s %s %s \"%s\"' %(exe_name, each_ellipsoid_file, each_block, band_no, minnaert, toa_file_fullpath))  # TOA writes data into toa_file_fullpath
-	print('-> python= %s' % (cmd))	# run the cmd command.
+	print('-> to cmd= %s' % (cmd))	# run the cmd command.
 
 	# return_value_of_cmd = 0 # for debug 
 
@@ -107,7 +108,7 @@ def run_from_cmd(exe_name, each_ellipsoid_file, each_block, band_no, minnaert, t
 
 ###############################################################################
 
-def dir_n_file_setting(input_dir_path, input_dir_name, root_dir, output_dir_name, band_list):
+def dir_file_setting(input_dir_path, input_dir_name, root_dir, output_dir_name, band_list):
 	'''
 	reads dir paths and check if they exist, lists all ellipsoid files and returns a list of files w/ fullpath
 	'''
