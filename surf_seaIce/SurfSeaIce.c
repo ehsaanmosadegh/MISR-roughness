@@ -1779,7 +1779,7 @@ return 1;
 
 //############################################### main ######################################################
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 int i;
 char tmp_str[256]; // s=tmp_str
@@ -1793,7 +1793,7 @@ if (argc < 6)
 	
 strcpy(fname[0], argv[1]);
 strcpy(fname[1], argv[2]);
-band = 		atoi(argv[3]);
+band = atoi(argv[3]);
 strcpy(fname[2], argv[4]);
 strcpy(fname[3], argv[5]);
 

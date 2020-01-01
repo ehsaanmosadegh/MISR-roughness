@@ -62,7 +62,7 @@ def main():
 
 	# pick each toa file and parse P,O,B
 	for toa_file in toa_file_list:
-		print('-> processing toa file: %s' %toa_file)
+		print('-> processing toa file: %s' % toa_file)
 		toa_path, toa_orbit, toa_block, camera = parse_toa_files(toa_file)
 		# # check if toa_file is inside domain, else continue to next toa_file
 		# if not (is_toa_inside_domain(study_domain_POB_list, toa_path, toa_orbit, toa_block)):
