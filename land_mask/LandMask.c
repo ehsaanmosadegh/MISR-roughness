@@ -233,20 +233,20 @@ FILE *f;
 f = fopen(fname, "rb");
 if (!f)
 	{
-	fprintf(stderr, "read_byte_data: couldn't open %s\n", fname);
+	fprintf(stderr, "read_byte_data: couldn't open %s \n", fname);
 	return 0;
 	}
 	
 *data = (unsigned char *) malloc(nlines * nsamples * sizeof(unsigned char));
 if (!*data)
 	{
-	fprintf(stderr, "read_byte_data: couldn't malloc data\n");
+	fprintf(stderr, "read_byte_data: couldn't malloc data \n");
 	return 0;
 	}
 	
 if (fread(*data, sizeof(unsigned char), nlines * nsamples, f) != nlines * nsamples)
 	{
-	fprintf(stderr, "read_byte_data: couldn't read data2\n");
+	fprintf(stderr, "read_byte_data: couldn't read data2 \n");
 	return 0;
 	}
 	
@@ -255,10 +255,10 @@ fclose(f);
 return 1;
 }
 
-int getFileList(char *dir)
+int getFileList(char* dir)
 {
-DIR *dp;
-struct dirent *ep;
+DIR* dp;
+struct dirent* ep; //char* d_name
 
 dp = opendir(dir);
 if (!dp)
@@ -267,23 +267,28 @@ if (!dp)
 	return 0;
 	}
 	
-while (ep = readdir(dp))
+while (ep = readdir(dp)) // loops for 3 dir of camera names
 	{
-	if (strstr(ep->d_name, ".hdr")) continue;
-	if (!strstr(ep->d_name, ".dat")) continue;
+	//printf("ep->d_name %s \n" , ep->d_name);
+	if (strstr(ep->d_name, ".hdr")) continue; //if returns a pointer, continue
+	if (!strstr(ep->d_name, ".dat")) continue; //if not return pointer, continue
 	//if (!strstr(ep->d_name, "sdcm_")) continue;
 	//if (!strstr(ep->d_name, "rms_")) continue;
 	if (flist == 0)
 	{
+		printf("nfiles is zero, we pass \n");
 	    flist = (char **) malloc(sizeof(char *));
 	    if (!flist)
 	    {
-		printf("getFileList: couldn't malloc flist\n");
+		printf("getFileList: couldn't malloc flist \n");
 		return 0;
 	    }
 	}
 	else
 	{
+		printf("nfiles 2= %d \n" , nfiles);
+		printf("max nfiles 2= %d \n" , max_nfiles);
+
 	    if (nfiles > max_nfiles)
 	    {
 		flist = (char **) realloc(flist, (nfiles + 1) * sizeof(char *));
@@ -301,7 +306,7 @@ while (ep = readdir(dp))
 	    return 0;
 	}
 	strcpy(flist[nfiles], ep->d_name);
-	//printf("%s\n", flist[nfiles]);
+	printf("flist_nfiles= %s\n", flist[nfiles]);
 	nfiles ++;
 	}
 	
@@ -325,23 +330,28 @@ char *strsub(char *s, char *a, char *b)
 
 // ################################  main  #############################
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     char s[256];
-    char idir0[256] = "/home3/mare/Nolin/2016/Surface3/Jul/";  // Ehsan: surf_ files for each month; surf_p078_o087995_b019_an.dat; AN: replace surf with toa;atm data
-    char mfile0[256] = "/home3/mare/Nolin/SeaIce/LWData/MISR_LandSeaMask/lsmask_pP_bB.dat";  // Ehsan: mask file, output of <ArcticTileToGrid.c>
-    char odir0[256] = "/home3/mare/Nolin/2016/Surface3_LandMasked/Jul/"; // output dir; dat and png files
+    char idir0[256] = "/home/mare/Ehsan_lab/misr_proceesing_dir/surf_reflectance_July_2016/test1/"; 	//"/home3/mare/Nolin/2016/Surface3/Jul/";  // Ehsan: surf_ files for each month; surf_p078_o087995_b019_an.dat; AN: replace surf with toa;atm data
+    char mfile0[256] = "/home3/mare/Nolin/SeaIce/LWData/MISR_LandSeaMask/lsmask_pP_bB.dat";  	// Ehsan: mask file, output of <ArcticTileToGrid.c>
+   
+    char odir0[256] = "/home/mare/Ehsan_lab/misr_proceesing_dir/masked_surf_refl/";		//"/home3/mare/Nolin/2016/Surface3_LandMasked/Jul/"; // output dir; dat and png files
     char idir[256], mfile[256];
     char odir[256];
     char fname[256];
     char ofile[256], ofile1[256];
     char spath[10], sblock[10];
     int i, j, k;
+    int i_initial = 2; //E- added to constrain to 2=Cf
+    char masked_outfile[256];
 
-    for (i=2; i < 3; i++ )
+    strcpy(masked_outfile, "masked_");
+
+    for (i=i_initial; i < 3; i++ ) // E: why starts from i=2? should be i=0 starts from camera= 0 to 2
     {
-	strcpy(idir, idir0);
-	if (i == 0) strcat(idir, "An/"); 
+	strcpy(idir, idir0); // copies the pointer
+	if (i == 0) strcat(idir, "An/"); // adds this dir to the end of surf file dir
 	if (i == 1) strcat(idir, "Ca/"); 
 	if (i == 2) strcat(idir, "Cf/"); 
 	strcpy(odir, odir0);
@@ -349,19 +359,25 @@ int main(int argc, char *argv[])
 	if (i == 1) strcat(odir, "Ca/"); 
 	if (i == 2) strcat(odir, "Cf/"); 
 
-	if (nfiles > max_nfiles) max_nfiles = nfiles;
+	printf("idir is= %s \n" , idir);
+	printf("nfiles 1= %d \n" , nfiles);
+	printf("max nfiles 1= %d \n" , max_nfiles);
+
+	if (nfiles > max_nfiles) max_nfiles = nfiles; //E- why? to remember how many iterations/files we did in past step?
 	nfiles = 0;
 	if (!getFileList(idir)) return 1;
 
-	for (j=0; j < nfiles; j++)
-	{
+	nfiles = 40; //E-i added to test it
+	for (j=0; j < nfiles; j++) // loop for? loop over nfiles=surf_refl
+	{	printf("\n");
+		printf("nfiles is total of: %d \n" , nfiles);
 	    sprintf(fname, "%s%s", idir, flist[j]);
-	    printf("%s\n",fname);
+	    printf("process file: %s \n",fname);
 	    if (!read_data(fname, &data, nlines, nsamples)) return 1;	
 
-	    if (strstr(fname, "_p"))
+	    if (strstr(fname, "_P"))
 	    {
-		strncpy(spath, strstr(fname, "_p") + 2, 3);
+		strncpy(spath, strstr(fname, "_P") + 2, 3);
 		spath[3] = 0;
 	    }
 	    else
@@ -370,10 +386,11 @@ int main(int argc, char *argv[])
 		return 1;
 	    }
 
-	    if (strstr(fname, "_b"))
+	    if (strstr(fname, "_B"))
 	    {
-		strncpy(sblock, strstr(fname, "_b") + 2, 3);
+		strncpy(sblock, strstr(fname, "_B") + 2, 3);
 		sblock[3] = 0;
+		printf("sblock= %s \n" , sblock);
 	    }
 	    else
 	    {
@@ -383,16 +400,27 @@ int main(int argc, char *argv[])
 	    strcpy(mfile, mfile0);
 	    strsub(mfile, "P", spath);
 	    strsub(mfile, "B", sblock);
-	    //printf("mfile : %s\n", mfile);
+	    printf("mfile==mask= %s\n", mfile);
+
 	    if (!read_byte_data(mfile, &mask, nlines, nsamples)) return 1;
 	    if (!maskData()) return 1;
 
-	    strcpy(ofile1, flist[j]);
+	    strcat(masked_outfile, flist[j]); //E
+	    //strcpy(ofile1, flist[j]); //E
+
+	    //ofile1 = ("masked_%s", ofile1);
 	    //strsub(ofile1, "surf", "surf_lsm");
+	  	//strcat("masked_", ofile1);
 	    strcpy(ofile, odir);	
-	    strcat(ofile, ofile1);
-	    //printf("ofile: %s\n", ofile);
+	    printf("ofile1: %s \n", ofile);
+
+	    //strcat(ofile, ofile1); //E
+	    strcat(ofile, masked_outfile); //E
+
+	    printf("ofile2: %s \n", ofile);
+
 	    if (!write_data(ofile, data, nlines, nsamples)) return 1;
+
 	    strsub(ofile, ".dat", ".png");
 	    if (!write_png(ofile, data2image(data, nlines, nsamples), nlines, nsamples)) return 1;
 
@@ -403,8 +431,12 @@ int main(int argc, char *argv[])
 	    }
 	    free(data);
 	    free((unsigned char *) mask);
+
+		//memset(ofile, '\0', sizeof ofile);
+    	strcpy(masked_outfile, "masked_"); //E
+
 	}	//end of j for loop
     }   //end of i for loop
 
     return 0;
-}
+} // end of main
