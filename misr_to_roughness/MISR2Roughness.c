@@ -241,11 +241,11 @@ int main(char argc, char *argv[])
 
     /* Read the output a line at a time - output it. */
     while (fgets(wc_out, sizeof(wc_out)-1, fp) != NULL) { // reads line from fp, stores in wc_out
-		printf("wc_out: %s \n", wc_out);
-		words = strtok(wc_out, " "); //searches wc_out for tockens delimited by ""
-		w = 0;
-		if (w == 0) raz_nlines = atoi(words);
-		//printf("nlines= %d\n", raz_nlines);
+	//printf("wc_out: %s \n", wc_out);
+	words = strtok(wc_out, " "); //searches wc_out for tockens delimited by ""
+	w = 0;
+	if (w == 0) raz_nlines = atoi(words);
+	//printf("nlines= %d\n", raz_nlines);
     }
 
     /* close */
@@ -264,6 +264,7 @@ int main(char argc, char *argv[])
 	while ((l == 0) && (words != NULL)) {
 	    if (w == 1) start_orbit = atoi(words);
     	    words = strtok (NULL, " ");
+    	    //printf("word: %s" , words);
 	    w++;
 	}
 	while ((l == raz_nlines - 1) && (words != NULL)) {
