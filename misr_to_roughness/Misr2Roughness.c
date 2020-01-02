@@ -178,10 +178,10 @@ int main(char argc, char *argv[])
     DIR *dirp;
     FILE *fp;
     struct dirent *ent;
-    char rms_dir[256] = 	"/home/mare/Nolin/data_2000_2016/2016/RMSBlocks/Jul2016_SeaIce_Model/Jul025"; // RMS file; output; MISR roughness
-    char misr_dir[256] = 	"/home/mare/Nolin/2016/Surface3_LandMasked/Jul/An"; // output of LandMask.c - LandMasked .dat file; AN: should use toa instead
-    char atmfile[256] = 	"/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel2_r025.csv"; // ATM csv file; use toa for it
+    char surf_masked_file_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul/An/"; // output of LandMask.c - use masked_surf files instead
+    char atmfile[256] = 	"/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel2_r025.csv"; // ATM csv file; source from where/
     char razimuth[256] =  	"/home/mare/Projects/MISR/Julienne/IceBridge2016/RelativeAzimuth_Jul2016_sorted.txt"; // source from where?
+    char rms_dir[256] = 	"/home/mare/Ehsan_lab/misr_proceesing_dir/misr_roughness"; // RMS file; output?; MISR roughness
     char command[256];
     char wc_out[256];
     char message[256];
@@ -231,20 +231,21 @@ int main(char argc, char *argv[])
     //printf("Reading /home/mare/Nolin/SeaIce/ArcticTiles.dat ...\n");
     //if (!read_bytedata("/home/mare/Nolin/SeaIce/ArcticTiles.dat", &mask, gridlines, gridsamples)) return 1;
 
+    /* E- check azimuth file */
     sprintf(command, "wc -l %s", razimuth);
-    fp = popen(command, "r");
+    fp = popen(command, "r"); // fp pointer to a stream
     if (fp == NULL) {
 	printf("Failed to run command\n" );
 	exit(1);
     }
 
     /* Read the output a line at a time - output it. */
-    while (fgets(wc_out, sizeof(wc_out)-1, fp) != NULL) {
-	//printf("%s", wc_out);
-	words = strtok(wc_out, " ");
-	w = 0;
-	if (w == 0) raz_nlines = atoi(words);
-	//printf("nlines= %d\n", raz_nlines);
+    while (fgets(wc_out, sizeof(wc_out)-1, fp) != NULL) { // reads line from fp, stores in wc_out
+		printf("wc_out: %s \n", wc_out);
+		words = strtok(wc_out, " "); //searches wc_out for tockens delimited by ""
+		w = 0;
+		if (w == 0) raz_nlines = atoi(words);
+		//printf("nlines= %d\n", raz_nlines);
     }
 
     /* close */
@@ -255,8 +256,9 @@ int main(char argc, char *argv[])
 	fprintf(stderr, "main: couldn't open %s\n", razimuth);
 	return 1;
     }
+
     l = 0;
-    while ((read = getline(&sline, &slen, fp)) != -1) {
+    while (( read = getline(&sline, &slen, fp) ) != -1) {
 	words = strtok(sline, " ");
 	w = 0;
 	while ((l == 0) && (words != NULL)) {
@@ -296,7 +298,7 @@ int main(char argc, char *argv[])
 	return 1;
     }
 
-    printf("%s", atmfile);
+    //printf("%s", atmfile);
     while ((read = getline(&sline, &slen, fp)) != -1) {
         //printf("Retrieved line of length %zu :\n", read);
         //printf("%s", sline);
@@ -334,7 +336,7 @@ int main(char argc, char *argv[])
 
     // Get list of Masked Surface An files
     printf("Getting list of Masked Surface An files ...\n");
-    dirp = opendir(misr_dir);
+    dirp = opendir(surf_masked_file_dir);
     if (dirp) {
     	while ((ent = readdir(dirp)) != NULL) {
 	    if (!strstr(ent->d_name, ".dat")) continue;
@@ -365,7 +367,7 @@ int main(char argc, char *argv[])
     } 
     else {
 	strcat(message, "Can't open ");
-	strcat(message, misr_dir);
+	strcat(message, surf_masked_file_dir);
   	perror (message);
   	return EXIT_FAILURE;
     }
@@ -384,7 +386,7 @@ int main(char argc, char *argv[])
 	//if (path != 78) continue;
 	//if (path != 83) continue;
 	if ((path < 167) || (path > 240)) continue;
-	printf("%s/%s\n", misr_dir, misr_list[i]);
+	printf("%s/%s\n", surf_masked_file_dir, misr_list[i]);
 	
 	if (strstr(misr_list[i], "_o")) {
 	    strncpy(sorbit, strstr(misr_list[i], "_o") + 2, 6);
@@ -395,13 +397,13 @@ int main(char argc, char *argv[])
 	    printf("No orbit info in file name\n");
 	    return 1;
         }
-	sprintf(an_fname, "%s/%s", misr_dir, misr_list[i]);
-	sprintf(cf_fname, "%s/%s", misr_dir, misr_list[i]);
+	sprintf(an_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
+	sprintf(cf_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
 	strsub(cf_fname, "An", "Cf");
 	strsub(cf_fname, "_an", "_cf");
 	
 	if (access(cf_fname, F_OK) == -1) continue;	
-	sprintf(ca_fname, "%s/%s", misr_dir, misr_list[i]);
+	sprintf(ca_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
 	strsub(ca_fname, "An", "Ca");
 	strsub(ca_fname, "_an", "_ca");
 	if (access(ca_fname, F_OK) == -1) continue;	
