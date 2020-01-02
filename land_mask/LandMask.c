@@ -41,6 +41,7 @@ int maskData(void);
 int getFileList(char *dir);
 char *strsub(char *s, char *a, char *b);
 
+//#####################################################################################################
 
 int maskData(void)
 {
@@ -61,6 +62,7 @@ for (j = 0; j < nlines; j ++)
 return 1;
 }
 
+//#####################################################################################################
 
 char *data2image(double *data, int nlines, int nsamples)
 {
@@ -110,6 +112,7 @@ for (i = 0; i < nlines * nsamples; i ++)
 return image;
 }
 
+//#####################################################################################################
 
 int write_png(char *fname, char *image, int ny, int nx)
 {
@@ -174,6 +177,7 @@ if (row_ptrs) free(row_ptrs);
 return 1;
 }
 
+//#####################################################################################################
 
 int write_data(char *fname, double *data, int nlines, int nsamples)
 {
@@ -196,6 +200,7 @@ fclose(f);
 return 1;
 }
 
+//#####################################################################################################
 
 int read_data(char *fname, double **data, int nlines, int nsamples)
 {
@@ -225,6 +230,7 @@ fclose(f);
 return 1;
 }
 
+//#####################################################################################################
 
 int read_byte_data(char *fname, unsigned char **data, int nlines, int nsamples)
 {
@@ -254,6 +260,8 @@ fclose(f);
 
 return 1;
 }
+
+//#####################################################################################################
 
 int getFileList(char* dir)
 {
@@ -313,6 +321,8 @@ while (ep = readdir(dp)) // loops for 3 dir of camera names
 closedir(dp);
 return 1;
 }
+
+//#####################################################################################################
 
 char *strsub(char *s, char *a, char *b)
 {
