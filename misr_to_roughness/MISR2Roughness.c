@@ -2,6 +2,7 @@
 // notes:
 // to-do: 
 
+// E- header files
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +12,7 @@
 #include <MisrError.h>
 #include <dirent.h>
 
+// E- declarations
 #define NO_DATA -999999.0
 #define BACKGROUND -999998.0
 #define FOREGROUND -999997.0
@@ -19,7 +21,8 @@
 #define LMASKED -999994.0
 #define VERBOSE 0
 
-typedef struct
+// E- global variables
+typedef struct // E- why not path??? --> 9 var/elements
 {
     int block;
     int orbit;
@@ -28,12 +31,12 @@ typedef struct
     double cf;
     double rms;
     float weight;
-    float tweight;
+    float tweight; // E-???
     int ascend;
 } atm_type;
 
 MTKt_status status;
-atm_type *atm_model;
+atm_type* atm_model; // declare an instance/member
 int nfiles;
 
 int nlines = 512;
@@ -175,13 +178,19 @@ char *strsub(char *s, char *a, char *b)
 
 int main(char argc, char *argv[])
 {
-    DIR *dirp;
-    FILE *fp;
-    struct dirent *ent;
+    DIR* dirp;
+    FILE* fp;
+    struct dirent* ent; // directory entries
+    
+    // inputs
     char surf_masked_file_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul/An/"; // output of LandMask.c - use masked_surf files instead
     char atmfile[256] = 	"/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel2_r025.csv"; // ATM csv file; source from where/
-    char razimuth[256] =  	"/home/mare/Projects/MISR/Julienne/IceBridge2016/RelativeAzimuth_Jul2016_sorted.txt"; // source from where?
-    char rms_dir[256] = 	"/home/mare/Ehsan_lab/misr_proceesing_dir/misr_roughness"; // RMS file; output?; MISR roughness
+    char razimuth[256] =  	"/home/mare/Projects/MISR/Julienne/IceBridge2016/RelativeAzimuth_Jul2016_sorted.txt"; // we don't need this anymore; source from where?
+    
+    // outputs 
+    char rms_dir[256] = 	"/home/mare/Ehsan_lab/misr_proceesing_dir/misr_roughness"; // MISR roughness; rms file;
+    
+    // other variables
     char command[256];
     char wc_out[256];
     char message[256];
@@ -231,45 +240,54 @@ int main(char argc, char *argv[])
     //printf("Reading /home/mare/Nolin/SeaIce/ArcticTiles.dat ...\n");
     //if (!read_bytedata("/home/mare/Nolin/SeaIce/ArcticTiles.dat", &mask, gridlines, gridsamples)) return 1;
 
-    /* E- check azimuth file */
-    sprintf(command, "wc -l %s", razimuth);
-    fp = popen(command, "r"); // fp pointer to a stream
+    // E- reads azimuth file //////////////////////////////////////////////////////////////////////
+    sprintf(command, "wc -l %s", razimuth); // stoes command 
+    fp = popen(command, "r"); // pipe-open; fp pointer to a stream
     if (fp == NULL) {
 	printf("Failed to run command\n" );
 	exit(1);
     }
 
+    //char return_fgets[200];     // Ehsan
+
     /* Read the output a line at a time - output it. */
+    //return_fgets = fgets(wc_out, sizeof(wc_out)-1, fp);
+    //printf("fgets got: %s" , return_fgets);
     while (fgets(wc_out, sizeof(wc_out)-1, fp) != NULL) { // reads line from fp, stores in wc_out
 	//printf("wc_out: %s \n", wc_out);
-	words = strtok(wc_out, " "); //searches wc_out for tockens delimited by ""
+	words = strtok(wc_out, " "); // searches wc_out for tockens delimited by ""; words=no of lines in file
+	//printf("wordsare: %s \n", words);
 	w = 0;
-	if (w == 0) raz_nlines = atoi(words);
-	//printf("nlines= %d\n", raz_nlines);
+	if (w == 0) raz_nlines = atoi(words); // no of lines in relAzimuth file
+	printf("nlines= %d \n", raz_nlines);
     }
-
     /* close */
     pclose(fp);
 
-    fp = fopen(razimuth, "r");
+    // E- reads azimuth file //////////////////////////////////////////////////////////////////////
+    fp = fopen(razimuth, "r"); // opens file, stores it somewhere and returns the mem-add
     if (!fp) {
 	fprintf(stderr, "main: couldn't open %s\n", razimuth);
 	return 1;
     }
 
     l = 0;
-    while (( read = getline(&sline, &slen, fp) ) != -1) {
-	words = strtok(sline, " ");
+    //printf("file ptr is: %p \n" , fp);
+    while ( (read = getline(&sline, &slen, fp)) != -1) { // read is the return characters+ "\n" at the end, if -1 == EOF
+    //printf("no of characters read from each line: %d \n" , read); // read is the return characters+\n, if -1 == EOF
+    //printf("sline is: %s \n" , sline);
+	words = strtok(sline, " "); // breaks/parse line to its words in each line in a loop
 	w = 0;
-	while ((l == 0) && (words != NULL)) {
-	    if (w == 1) start_orbit = atoi(words);
-    	    words = strtok (NULL, " ");
-    	    //printf("word: %s" , words);
-	    w++;
+	//printf("word1 is: %s \n" , words); //  the 1st word, cos not in loop
+	while ((l == 0) && (words != NULL)) { // NULL at the end of each sentence
+		if (w == 1) start_orbit = atoi(words);
+    	words = strtok (NULL, " "); // gets tokens in a sentence in a loop
+    	//printf("word: %s \n" , words); // gets words in a rel azimuth in a loop
+		w++;
 	}
 	while ((l == raz_nlines - 1) && (words != NULL)) {
 	    if (w == 1) end_orbit = atoi(words);
-    	    words = strtok (NULL, " ");
+    	words = strtok (NULL, " ");
 	    w++;
 	}
 	l++;
@@ -280,8 +298,10 @@ int main(char argc, char *argv[])
     raz_table = (int *) malloc((end_orbit - start_orbit + 1) * sizeof(int));
     while ((read = getline(&sline, &slen, fp)) != -1) {
 	words = strtok(sline, " ");
-	w = 0;
-	while (words != NULL) {
+	w = 0; // what is w? is it counter?
+	//printf(" w2 is: %d \n" , w);
+	//printf("word2 is: %s \n" ,  words); // gets words in a rel azimuth in a loop
+	while (words != NULL) { // the end of file EOF
 	    if (w == 1) orbit = atoi(words);
 	    if (w == 3) block12 = 100*atoi(words);
 	    if (w == 4) block12 += atoi(words);
@@ -293,20 +313,26 @@ int main(char argc, char *argv[])
 
     fclose(fp);
 
+
+    // E- reads ATM scsv file //////////////////////////////////////////////////////////////////////////////
     fp = fopen(atmfile, "r");
     if (!fp) {
 	fprintf(stderr, "main: couldn't open %s\n", atmfile);
 	return 1;
     }
-
     //printf("%s", atmfile);
-    while ((read = getline(&sline, &slen, fp)) != -1) {
-        //printf("Retrieved line of length %zu :\n", read);
-        //printf("%s", sline);
-	words = strtok (sline," ,");
-	w = 0;
-  	while (words != NULL) {
-    	    //printf ("%s\n",words);
+    
+    // 
+    while ( (read = getline(&sline, &slen, fp)) != -1) { // reads/extracts each row
+        //printf("num of char read: %zu \n", read);
+        //printf("row extracted: %s", sline);
+    w = 0;
+    //printf("w is: %d \n" , w);
+	words = strtok (sline," ,"); // moves ptr to first token == path in this case
+	//printf("word is: %s \n\n" , words);
+	
+  	while (words != NULL) { // NULL = end of line or EOF; Q- how about w=0==path?
+    	//printf ("inside loop, w = %d and words = %s \n",w,words);
 	    if (w == 1) orbit = atof(words);
 	    if (w == 2) block = atof(words);
 	    if (w == 7) xan = atof(words);
@@ -316,11 +342,16 @@ int main(char argc, char *argv[])
 	    if (w == 13) xweight = atof(words);
 	    if (w == 14) tweight = atof(words);
 	    if (w == 15) ascend = atoi(words);
-    	    words = strtok (NULL, " ,");
+    	words = strtok (NULL, " ,"); // whats this?
+    	//printf("word updates: %s \n" , words);
+    	//printf("\n");
 	    w++;
   	}
+  	printf("atm_np: %d \n", atm_np);
+
 	if (atm_np == 0) atm_model = (atm_type * ) malloc(sizeof(atm_type));
 	else atm_model = (atm_type * ) realloc(atm_model, (atm_np + 1) * sizeof(atm_type));
+	// update elements/variables of a new member
 	atm_model[atm_np].orbit = orbit;
 	atm_model[atm_np].block = block;
 	atm_model[atm_np].an = xan;
@@ -330,19 +361,20 @@ int main(char argc, char *argv[])
 	atm_model[atm_np].weight = xweight;
 	atm_model[atm_np].tweight = tweight;
 	atm_model[atm_np].ascend = ascend;
-	atm_np++;
+	atm_np++;// counter
     }
+    //printf("atm_model now is: %d \n", atm_model->d_name);
 
     fclose(fp);
 
-    // Get list of Masked Surface An files
-    printf("Getting list of Masked Surface An files ...\n");
-    dirp = opendir(surf_masked_file_dir);
-    if (dirp) {
-    	while ((ent = readdir(dirp)) != NULL) {
-	    if (!strstr(ent->d_name, ".dat")) continue;
+    // Get list of Masked Surface An files //////////////////////////////////////////////////////////////////////////////
+    printf("Getting list of Masked Surface An files ...\n"); // called misr_list
+    dirp = opendir(surf_masked_file_dir); // define dir stream
+    if (dirp) { // if ptr TRUE
+    	while ((ent = readdir(dirp)) != NULL) {// read the first item in dir and moves the ptr to next item
+	    if (!strstr(ent->d_name, ".dat")) continue; // if cound not find the this string
 	    if (misr_list == 0) {
-		misr_list = (char **) malloc(sizeof(char *));
+			misr_list = (char **) malloc(sizeof(char *));
 		if (!misr_list) {
 		    printf("main: couldn't malloc atm_flist\n");
 		    return 0;
@@ -361,6 +393,7 @@ int main(char argc, char *argv[])
 		return 0;
 	    }
 	    strcpy(misr_list[misr_nfiles], ent->d_name);
+	    printf("d_name: %s \n", ent->d_name); // d_name is char array inside <dirent.h>
 	    //printf("%d %s\n", misr_nfiles, misr_list[misr_nfiles]);
 	    misr_nfiles ++;
     	}
@@ -373,41 +406,59 @@ int main(char argc, char *argv[])
   	return EXIT_FAILURE;
     }
 
+	// Processing MISR files ////////////////////////////////////////////////////////////////////////////
     printf("Processing MISR files ...\n");
     for (i = 0; i < misr_nfiles; i++) {
-	if (strstr(misr_list[i], "_p")) {
-	    strncpy(spath, strstr(misr_list[i], "_p") + 2, 3);
-	    spath[3] = 0;
+	if (strstr(misr_list[i], "_p")) { // if _P is in the file name, find _P in each surf file
+	    strncpy(spath, strstr(misr_list[i], "_p") + 2, 3); // find path
+	    spath[3] = 0; // ?
 	    path = atoi(spath);
+	    //printf("path from MISR: %d \n", path);
+
         }
-        else {
+    else {
 	    printf("No path info in file name\n");
 	    return 1;
         }
 	//if (path != 78) continue;
 	//if (path != 83) continue;
-	if ((path < 167) || (path > 240)) continue;
-	printf("%s/%s\n", surf_masked_file_dir, misr_list[i]);
+	if ((path < 167) || (path > 240)) continue; // E- what is this path region????
+	//printf("now ... \n");
+	printf("processing: %s%s \n", surf_masked_file_dir, misr_list[i]);
 	
 	if (strstr(misr_list[i], "_o")) {
-	    strncpy(sorbit, strstr(misr_list[i], "_o") + 2, 6);
-	    sorbit[6] = 0;
+	    strncpy(sorbit, strstr(misr_list[i], "_o") + 2, 6); // get the orbit and copy to sorbit
+	    sorbit[6] = 0; //?
 	    orbit = atoi(sorbit);
         }
-        else {
+    else {
 	    printf("No orbit info in file name\n");
 	    return 1;
         }
 	sprintf(an_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
 	sprintf(cf_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
-	strsub(cf_fname, "An", "Cf");
-	strsub(cf_fname, "_an", "_cf");
-	
-	if (access(cf_fname, F_OK) == -1) continue;	
+	// printf("an_fname: %s \n", an_fname);
+	// printf("cf_fname: %s \n",cf_fname);
+	strsub(cf_fname, "An", "Cf"); // why this?
+	strsub(cf_fname, "_an", "_cf"); // substitute an with cfront!
+	//printf("cf_fname: %s \n",cf_fname);
+
+	if (access(cf_fname, F_OK) == -1) continue;	// check if file is acessible, returns 0
+
 	sprintf(ca_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
 	strsub(ca_fname, "An", "Ca");
-	strsub(ca_fname, "_an", "_ca");
-	if (access(ca_fname, F_OK) == -1) continue;	
+	strsub(ca_fname, "_an", "_ca"); // rename file to ca
+	// printf("ca_fname: %s \n", ca_fname);
+	// printf("\n");
+	if (access(ca_fname, F_OK) == -1) continue; // check if file is acessible, returns 0
+
+
+
+
+
+	
+	// from here //////////////////////////////////////////////////////////////////////
+
 	if (!read_data(an_fname, nlines, nsamples, &an_data)) return 0;
 	//printf("%d %s\n", i, an_fname);
 	if (!read_data(ca_fname, nlines, nsamples, &ca_data)) return 0;
@@ -437,6 +488,7 @@ int main(char argc, char *argv[])
 	    //radius = radius_ascend;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////
 	for (r=0; r<nlines; r++) {
 	    for (c=0; c<nsamples; c++) {
 		if (!pixel2grid(path, block, r, c, &lat, &lon, &r2, &c2)) return 0;
@@ -469,6 +521,8 @@ int main(char argc, char *argv[])
 	    	    }
 		}
 		***/
+
+		//////////////////////////////////////////////////////////////////////////////
 		xrms = 0;
 		tweight = 0;
 		xrad_min = 1e23;
@@ -490,7 +544,10 @@ int main(char argc, char *argv[])
 		    xca = (ca_data[r*nsamples + c] - atm_model[n].ca);
 		    xcf = (cf_data[r*nsamples + c] - atm_model[n].cf);
 		    ***/
+
+		    // E- is it misr refl?
 		    xrad = sqrt(xan*xan + xca*xca + xcf*xcf);
+		    //
 		    if (xrad < radius) {
 			xrms += atm_model[n].tweight * atm_model[n].rms;
 			tweight += atm_model[n].tweight;
