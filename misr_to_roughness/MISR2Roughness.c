@@ -54,7 +54,7 @@ int read_data(char *fname, int nline, int nsample, double **data)
 {
     FILE *f;
 
-    f = fopen(fname, "r");
+    f = fopen(fname, "r"); // f = stream; ptr that is opened and shows where data is stored in memory;
     if (!f) {
 	fprintf(stderr,  "read_data: couldn't open %s\n", fname);
 	return 0;
@@ -65,8 +65,8 @@ int read_data(char *fname, int nline, int nsample, double **data)
 	fprintf(stderr,  "read_data: couldn't malloc data\n");
 	return 0;
     }
-	
-    if (fread(*data, sizeof(double), nlines * nsamples, f) != nlines * nsamples) {
+	// read data from stream=f --> *data;  f is the pointer to a FILE object that specifies an input stream.
+    if (fread(*data, sizeof(double), nlines * nsamples, f) != nlines * nsamples) { // check see if number of elements read= initial number of elements
 	fprintf(stderr,  "read_data: couldn't read data in %s\n", fname);
 	return 0;
     }
@@ -435,49 +435,50 @@ int main(char argc, char *argv[])
 	    printf("No orbit info in file name\n");
 	    return 1;
         }
+    // copy surf file into an
 	sprintf(an_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
-	sprintf(cf_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
+    // copy the same surf file into cf
+    sprintf(cf_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
 	// printf("an_fname: %s \n", an_fname);
 	// printf("cf_fname: %s \n",cf_fname);
+	// substitute an with cf in any format
 	strsub(cf_fname, "An", "Cf"); // why this?
 	strsub(cf_fname, "_an", "_cf"); // substitute an with cfront!
 	//printf("cf_fname: %s \n",cf_fname);
-
+    // check if cf_fname is accessible
 	if (access(cf_fname, F_OK) == -1) continue;	// check if file is acessible, returns 0
-
+    // do the same thing with ca, copy the same surf file into ca
 	sprintf(ca_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
+	// substitute an with cf in any format
 	strsub(ca_fname, "An", "Ca");
 	strsub(ca_fname, "_an", "_ca"); // rename file to ca
 	// printf("ca_fname: %s \n", ca_fname);
 	// printf("\n");
+	// check if ca_fname is accessible
 	if (access(ca_fname, F_OK) == -1) continue; // check if file is acessible, returns 0
-
-
-
-
-
-	
-	// from here //////////////////////////////////////////////////////////////////////
-
-	if (!read_data(an_fname, nlines, nsamples, &an_data)) return 0;
+	// the same an file
+	if (!read_data(an_fname, nlines, nsamples, &an_data)) return 0; // we fill an_data array from: an_fname
 	//printf("%d %s\n", i, an_fname);
 	if (!read_data(ca_fname, nlines, nsamples, &ca_data)) return 0;
 	//printf("%d %s\n", i, ca_fname);
 	if (!read_data(cf_fname, nlines, nsamples, &cf_data)) return 0;
 	//printf("%d %s\n", i, cf_fname);
+
 	rms_data = (double *) malloc(5*nlines * nsamples * sizeof(double));
 
-        if (strstr(misr_list[i], "_b")) {
-	    strncpy(sblock, strstr(misr_list[i], "_b") + 2, 3);
-	    sblock[3] = 0;
-	    block = atoi(sblock);
-        }
-        else {
-	    printf("No block info in file name\n");
-	    return 1;
-        }
+    // get the block number from file name
+    if (strstr(misr_list[i], "_b")) {
+    strncpy(sblock, strstr(misr_list[i], "_b") + 2, 3);
+    sblock[3] = 0;
+    block = atoi(sblock);
+    }
+    else {
+    printf("No block info in file name\n");
+    return 1;
+    }
 
-	block1 = raz_table[orbit - start_orbit] /= 100;
+    // from here ******************************************************************
+    block1 = raz_table[orbit - start_orbit] /= 100;
 	block2 = raz_table[orbit - start_orbit] %= 100;
 	radius = 0.025;
 
