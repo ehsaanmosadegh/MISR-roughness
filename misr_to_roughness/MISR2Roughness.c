@@ -1,4 +1,4 @@
-// Ehsan Mosadegh 10 Nov 2019
+LetMeInG// Ehsan Mosadegh 10 Nov 2019
 // notes:
 // to-do: 
 
@@ -296,19 +296,20 @@ int main(char argc, char *argv[])
     fseek(fp, 0, SEEK_SET);
 
     raz_table = (int *) malloc((end_orbit - start_orbit + 1) * sizeof(int));
-    while ((read = getline(&sline, &slen, fp)) != -1) {
+    while ((read = getline(&sline, &slen, fp)) != -1) { // read= no of char read from each line; fp=stream
 	words = strtok(sline, " ");
 	w = 0; // what is w? is it counter?
 	//printf(" w2 is: %d \n" , w);
-	//printf("word2 is: %s \n" ,  words); // gets words in a rel azimuth in a loop
+	//printf("word2 is: %s \n" ,  words); // gets words in a rel. azimuth in a loop
 	while (words != NULL) { // the end of file EOF
 	    if (w == 1) orbit = atoi(words);
-	    if (w == 3) block12 = 100*atoi(words);
-	    if (w == 4) block12 += atoi(words);
-    	    words = strtok (NULL, " ");
+	    if (w == 3) block12 = 100*atoi(words); // col4*100
+	    if (w == 4) block12 += atoi(words); // 100col5 + col4; gets updated here
+    	words = strtok (NULL, " "); // updates words and w in next line
 	    w++;
 	}
 	raz_table[orbit - start_orbit] = block12;
+    printf("block12: %d \n", block12);
     }
 
     fclose(fp);
@@ -347,7 +348,7 @@ int main(char argc, char *argv[])
     	//printf("\n");
 	    w++;
   	}
-  	printf("atm_np: %d \n", atm_np);
+  	//printf("atm_np: %d \n", atm_np);
 
 	if (atm_np == 0) atm_model = (atm_type * ) malloc(sizeof(atm_type));
 	else atm_model = (atm_type * ) realloc(atm_model, (atm_np + 1) * sizeof(atm_type));
@@ -393,7 +394,7 @@ int main(char argc, char *argv[])
 		return 0;
 	    }
 	    strcpy(misr_list[misr_nfiles], ent->d_name);
-	    printf("d_name: %s \n", ent->d_name); // d_name is char array inside <dirent.h>
+	    //printf("d_name: %s \n", ent->d_name); // d_name is char array inside <dirent.h>
 	    //printf("%d %s\n", misr_nfiles, misr_list[misr_nfiles]);
 	    misr_nfiles ++;
     	}
@@ -477,10 +478,12 @@ int main(char argc, char *argv[])
     return 1;
     }
 
-    // from here ******************************************************************
-    block1 = raz_table[orbit - start_orbit] /= 100;
-	block2 = raz_table[orbit - start_orbit] %= 100;
+    block1 = raz_table[orbit - start_orbit] /= 100; // result
+	block2 = raz_table[orbit - start_orbit] %= 100; // remainder
+    printf("b1: %d; b2: %d \n", block1, block2);
 	radius = 0.025;
+
+    // start from here ******************************************************************
 
 	//radius = radius_descend;
 	//if ((block < 20) || ((block >= block1) && (block <= block2))) {
