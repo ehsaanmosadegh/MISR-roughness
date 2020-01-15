@@ -1,4 +1,4 @@
-// Ehsan Mosadegh 10 Nov 2019
+// Ehsan Mosadegh 10 Nov 2019-Jan 2020
 // notes:
 // to-do: 
 
@@ -130,8 +130,8 @@ int write_data(char *fname, double *data, int nlines, int nsamples)
 
 //#####################################################################################################
 
-int pixel2grid(int path, int block, int line, int sample, double *xlat, double *xlon, int *r, int *c)
-{
+int pixel2grid(int path, int block, int line, int sample, double* xlat, double* xlon, int* r, int* c)
+{ // receives path-block-line-sample and updates/outputs xlat,xlon,r,c
 int status;
 char *errs[] = MTK_ERR_DESC;
 double lat, lon;
@@ -151,8 +151,9 @@ double psize = 10./12000.;
 double lon0 = -130.0;
 double lat0 = 90.0;
 
-*xlat = lat;
-*xlon = lon;
+// out
+*xlat = lat; // updates value at xlat == lat
+*xlon = lon; // updates value at xlon == lon
 *c = rint((lon - lon0)/psize);
 *r = rint(-(lat - lat0)/psize);
 
@@ -407,7 +408,7 @@ int main(char argc, char *argv[])
   	return EXIT_FAILURE;
     }
 
-	// Processing MISR files ////////////////////////////////////////////////////////////////////////////
+	// Process each MISR files ////////////////////////////////////////////////////////////////////////////
     printf("Processing MISR files ...\n");
     for (i = 0; i < misr_nfiles; i++) {
 	if (strstr(misr_list[i], "_p")) { // if _P is in the file name, find _P in each surf file
@@ -415,7 +416,6 @@ int main(char argc, char *argv[])
 	    spath[3] = 0; // ?
 	    path = atoi(spath);
 	    //printf("path from MISR: %d \n", path);
-
         }
     else {
 	    printf("No path info in file name\n");
@@ -425,7 +425,7 @@ int main(char argc, char *argv[])
 	//if (path != 83) continue;
 	if ((path < 167) || (path > 240)) continue; // E- what is this path region????
 	//printf("now ... \n");
-	printf("processing: %s%s \n", surf_masked_file_dir, misr_list[i]);
+	printf("misr file: %s%s \n", surf_masked_file_dir, misr_list[i]);
 	
 	if (strstr(misr_list[i], "_o")) {
 	    strncpy(sorbit, strstr(misr_list[i], "_o") + 2, 6); // get the orbit and copy to sorbit
@@ -467,35 +467,39 @@ int main(char argc, char *argv[])
 
 	rms_data = (double *) malloc(5*nlines * nsamples * sizeof(double));
 
-    // get the block number from file name
+    // get the block number from surf file name
     if (strstr(misr_list[i], "_b")) {
-    strncpy(sblock, strstr(misr_list[i], "_b") + 2, 3);
-    sblock[3] = 0;
-    block = atoi(sblock);
+        strncpy(sblock, strstr(misr_list[i], "_b") + 2, 3);
+        sblock[3] = 0;
+        block = atoi(sblock);
+        printf("block: %d \n", block);
     }
     else {
-    printf("No block info in file name\n");
-    return 1;
+        printf("No block info in file name\n");
+        return 1;
     }
-
+    // from relative azimush file/table
     block1 = raz_table[orbit - start_orbit] /= 100; // result
 	block2 = raz_table[orbit - start_orbit] %= 100; // remainder
     printf("b1: %d; b2: %d \n", block1, block2);
-	radius = 0.025;
+	radius = 0.025; //
 
     // start from here ******************************************************************
 
 	//radius = radius_descend;
 	//if ((block < 20) || ((block >= block1) && (block <= block2))) {
-	if ((block >= block1) && (block <= block2)) {
+	if ((block >= block1) && (block <= block2)) { // E- why this condition?
 	    ascend = 1;
+	    printf("ascend block");
 	    //radius = radius_ascend;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	for (r=0; r<nlines; r++) {
 	    for (c=0; c<nsamples; c++) {
-		if (!pixel2grid(path, block, r, c, &lat, &lon, &r2, &c2)) return 0;
+	        printf("lat is: %d \n", lat);
+		if (!pixel2grid(path, block, r, c, &lat, &lon, &r2, &c2)) return 0; // input &lat to play with
+
 		rms_data[dsize + r*nsamples + c] = lat;
 		rms_data[2*dsize + r*nsamples + c] = lon;
 		//rms_data[3*dsize + r*nsamples + c] = 90.0 - r2/1200.0 ;
