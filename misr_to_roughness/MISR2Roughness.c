@@ -56,19 +56,19 @@ int read_data(char *fname, int nline, int nsample, double **data)
 
     f = fopen(fname, "r"); // f = stream; ptr that is opened and shows where data is stored in memory;
     if (!f) {
-	fprintf(stderr,  "read_data: couldn't open %s\n", fname);
-	return 0;
+        fprintf(stderr,  "read_data: couldn't open %s\n", fname);
+        return 0;
     }
 	
     *data = (double *) malloc(nlines * nsamples * sizeof(double));
     if (!*data) {
-	fprintf(stderr,  "read_data: couldn't malloc data\n");
-	return 0;
+        fprintf(stderr,  "read_data: couldn't malloc data\n");
+        return 0;
     }
-	// read data from stream=f --> *data;  f is the pointer to a FILE object that specifies an input stream.
+	// read data from stream = f --> *data;  f is the pointer to a FILE object that specifies an input stream.
     if (fread(*data, sizeof(double), nlines * nsamples, f) != nlines * nsamples) { // check see if number of elements read= initial number of elements
-	fprintf(stderr,  "read_data: couldn't read data in %s\n", fname);
-	return 0;
+        fprintf(stderr,  "read_data: couldn't read data in %s\n", fname);
+        return 0;
     }
 
     fclose(f);
@@ -372,225 +372,229 @@ int main(char argc, char *argv[])
 
     // Get list of Masked Surface An files //////////////////////////////////////////////////////////////////////////////
     printf("Getting list of Masked Surface An files ...\n"); // called misr_list
-    dirp = opendir(surf_masked_file_dir); // define dir stream
-    if (dirp) { // if ptr TRUE
-    	while ((ent = readdir(dirp)) != NULL) {// read the first item in dir and moves the ptr to next item
-	    if (!strstr(ent->d_name, ".dat")) continue; // if cound not find the this string
-	    if (misr_list == 0) {
-			misr_list = (char **) malloc(sizeof(char *));
-		if (!misr_list) {
-		    printf("main: couldn't malloc atm_flist\n");
-		    return 0;
-		}
-	    }
-	    else {
-		misr_list = (char **) realloc(misr_list, (misr_nfiles + 1) * sizeof(char *));
-		if (!misr_list) {
-		    printf("getFileList: couldn't realloc atm_flist\n");
-		    return 0;
-		}
-	    }
-	    misr_list[misr_nfiles] = (char *) malloc(strlen(ent->d_name) + 1);
-	    if (!misr_list[misr_nfiles]) {
-		printf("main: couldn't malloc atm_flist[%d]\n", misr_nfiles);
-		return 0;
-	    }
-	    strcpy(misr_list[misr_nfiles], ent->d_name);
-	    //printf("d_name: %s \n", ent->d_name); // d_name is char array inside <dirent.h>
-	    //printf("%d %s\n", misr_nfiles, misr_list[misr_nfiles]);
-	    misr_nfiles ++;
+    dirp = opendir(surf_masked_file_dir); // define dir stream == dirp
+    if (dirp) {     // if ptr TRUE
+    	while ((ent = readdir(dirp)) != NULL) {     // read the first item in dir and moves the ptr to next item
+            if (!strstr(ent->d_name, ".dat")) continue; // if could not find the this string
+            if (misr_list == 0) {
+                misr_list = (char **) malloc(sizeof(char *));
+                if (!misr_list) {
+                    printf("main: couldn't malloc atm_flist\n");
+                    return 0;
+                }
+            }
+            else {
+                misr_list = (char **) realloc(misr_list, (misr_nfiles + 1) * sizeof(char *));
+                if (!misr_list) {
+                    printf("getFileList: couldn't realloc atm_flist\n");
+                    return 0;
+                }
+            }
+            misr_list[misr_nfiles] = (char *) malloc(strlen(ent->d_name) + 1);
+            if (!misr_list[misr_nfiles]) {
+                printf("main: couldn't malloc atm_flist[%d]\n", misr_nfiles);
+                return 0;
+            }
+            // fill the misr_list with d_name: misr surf files
+            strcpy(misr_list[misr_nfiles], ent->d_name);
+           // printf("d_name: %s \n", ent->d_name); // d_name is char array inside <dirent.h>
+            printf("file no. %d, %s \n", misr_nfiles, misr_list[misr_nfiles]);
+            misr_nfiles ++;
     	}
     	closedir (dirp);
     } 
     else {
-	strcat(message, "Can't open ");
-	strcat(message, surf_masked_file_dir);
-  	perror (message);
-  	return EXIT_FAILURE;
+        strcat(message, "Can't open ");
+        strcat(message, surf_masked_file_dir);
+        perror (message);
+        return EXIT_FAILURE;
     }
 
 	// Process each MISR files ////////////////////////////////////////////////////////////////////////////
     printf("Processing MISR files ...\n");
     for (i = 0; i < misr_nfiles; i++) {
-	if (strstr(misr_list[i], "_p")) { // if _P is in the file name, find _P in each surf file
-	    strncpy(spath, strstr(misr_list[i], "_p") + 2, 3); // find path
-	    spath[3] = 0; // ?
-	    path = atoi(spath);
-	    //printf("path from MISR: %d \n", path);
+        if (strstr(misr_list[i], "_p")) { // if _P is in the file name, find _P in each surf file
+            strncpy(spath, strstr(misr_list[i], "_p") + 2, 3); // find path
+            spath[3] = 0; // ?
+            path = atoi(spath); // find path no from surf file
+            //printf("path from MISR: %d \n", path);
         }
-    else {
-	    printf("No path info in file name\n");
-	    return 1;
+        else {
+            printf("No path info in file name\n");
+            return 1;
         }
-	//if (path != 78) continue;
-	//if (path != 83) continue;
-	if ((path < 167) || (path > 240)) continue; // E- what is this path region????
-	//printf("now ... \n");
-	printf("misr file: %s%s \n", surf_masked_file_dir, misr_list[i]);
-	
-	if (strstr(misr_list[i], "_o")) {
-	    strncpy(sorbit, strstr(misr_list[i], "_o") + 2, 6); // get the orbit and copy to sorbit
-	    sorbit[6] = 0; //?
-	    orbit = atoi(sorbit);
+        //if (path != 78) continue;
+        //if (path != 83) continue;
+        if ((path < 167) || (path > 240)) continue; // E- what is this path region????
+        //printf("now ... \n");
+        printf("misr file: %s%s \n", surf_masked_file_dir, misr_list[i]);
+
+        if (strstr(misr_list[i], "_o")) {
+            strncpy(sorbit, strstr(misr_list[i], "_o") + 2, 6); // get the orbit and copy to sorbit
+            sorbit[6] = 0; //?
+            orbit = atoi(sorbit); // find orbit no from surf file
         }
-    else {
-	    printf("No orbit info in file name\n");
-	    return 1;
+        else {
+            printf("No orbit info in file name\n");
+            return 1;
         }
-    // copy surf file into an
-	sprintf(an_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
-    // copy the same surf file into cf
-    sprintf(cf_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
-	// printf("an_fname: %s \n", an_fname);
-	// printf("cf_fname: %s \n",cf_fname);
-	// substitute an with cf in any format
-	strsub(cf_fname, "An", "Cf"); // why this?
-	strsub(cf_fname, "_an", "_cf"); // substitute an with cfront!
-	//printf("cf_fname: %s \n",cf_fname);
-    // check if cf_fname is accessible
-	if (access(cf_fname, F_OK) == -1) continue;	// check if file is acessible, returns 0
-    // do the same thing with ca, copy the same surf file into ca
-	sprintf(ca_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
-	// substitute an with cf in any format
-	strsub(ca_fname, "An", "Ca");
-	strsub(ca_fname, "_an", "_ca"); // rename file to ca
-	// printf("ca_fname: %s \n", ca_fname);
-	// printf("\n");
-	// check if ca_fname is accessible
-	if (access(ca_fname, F_OK) == -1) continue; // check if file is acessible, returns 0
-	// the same an file
-	if (!read_data(an_fname, nlines, nsamples, &an_data)) return 0; // we fill an_data array from: an_fname
-	//printf("%d %s\n", i, an_fname);
-	if (!read_data(ca_fname, nlines, nsamples, &ca_data)) return 0;
-	//printf("%d %s\n", i, ca_fname);
-	if (!read_data(cf_fname, nlines, nsamples, &cf_data)) return 0;
-	//printf("%d %s\n", i, cf_fname);
+        // copy surf file into an
+        sprintf(an_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
 
-	rms_data = (double *) malloc(5*nlines * nsamples * sizeof(double));
+        // is it correct????????????????????????????????????????????????????????????????????????????????????????????????
+        // copy the same surf file into cf
+        sprintf(cf_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
+        // printf("an_fname: %s \n", an_fname);
+        // printf("cf_fname: %s \n",cf_fname);
+        // substitute an with cf in any format
+        strsub(cf_fname, "An", "Cf"); // why this?
+        strsub(cf_fname, "_an", "_cf"); // substitute an with cfront!
+        //printf("cf_fname: %s \n",cf_fname);
+        // check if cf_fname is accessible
+        if (access(cf_fname, F_OK) == -1) continue;	// check if file is acessible, returns 0
 
-    // get the block number from surf file name
-    if (strstr(misr_list[i], "_b")) {
-        strncpy(sblock, strstr(misr_list[i], "_b") + 2, 3);
-        sblock[3] = 0;
-        block = atoi(sblock);
-        printf("block: %d \n", block);
-    }
-    else {
-        printf("No block info in file name\n");
-        return 1;
-    }
-    // from relative azimush file/table
-    block1 = raz_table[orbit - start_orbit] /= 100; // result
-	block2 = raz_table[orbit - start_orbit] %= 100; // remainder
-    printf("b1: %d; b2: %d \n", block1, block2);
-	radius = 0.025; //
+        // do the same thing with ca, copy the same surf file into ca
+        sprintf(ca_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
+        // substitute an with cf in any format
+        strsub(ca_fname, "An", "Ca");
+        strsub(ca_fname, "_an", "_ca"); // rename file to ca
+        // printf("ca_fname: %s \n", ca_fname);
+        // printf("\n");
+        // check if ca_fname is accessible
+        // is it correct????????????????????????????????????????????????????????????????????????????????????????????????
 
-	//radius = radius_descend;
-	//if ((block < 20) || ((block >= block1) && (block <= block2))) {
-	if ((block >= block1) && (block <= block2)) { // E- why this condition?
-	    ascend = 1;
-	    printf("ascend block");
-	    //radius = radius_ascend;
-	}
+        // check if file is accessible, returns 0
+        if (access(ca_fname, F_OK) == -1) continue; // check if file is acessible, returns 0
+        // the same an file
+        if (!read_data(an_fname, nlines, nsamples, &an_data)) return 0; // we fill an_data array from: an_fname
+        //printf("%d %s\n", i, an_fname);
+        if (!read_data(ca_fname, nlines, nsamples, &ca_data)) return 0;
+        //printf("%d %s\n", i, ca_fname);
+        if (!read_data(cf_fname, nlines, nsamples, &cf_data)) return 0;
+        //printf("%d %s\n", i, cf_fname);
 
-	//////////////////////////////////////////////////////////////////////////////
-	for (r=0; r<nlines; r++) {
-	    for (c=0; c<nsamples; c++) {
-	        printf("lat is: %d \n", lat);
-		if (!pixel2grid(path, block, r, c, &lat, &lon, &r2, &c2)) return 0; // input &lat-&lon-&r2-&c2 to play with
-		// E- r2 and c2 not used
+        rms_data = (double *) malloc(5*nlines * nsamples * sizeof(double));
 
-		// start from here ******************************************************************
+        // get the block number from surf file name
+        if (strstr(misr_list[i], "_b")) {
+            strncpy(sblock, strstr(misr_list[i], "_b") + 2, 3);
+            sblock[3] = 0;
+            block = atoi(sblock);
+            printf("block: %d \n", block);
+        }
+        else {
+            printf("No block info in file name\n");
+            return 1;
+        }
+        // from relative azimush file/table
+        block1 = raz_table[orbit - start_orbit] /= 100; // result
+        block2 = raz_table[orbit - start_orbit] %= 100; // remainder
+        printf("b1: %d; b2: %d \n", block1, block2);
+        radius = 0.025; //
 
-		rms_data[dsize + r*nsamples + c] = lat;
-		rms_data[2*dsize + r*nsamples + c] = lon;
-		//rms_data[3*dsize + r*nsamples + c] = 90.0 - r2/1200.0 ;
-		//rms_data[4*dsize + r*nsamples + c] = -130.0 + c2/1200.0;
+        //radius = radius_descend;
+        //if ((block < 20) || ((block >= block1) && (block <= block2))) {
+        if ((block >= block1) && (block <= block2)) { // E- why this condition?
+            ascend = 1;
+            printf("ascend block");
+            //radius = radius_ascend;
+        }
 
-		if (an_data[r*nsamples + c] < 0) {
-		    rms_data[r*nsamples + c] = an_data[r*nsamples + c];
-	    	    //rms_data[3*dsize + r*nsamples + c] = an_data[r*nsamples + c];;
-		    continue;
-		}
+        //////////////////////////////////////////////////////////////////////////////
+        for (r=0; r<nlines; r++) {
+            for (c=0; c<nsamples; c++) {
+                printf("lat is: %d \n", lat);
+                if (!pixel2grid(path, block, r, c, &lat, &lon, &r2, &c2)) return 0; // input &lat-&lon-&r2-&c2 to play with
+                // E- r2 and c2 not used
 
-		if (ca_data[r*nsamples + c] < 0) {
-		    rms_data[r*nsamples + c] = ca_data[r*nsamples + c];
-	    	    //rms_data[3*dsize + r*nsamples + c] = ca_data[r*nsamples + c];;
-		    continue;
-		}
+                // start from here ******************************************************************
 
-		if (cf_data[r*nsamples + c] < 0) {
-		    rms_data[r*nsamples + c] = cf_data[r*nsamples + c];
-	    	    //rms_data[3*dsize + r*nsamples + c] = cf_data[r*nsamples + c];;
-		    continue;
-		}
+                rms_data[dsize + r*nsamples + c] = lat;
+                rms_data[2*dsize + r*nsamples + c] = lon;
+                //rms_data[3*dsize + r*nsamples + c] = 90.0 - r2/1200.0 ;
+                //rms_data[4*dsize + r*nsamples + c] = -130.0 + c2/1200.0;
 
-		/***
-		if (r2 >= 0 && r2 < gridlines && c2 >= 0 && c2 < gridsamples) {
-	    	    k = c2 + r2 * gridsamples;
-	            if (mask[k] == 1){
-	    		rms_data[r*nsamples + c] = LMASKED;
-	    		//rms_data[3*dsize + r*nsamples + c] = LMASKED;
-			continue;
-	    	    }
-		}
-		***/
-
-		//////////////////////////////////////////////////////////////////////////////
-		xrms = 0;
-		tweight = 0;
-		xrad_min = 1e23;
-		for (n=0; n<atm_np; n++) {
-		    //if (atm_model[n].ascend != ascend) continue;
-		    //if (~ascend || ((block < 20) && (atm_model[n].block < 20)) || ((block >= 20) && (atm_model[n].block >= 20))) {
-		    if ((~ascend  && ((atm_model[n].block < 20) || ~atm_model[n].ascend)) || (ascend && (atm_model[n].block >= 20) && (atm_model[n].ascend))) {
-                xan = (an_data[r*nsamples + c] - atm_model[n].an);
-                xca = (ca_data[r*nsamples + c] - atm_model[n].ca);
-                xcf = (cf_data[r*nsamples + c] - atm_model[n].cf);
-		    }
-		    else {
-                xan = (an_data[r*nsamples + c] - atm_model[n].an);
-                xca = (cf_data[r*nsamples + c] - atm_model[n].ca);
-                xcf = (ca_data[r*nsamples + c] - atm_model[n].cf);
-		    }
-		    /***
-		    xan = (an_data[r*nsamples + c] - atm_model[n].an);
-		    xca = (ca_data[r*nsamples + c] - atm_model[n].ca);
-		    xcf = (cf_data[r*nsamples + c] - atm_model[n].cf);
-		    ***/
-
-		    // E- is it misr refl?
-		    xrad = sqrt(xan*xan + xca*xca + xcf*xcf);
-		    //
-		    if (xrad < radius) {
-			xrms += atm_model[n].tweight * atm_model[n].rms;
-			tweight += atm_model[n].tweight;
-                if (xrad < xrad_min) {
-                    xrad_min = xrad;
-                    xrms_nearest = atm_model[n].rms;
+                if (an_data[r*nsamples + c] < 0) {
+                    rms_data[r*nsamples + c] = an_data[r*nsamples + c];
+                        //rms_data[3*dsize + r*nsamples + c] = an_data[r*nsamples + c];;
+                    continue;
                 }
-		    }
-		}
+                if (ca_data[r*nsamples + c] < 0) {
+                    rms_data[r*nsamples + c] = ca_data[r*nsamples + c];
+                        //rms_data[3*dsize + r*nsamples + c] = ca_data[r*nsamples + c];;
+                    continue;
+                }
+                if (cf_data[r*nsamples + c] < 0) {
+                    rms_data[r*nsamples + c] = cf_data[r*nsamples + c];
+                        //rms_data[3*dsize + r*nsamples + c] = cf_data[r*nsamples + c];;
+                    continue;
+                }
+                /***
+                if (r2 >= 0 && r2 < gridlines && c2 >= 0 && c2 < gridsamples) {
+                        k = c2 + r2 * gridsamples;
+                        if (mask[k] == 1){
+                        rms_data[r*nsamples + c] = LMASKED;
+                        //rms_data[3*dsize + r*nsamples + c] = LMASKED;
+                    continue;
+                        }
+                }
+                ***/
 
-		if (xrms == 0) xrms = xrms_nearest;
-		else xrms /= tweight;
-		rms_data[r*nsamples + c] = xrms;
-		//rms_data[3*dsize + r*nsamples + c] = tweight;
-	    }
-	}
+                //////////////////////////////////////////////////////////////////////////////
+                xrms = 0;
+                tweight = 0;
+                xrad_min = 1e23;
+                for (n=0; n<atm_np; n++) {
+                    //if (atm_model[n].ascend != ascend) continue;
+                    //if (~ascend || ((block < 20) && (atm_model[n].block < 20)) || ((block >= 20) && (atm_model[n].block >= 20))) {
+                    if ((~ascend  && ((atm_model[n].block < 20) || ~atm_model[n].ascend)) || (ascend && (atm_model[n].block >= 20) && (atm_model[n].ascend))) {
+                        xan = (an_data[r*nsamples + c] - atm_model[n].an);
+                        xca = (ca_data[r*nsamples + c] - atm_model[n].ca);
+                        xcf = (cf_data[r*nsamples + c] - atm_model[n].cf);
+                    }
+                    else {
+                        xan = (an_data[r*nsamples + c] - atm_model[n].an);
+                        xca = (cf_data[r*nsamples + c] - atm_model[n].ca);
+                        xcf = (ca_data[r*nsamples + c] - atm_model[n].cf);
+                    }
+                    /***
+                    xan = (an_data[r*nsamples + c] - atm_model[n].an);
+                    xca = (ca_data[r*nsamples + c] - atm_model[n].ca);
+                    xcf = (cf_data[r*nsamples + c] - atm_model[n].cf);
+                    ***/
 
-	sprintf(rms_fname, "%s/%s", rms_dir, misr_list[i]);
-	strsub(rms_fname, "_an.dat", ".dat");
-	strsub(rms_fname, "surf", "rms");
-	//strsub(rms_fname, "surf", "rms");
-	//fp = fopen(rms_fname, "wb");
-	printf("%d %s\n", i, rms_fname);
-	write_data(rms_fname, rms_data, nlines, nsamples);
-	
-	free(an_data);
-	free(ca_data);
-	free(cf_data);
-	free(rms_data);
+                    // E- is it misr refl?
+                    xrad = sqrt(xan*xan + xca*xca + xcf*xcf);
+                    //
+                    if (xrad < radius) {
+                    xrms += atm_model[n].tweight * atm_model[n].rms;
+                    tweight += atm_model[n].tweight;
+                        if (xrad < xrad_min) {
+                            xrad_min = xrad;
+                            xrms_nearest = atm_model[n].rms;
+                        }
+                    }
+                }
+
+                if (xrms == 0) xrms = xrms_nearest;
+                else xrms /= tweight;
+                rms_data[r*nsamples + c] = xrms;
+                //rms_data[3*dsize + r*nsamples + c] = tweight;
+            }
+        }
+
+        sprintf(rms_fname, "%s/%s", rms_dir, misr_list[i]);
+        strsub(rms_fname, "_an.dat", ".dat");
+        strsub(rms_fname, "surf", "rms");
+        //strsub(rms_fname, "surf", "rms");
+        //fp = fopen(rms_fname, "wb");
+        printf("%d %s\n", i, rms_fname);
+        write_data(rms_fname, rms_data, nlines, nsamples);
+
+        free(an_data);
+        free(ca_data);
+        free(cf_data);
+        free(rms_data);
     }
 
     return 0;
