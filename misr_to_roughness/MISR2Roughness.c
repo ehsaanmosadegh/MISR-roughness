@@ -178,8 +178,7 @@ char *strsub(char *s, char *a, char *b)
 
 //############################################### main ######################################################
 
-int main(char argc, char *argv[])
-{
+int main(char argc, char *argv[]) {
     DIR* dirp;
     FILE* fp;
     struct dirent* ent; // directory entries
@@ -372,12 +371,12 @@ int main(char argc, char *argv[])
 
     // Get list of Masked Surface An files //////////////////////////////////////////////////////////////////////////////
     printf("Getting list of Masked Surface An files ...\n"); // called misr_list
-    dirp = opendir(surf_masked_file_dir); // define dir stream == dirp
-    if (dirp) {     // if ptr TRUE
-    	while ((ent = readdir(dirp)) != NULL) {     // read the first item in dir and moves the ptr to next item
-            if (!strstr(ent->d_name, ".dat")) continue; // if could not find the this string
-            if (misr_list == 0) {
-                misr_list = (char **) malloc(sizeof(char *));
+    dirp = opendir(surf_masked_file_dir); // define dir stream == dirp == ptr to that directory
+    if (dirp) {     // if ptr available == TRUE
+    	while ((ent = readdir(dirp)) != NULL) {     // read the first item in dir and moves the ptr to next item/file in dir; ent == struct==fileObj for each file in dir
+            if (!strstr(ent->d_name, ".dat")) continue; // d_name= fileName, if could not find the pattern ".dat" in this string
+            if (misr_list == 0) {  // if it has not been created yet
+                misr_list = (char **) malloc(sizeof(char *));   // allocate mem-
                 if (!misr_list) {
                     printf("main: couldn't malloc atm_flist\n");
                     return 0;
@@ -390,14 +389,13 @@ int main(char argc, char *argv[])
                     return 0;
                 }
             }
-            misr_list[misr_nfiles] = (char *) malloc(strlen(ent->d_name) + 1);
+            misr_list[misr_nfiles] = (char *) malloc(strlen(ent->d_name) + 1); // allocate mem-
             if (!misr_list[misr_nfiles]) {
                 printf("main: couldn't malloc atm_flist[%d]\n", misr_nfiles);
                 return 0;
             }
-            // fill the misr_list with d_name: misr surf files
-            strcpy(misr_list[misr_nfiles], ent->d_name);
-           // printf("d_name: %s \n", ent->d_name); // d_name is char array inside <dirent.h>
+            strcpy(misr_list[misr_nfiles], ent->d_name);  // fill the misr_list with d_name: misr surf files; from ent=fileObj gets the fileName
+           // printf("d_name: %s \n", ent->d_name);       // d_name is char array inside <dirent.h>
             printf("file no. %d, %s \n", misr_nfiles, misr_list[misr_nfiles]);
             misr_nfiles ++;
     	}
@@ -410,13 +408,13 @@ int main(char argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-	// Process each MISR files ////////////////////////////////////////////////////////////////////////////
+	// Process each MISR surf file ////////////////////////////////////////////////////////////////////////////
     printf("Processing MISR files ...\n");
-    for (i = 0; i < misr_nfiles; i++) {
-        if (strstr(misr_list[i], "_p")) { // if _P is in the file name, find _P in each surf file
+    for (i = 0; i < misr_nfiles; i++) { // i=loop for each surf file
+        if (strstr(misr_list[i], "_p")) {   // search for _P in the file name, find _P in each surf file
             strncpy(spath, strstr(misr_list[i], "_p") + 2, 3); // find path
             spath[3] = 0; // ?
-            path = atoi(spath); // find path no from surf file
+            path = atoi(spath); // find path num from surf file
             //printf("path from MISR: %d \n", path);
         }
         else {
@@ -427,10 +425,10 @@ int main(char argc, char *argv[])
         //if (path != 83) continue;
         if ((path < 167) || (path > 240)) continue; // E- what is this path region????
         //printf("now ... \n");
-        printf("misr file: %s%s \n", surf_masked_file_dir, misr_list[i]);
+        printf("surf file that is processed: %s%s \n", surf_masked_file_dir, misr_list[i]); // check the full path of surf file
 
         if (strstr(misr_list[i], "_o")) {
-            strncpy(sorbit, strstr(misr_list[i], "_o") + 2, 6); // get the orbit and copy to sorbit
+            strncpy(sorbit, strstr(misr_list[i], "_o") + 2, 6); // get the orbit num from surf file and copy to sorbit
             sorbit[6] = 0; //?
             orbit = atoi(sorbit); // find orbit no from surf file
         }
@@ -438,18 +436,20 @@ int main(char argc, char *argv[])
             printf("No orbit info in file name\n");
             return 1;
         }
-        // copy surf file into an
-        sprintf(an_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
+        printf("misr list file: %s \n", misr_list[i]);
+        sprintf(an_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);      // stores surf fileName into an_fname buffer
+        printf("an_fname: %s \n", an_fname);
 
         // is it correct????????????????????????????????????????????????????????????????????????????????????????????????
-        // copy the same surf file into cf
-        sprintf(cf_fname, "%s/%s", surf_masked_file_dir, misr_list[i]);
-        // printf("an_fname: %s \n", an_fname);
-        // printf("cf_fname: %s \n",cf_fname);
-        // substitute an with cf in any format
-        strsub(cf_fname, "An", "Cf"); // why this?
+        printf("misr list file: %s \n", misr_list[i]);
+        sprintf(cf_fname, "%s/%s", surf_masked_file_dir, misr_list[i]); // copy the same surf file into cf
+        printf("cf_fname before: %s \n",cf_fname);
+
+        strsub(cf_fname, "An", "Cf"); // why this? // substitute an with cf in any format
         strsub(cf_fname, "_an", "_cf"); // substitute an with cfront!
-        //printf("cf_fname: %s \n",cf_fname);
+        printf("cf_fname after: %s \n",cf_fname);
+        printf("\n");
+
         // check if cf_fname is accessible
         if (access(cf_fname, F_OK) == -1) continue;	// check if file is acessible, returns 0
 
@@ -464,7 +464,7 @@ int main(char argc, char *argv[])
         // is it correct????????????????????????????????????????????????????????????????????????????????????????????????
 
         // check if file is accessible, returns 0
-        if (access(ca_fname, F_OK) == -1) continue; // check if file is acessible, returns 0
+        if (access(ca_fname, F_OK) == -1) continue; // check if file exists, returns 0
         // the same an file
         if (!read_data(an_fname, nlines, nsamples, &an_data)) return 0; // we fill an_data array from: an_fname
         //printf("%d %s\n", i, an_fname);
@@ -503,7 +503,7 @@ int main(char argc, char *argv[])
         //////////////////////////////////////////////////////////////////////////////
         for (r=0; r<nlines; r++) {
             for (c=0; c<nsamples; c++) {
-                printf("lat is: %d \n", lat);
+                //printf("lat is: %d \n", lat);
                 if (!pixel2grid(path, block, r, c, &lat, &lon, &r2, &c2)) return 0; // input &lat-&lon-&r2-&c2 to play with
                 // E- r2 and c2 not used
 
@@ -596,6 +596,5 @@ int main(char argc, char *argv[])
         free(cf_data);
         free(rms_data);
     }
-
     return 0;
 }
