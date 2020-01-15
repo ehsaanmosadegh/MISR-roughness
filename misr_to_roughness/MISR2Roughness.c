@@ -137,8 +137,10 @@ char *errs[] = MTK_ERR_DESC;
 double lat, lon;
 /* parameters for grid stereographic : 				*/
 /* MOD44W.A2000055.h14v01.005.2009212173527_MOD44W_250m_GRID.dat	*/ 
-
+//printf("lat before: %d \n", lat);
 status = MtkBlsToLatLon(path, 275, block, line * 1.0, sample * 1.0, &lat, &lon);
+//printf("lat after: %d \n", lat);
+
 if (status != MTK_SUCCESS) 
 	{
 	printf("pixel2grid: MtkBlsToLatLon failed!!!, status = %d (%s)\n", status, errs[status]);
@@ -159,7 +161,6 @@ double lat0 = 90.0;
 
 return 1;
 }
-
 //#####################################################################################################
 
 char *strsub(char *s, char *a, char *b)
@@ -484,8 +485,6 @@ int main(char argc, char *argv[])
     printf("b1: %d; b2: %d \n", block1, block2);
 	radius = 0.025; //
 
-    // start from here ******************************************************************
-
 	//radius = radius_descend;
 	//if ((block < 20) || ((block >= block1) && (block <= block2))) {
 	if ((block >= block1) && (block <= block2)) { // E- why this condition?
@@ -501,25 +500,31 @@ int main(char argc, char *argv[])
 		if (!pixel2grid(path, block, r, c, &lat, &lon, &r2, &c2)) return 0; // input &lat-&lon-&r2-&c2 to play with
 		// E- r2 and c2 not used
 
+		// start from here ******************************************************************
+
 		rms_data[dsize + r*nsamples + c] = lat;
 		rms_data[2*dsize + r*nsamples + c] = lon;
 		//rms_data[3*dsize + r*nsamples + c] = 90.0 - r2/1200.0 ;
 		//rms_data[4*dsize + r*nsamples + c] = -130.0 + c2/1200.0;
+
 		if (an_data[r*nsamples + c] < 0) {
 		    rms_data[r*nsamples + c] = an_data[r*nsamples + c];
 	    	    //rms_data[3*dsize + r*nsamples + c] = an_data[r*nsamples + c];;
 		    continue;
 		}
+
 		if (ca_data[r*nsamples + c] < 0) {
 		    rms_data[r*nsamples + c] = ca_data[r*nsamples + c];
 	    	    //rms_data[3*dsize + r*nsamples + c] = ca_data[r*nsamples + c];;
 		    continue;
 		}
+
 		if (cf_data[r*nsamples + c] < 0) {
 		    rms_data[r*nsamples + c] = cf_data[r*nsamples + c];
 	    	    //rms_data[3*dsize + r*nsamples + c] = cf_data[r*nsamples + c];;
 		    continue;
 		}
+
 		/***
 		if (r2 >= 0 && r2 < gridlines && c2 >= 0 && c2 < gridsamples) {
 	    	    k = c2 + r2 * gridsamples;
@@ -539,14 +544,14 @@ int main(char argc, char *argv[])
 		    //if (atm_model[n].ascend != ascend) continue;
 		    //if (~ascend || ((block < 20) && (atm_model[n].block < 20)) || ((block >= 20) && (atm_model[n].block >= 20))) {
 		    if ((~ascend  && ((atm_model[n].block < 20) || ~atm_model[n].ascend)) || (ascend && (atm_model[n].block >= 20) && (atm_model[n].ascend))) {
-			xan = (an_data[r*nsamples + c] - atm_model[n].an);
-			xca = (ca_data[r*nsamples + c] - atm_model[n].ca);
-			xcf = (cf_data[r*nsamples + c] - atm_model[n].cf);
+                xan = (an_data[r*nsamples + c] - atm_model[n].an);
+                xca = (ca_data[r*nsamples + c] - atm_model[n].ca);
+                xcf = (cf_data[r*nsamples + c] - atm_model[n].cf);
 		    }
 		    else {
-			xan = (an_data[r*nsamples + c] - atm_model[n].an);
-			xca = (cf_data[r*nsamples + c] - atm_model[n].ca);
-			xcf = (ca_data[r*nsamples + c] - atm_model[n].cf);
+                xan = (an_data[r*nsamples + c] - atm_model[n].an);
+                xca = (cf_data[r*nsamples + c] - atm_model[n].ca);
+                xcf = (ca_data[r*nsamples + c] - atm_model[n].cf);
 		    }
 		    /***
 		    xan = (an_data[r*nsamples + c] - atm_model[n].an);
@@ -560,12 +565,13 @@ int main(char argc, char *argv[])
 		    if (xrad < radius) {
 			xrms += atm_model[n].tweight * atm_model[n].rms;
 			tweight += atm_model[n].tweight;
-			if (xrad < xrad_min) {
-			    xrad_min = xrad;
-			    xrms_nearest = atm_model[n].rms;
-			}
+                if (xrad < xrad_min) {
+                    xrad_min = xrad;
+                    xrms_nearest = atm_model[n].rms;
+                }
 		    }
 		}
+
 		if (xrms == 0) xrms = xrms_nearest;
 		else xrms /= tweight;
 		rms_data[r*nsamples + c] = xrms;
