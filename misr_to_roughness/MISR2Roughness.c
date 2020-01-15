@@ -498,7 +498,8 @@ int main(char argc, char *argv[])
 	for (r=0; r<nlines; r++) {
 	    for (c=0; c<nsamples; c++) {
 	        printf("lat is: %d \n", lat);
-		if (!pixel2grid(path, block, r, c, &lat, &lon, &r2, &c2)) return 0; // input &lat to play with
+		if (!pixel2grid(path, block, r, c, &lat, &lon, &r2, &c2)) return 0; // input &lat-&lon-&r2-&c2 to play with
+		// E- r2 and c2 not used
 
 		rms_data[dsize + r*nsamples + c] = lat;
 		rms_data[2*dsize + r*nsamples + c] = lon;
