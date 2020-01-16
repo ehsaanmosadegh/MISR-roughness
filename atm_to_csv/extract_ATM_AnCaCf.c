@@ -117,6 +117,7 @@ int main(char argc, char *argv[]) {
     //char atmfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/combined_atm.csv";
     // output
     char atmmodel[256] = "/home/mare/Ehsan_lab/MISR-roughness/atm/SeaIce_Jul2016_atmmodel_cloud_var.csv";
+    // char atmmodel[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel_cloud_var.csv"; // old
     //char lsmask_dir[256] = "/home/mare/Nolin/SeaIce/LWData/MISR_LandSeaMask";
     char message[256];
     char idir[256];
