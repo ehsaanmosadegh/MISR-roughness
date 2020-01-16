@@ -105,7 +105,7 @@ char *strsub(char *s, char *a, char *b)
 int main(char argc, char *argv[]) {
     DIR *dirp;
     FILE *fp, *fm;
-    struct dirent *ent; // ptr to fileObj == struct
+    struct dirent *entryObj; // ptr to fileObj == struct
     //char atm_dir[256] = "/home/mare/Nolin/SeaIce/ILATM2.002";
     //char misr_dir[256] = "/home/mare/Nolin/2013/MaskedSurf/April_sdcmClearHC";
     //char atmfile[256] = "/home/mare/Nolin/SeaIce/ILATM2.002/combined_atm.csv";
@@ -171,10 +171,10 @@ int main(char argc, char *argv[]) {
     // Get list of ATM text files
     dirp = opendir(atm_dir);
     if (dirp) {
-    	while ((ent = readdir(dirp)) != NULL) { // num of iterations == num of atm files available == atm_nfiles == ent is ptr to fileObj, we create it for every iteration
-		    if (strstr(ent->d_name, "combine")) continue;
-		    if (strstr(ent->d_name, "SeaIce")) continue;
-		    if (!strstr(ent->d_name, ".csv")) continue;
+    	while ((entryObj = readdir(dirp)) != NULL) { // num of iterations == num of atm files available == atm_nfiles == entryObj is ptr to fileObj, we create it for every iteration
+		    if (strstr(entryObj->d_name, "combine")) continue;
+		    if (strstr(entryObj->d_name, "SeaIce")) continue;
+		    if (!strstr(entryObj->d_name, ".csv")) continue;
 		    if (atm_flist == 0) {
                 atm_flist = (char **) malloc(sizeof(char *));
                 if (!atm_flist) {
@@ -189,12 +189,12 @@ int main(char argc, char *argv[]) {
                     return 0;
                 }
             }
-            atm_flist[atm_nfiles] = (char *) malloc(strlen(ent->d_name) + 1);
+            atm_flist[atm_nfiles] = (char *) malloc(strlen(entryObj->d_name) + 1);
             if (!atm_flist[atm_nfiles]) {
                 printf("main: couldn't malloc atm_flist[%d]\n", atm_nfiles);
                 return 0;
             }
-            strcpy(atm_flist[atm_nfiles], ent->d_name);
+            strcpy(atm_flist[atm_nfiles], entryObj->d_name);
             atm_nfiles ++;
     	}
     	closedir (dirp);
