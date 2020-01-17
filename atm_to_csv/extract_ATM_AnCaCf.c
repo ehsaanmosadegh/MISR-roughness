@@ -172,7 +172,7 @@ int main(char argc, char *argv[]) {
     dirp = opendir(atm_dir);
     if (dirp) {
     	while ((entryObj = readdir(dirp)) != NULL) { // num of iterations == num of atm files available == atm_nfiles == entryObj is ptr to fileObj, we create it for every iteration
-		    if (strstr(entryObj->d_name, "combine")) continue;
+		    if (strstr(entryObj->d_name, "combine")) continue; // d_name is string of fileName in fileObj
 		    if (strstr(entryObj->d_name, "SeaIce")) continue;
 		    if (!strstr(entryObj->d_name, ".csv")) continue;
 		    if (atm_flist == 0) {
@@ -211,27 +211,42 @@ int main(char argc, char *argv[]) {
     //}
 
     for (i = 0; i < atm_nfiles; i++) { // i is num of available atm files in the list
-        strncpy(syear, atm_flist[i] + 7, 4); // get year from file name
-        syear[4] = 0;
-        strncpy(smonth, atm_flist[i] + 11, 2); // get month from file name
-        smonth[2] = 0;
+        printf("processing atm file: %s \n", atm_flist[i]);
+        //memset(syear, '\0', sizeof(syear));
+        strncpy(syear, (atm_flist[i] + 7), 4); // get year from file name; why not in ptr format?
+        syear[4] = '\0'; // problem, why syear is printed as empty?
+        char* yearCopy = strdup(syear); // replaced every syear with yearCopy
+        
+        //memset(smonth, '\0', sizeof(smonth));
+        strncpy(smonth, (atm_flist[i] + 11), 2); // get month from file name; how?
+        smonth[2] = '\0';
         month = atoi(smonth);
-        strncpy(sday, atm_flist[i] + 13, 2); // get dat from file name
-        sday[2] = 0;
+
+        //memset(sday, '\0', sizeof(sday));
+        strncpy(sday, (atm_flist[i] + 13), 2); // get dat from file name
+        sday[2] = '\0';
+        printf("yr: %s mon: %d day: %s \n", yearCopy, month, sday);
+
         for (k  = -1; k < 2; k++) { // k=yesterday (-1) or tmrw (+1) == 0.5 of the ATM overpass; today=o
+            //printf("k is: %d \n", k);
             day = atoi(sday) + k;
-            sprintf(stime, "%s-%02d-%02dT00:00:00Z", syear, month, day); // start time
-            sprintf(etime, "%s-%02d-%02dT23:59:59Z", syear, month, day); // end time
+            printf("day is: %d \n" , day);
+            sprintf(stime, "%s-%02d-%02dT00:00:00Z", yearCopy, month, day); // start time
+            sprintf(etime, "%s-%02d-%02dT23:59:59Z", yearCopy, month, day); // end time
             printf("process for: %s %s %s\n", atm_flist[i], stime, etime);
             if (k == 0) weight = 1.0; // for today k=0; w=1 of the ATM overpass;
-            else weight = 0.5; // yesterday or tmrw k=0.5 of the ATM overpass
+            else weight = 0.5; // yesterday or tmrw; weight=0.5 of the ATM overpass
             //if (monthday[month][day] == 0) {
-                status = MtkTimeRangeToOrbitList(stime, etime, &orbitcnt, &orbitlist); // outputs are
+            status = MtkTimeRangeToOrbitList(stime, etime, &orbitcnt, &orbitlist); // outputs are orbitCount and list
+            //printf("status: %d \n" , status);
+            if (status != MTK_SUCCESS) return 1;
+            for (j = 0; j < orbitcnt; j++) { // what is orbitcnt? orbitCount
+                printf("orbit cnt: %d \n" , j);
+                printf("orbit file: %d \n" , orbitlist[j]); // ????????????????????????????????
+
+                status = MtkOrbitToPath(orbitlist[j], &path);
                 if (status != MTK_SUCCESS) return 1;
-                for (j = 0; j < orbitcnt; j++) {
-                    status = MtkOrbitToPath(orbitlist[j], &path);
-                    if (status != MTK_SUCCESS) return 1;
-                        //printf("%d %d\n", orbitlist[j], path);
+                printf("now %d %d \n", orbitlist[j], path);
                 sprintf(fname, "atm file fullPath:%s/%s", atm_dir, atm_flist[i]);
                 fp = fopen(fname, "r"); // create stream=fp for stm files
                 if (!fp) {
