@@ -196,9 +196,9 @@ int main(char argc, char *argv[]) {
             }
             strcpy(atm_flist[atm_nfiles], entryObj->d_name);
             atm_nfiles ++;
-    	}
+        }
     	closedir (dirp);
-    } 
+    }
     else {
         strcat(message, "Can't open ");
         strcat(message, atm_dir);
@@ -210,7 +210,7 @@ int main(char argc, char *argv[]) {
 	//printf("%d %s\n", i, atm_flist[i]);
     //}
 
-    for (i = 0; i < atm_nfiles; i++) { // i is num of available atm files in the list
+    for (i = 0; i < atm_nfiles; i++) { // i is num of available ATM files in the list
         printf("processing atm file: %s \n", atm_flist[i]);
         //memset(syear, '\0', sizeof(syear));
         strncpy(syear, (atm_flist[i] + 7), 4); // get year from file name; why not in ptr format?
@@ -227,41 +227,46 @@ int main(char argc, char *argv[]) {
         sday[2] = '\0';
         printf("yr: %s mon: %d day: %s \n", yearCopy, month, sday);
 
-        for (k  = -1; k < 2; k++) { // k=yesterday (-1) or tmrw (+1) == 0.5 of the ATM overpass; today=o
-            //printf("k is: %d \n", k);
+        for (k  = -1; k < 2; k++) { // k=days; yesterday (-1) or tmrw (+1) == 0.5 of the ATM overpass; today=o
+            printf("k is: %d \n", k);
             day = atoi(sday) + k;
-            printf("day is: %d \n" , day);
+            printf("day of ATM file: %d \n" , day);
             sprintf(stime, "%s-%02d-%02dT00:00:00Z", yearCopy, month, day); // start time
             sprintf(etime, "%s-%02d-%02dT23:59:59Z", yearCopy, month, day); // end time
-            printf("process for: %s %s %s\n", atm_flist[i], stime, etime);
+            printf("process atm: %s %s %s\n", atm_flist[i], stime, etime);
             if (k == 0) weight = 1.0; // for today k=0; w=1 of the ATM overpass;
             else weight = 0.5; // yesterday or tmrw; weight=0.5 of the ATM overpass
             //if (monthday[month][day] == 0) {
             status = MtkTimeRangeToOrbitList(stime, etime, &orbitcnt, &orbitlist); // outputs are orbitCount and list
             //printf("status: %d \n" , status);
             if (status != MTK_SUCCESS) return 1;
-            for (j = 0; j < orbitcnt; j++) { // what is orbitcnt? orbitCount
-                printf("orbit cnt: %d \n" , j);
-                printf("orbit file: %d \n" , orbitlist[j]); // ????????????????????????????????
 
-                status = MtkOrbitToPath(orbitlist[j], &path);
+            for (j = 0; j < orbitcnt; j++) { // what is orbitcnt? orbitCount; Q- orbit during each day?
+                printf("orbit-counter: %d \n" , j);
+                status = MtkOrbitToPath(orbitlist[j], &path); // what is path, given the orbit? or which path the orbit belong to?
                 if (status != MTK_SUCCESS) return 1;
-                printf("now %d %d \n", orbitlist[j], path);
-                sprintf(fname, "atm file fullPath:%s/%s", atm_dir, atm_flist[i]);
-                fp = fopen(fname, "r"); // create stream=fp for stm files
+                printf("MISR orbit & path in this period: \n");
+                printf("orbit: %d path: %d \n", orbitlist[j], path); // MISR: checking orbit and path of MISR
+                sprintf(fname, "%s/%s", atm_dir, atm_flist[i]); // ATM: create full path of ATM file(i)
+
+                fp = fopen(fname, "r"); // create stream=fp for ATM file
                 if (!fp) {
-                    fprintf(stderr, "main: couldn't open %s\n", fname);
+                    fprintf(stderr, "main: couldn't open %s \n", fname);
                     return 1;
                 }
-                //printf("%s\n", fname);
+                printf("opening ATM file: %s \n", fname); // the ATM file
                 while ((read = getline(&sline, &slen, fp)) != -1) { // get each line of atm csv
                     //printf("Retrieved line of length %zu :\n", read);
                     //printf("%s\n", sline);
                     words = strtok (sline," ,"); // gets the 1st token
                     w = 0;
                     //printf ("%s\n",words);
-                    if (!strcmp(words, "#")) continue;
-                    while (words != NULL) { // untile we get to the last word in line
+                    //if (!strcmp(words, "#")) continue; // why checking this???
+                    if (strcmp(words, "#") == 0) { // how about this one?
+                        printf("found # in csv file \n");
+                        continue;
+                    }
+                    while (words != NULL) { // until we get to the last word in line
                         //printf ("%s\n",words);
                         if (w == 1) xlat = atof(words);
                         if (w == 2) xlon = atof(words);
@@ -270,15 +275,20 @@ int main(char argc, char *argv[]) {
                         words = strtok (NULL, " ,");
                         w++;
                     }
-                if (xcam != 0) continue; // Track_Identifier?
-                status = MtkLatLonToBls(path, 275, xlat, xlon, &block, &fline, &fsample);
+                if (xcam != 0) continue; // Track_Identifier? why check this?
+                status = MtkLatLonToBls(path, 275, xlat, xlon, &block, &fline, &fsample); // assign ATM lat/lon to each block; why block and not pixel?
                 if (status != MTK_SUCCESS) {
                     if (block == -1) continue;
-                    printf("%f %f %d %f %f", xlat, xlon, block, fline, fsample);
+                    printf("%f %f %d %f %f", xlat, xlon, block, fline, fsample); // why float for line-sample?
                     return 1;
                 }
                 line = rint(fline); // rounds int
                 sample = rint(fsample);
+                printf("line: %d; sample: %d \n" , line, sample);
+
+
+                // up to here................................
+
 
                 sprintf(cf_fname, "%s/Cf/surf_p%03d_o%06d_b%03d_cf.dat", misr_dir, path, orbitlist[j], block);
                 if (access(cf_fname, F_OK) == -1) continue;
