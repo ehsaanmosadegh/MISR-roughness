@@ -228,7 +228,7 @@ int main(char argc, char *argv[]) {
         printf("yr: %s mon: %d day: %s \n", yearCopy, month, sday);
 
         for (k  = -1; k < 2; k++) { // k=days; yesterday (-1) or tmrw (+1) == 0.5 of the ATM overpass; today=o
-            printf("k is: %d \n", k);
+            printf("k = day is= %d \n", k);
             day = atoi(sday) + k;
             printf("day of ATM file: %d \n" , day);
             sprintf(stime, "%s-%02d-%02dT00:00:00Z", yearCopy, month, day); // start time
@@ -242,11 +242,11 @@ int main(char argc, char *argv[]) {
             if (status != MTK_SUCCESS) return 1;
 
             for (j = 0; j < orbitcnt; j++) { // what is orbitcnt? orbitCount; Q- orbit during each day?
-                printf("orbit-counter: %d \n" , j);
+                printf("orbit-counter: %d in orbit: %d \n" , j, orbitlist[j]);
                 status = MtkOrbitToPath(orbitlist[j], &path); // what is path, given the orbit? or which path the orbit belong to?
                 if (status != MTK_SUCCESS) return 1;
-                printf("MISR orbit & path in this period: \n");
-                printf("orbit: %d path: %d \n", orbitlist[j], path); // MISR: checking orbit and path of MISR
+                //printf("MISR orbit & path in this k: \n");
+                printf("orbit %d goes to path: %d \n", orbitlist[j], path); // MISR: checking orbit and path of MISR
                 sprintf(fname, "%s/%s", atm_dir, atm_flist[i]); // ATM: create full path of ATM file(i)
 
                 fp = fopen(fname, "r"); // create stream=fp for ATM file
@@ -254,7 +254,7 @@ int main(char argc, char *argv[]) {
                     fprintf(stderr, "main: couldn't open %s \n", fname);
                     return 1;
                 }
-                printf("opening ATM file: %s \n", fname); // the ATM file
+               // printf("opening ATM file: %s \n", fname); // the ATM file
                 while ((read = getline(&sline, &slen, fp)) != -1) { // get each line of atm csv
                     //printf("Retrieved line of length %zu :\n", read);
                     //printf("%s\n", sline);
@@ -263,7 +263,7 @@ int main(char argc, char *argv[]) {
                     //printf ("%s\n",words);
                     //if (!strcmp(words, "#")) continue; // why checking this???
                     if (strcmp(words, "#") == 0) { // how about this one?
-                        printf("found # in csv file \n");
+                        //printf("found # in csv file \n");
                         continue;
                     }
                     while (words != NULL) { // until we get to the last word in line
@@ -275,85 +275,85 @@ int main(char argc, char *argv[]) {
                         words = strtok (NULL, " ,");
                         w++;
                     }
-                if (xcam != 0) continue; // Track_Identifier? why check this?
-                status = MtkLatLonToBls(path, 275, xlat, xlon, &block, &fline, &fsample); // assign ATM lat/lon to each block; why block and not pixel?
-                if (status != MTK_SUCCESS) {
-                    if (block == -1) continue;
-                    printf("%f %f %d %f %f", xlat, xlon, block, fline, fsample); // why float for line-sample?
-                    return 1;
-                }
-                line = rint(fline); // rounds int
-                sample = rint(fsample);
-                printf("line: %d; sample: %d \n" , line, sample);
-
-
-                // up to here................................
-
-
-                sprintf(cf_fname, "%s/Cf/surf_p%03d_o%06d_b%03d_cf.dat", misr_dir, path, orbitlist[j], block);
-                if (access(cf_fname, F_OK) == -1) continue;
-                sprintf(ca_fname, "%s/Ca/surf_p%03d_o%06d_b%03d_ca.dat", misr_dir, path, orbitlist[j], block);
-                if (access(ca_fname, F_OK) == -1) continue;
-                sprintf(an_fname, "%s/An/surf_p%03d_o%06d_b%03d_an.dat", misr_dir, path, orbitlist[j], block);
-                if (access(an_fname, F_OK) == -1) continue;
-                sprintf(cm_fname, "%s/An/lsdcm_p%03d_o%06d_b%03d_an.dat", cm_dir, path, orbitlist[j], block);
-                cm_exist = 1;
-                if (access(cm_fname, F_OK) == -1) {
-                    cm_exist = 0;
-                }
-                printf("Success: %d %d %f %f %f %d %d %d\n", path, orbitlist[j], xlat, xlon, xrms, block, line, sample);
-                atm_found = 0;
-                if (atm_np == 0) atm_fileObj = (atm_type * ) malloc(sizeof(atm_type));
-                else {
-                    n = 0;
-                    while ((n < atm_np) && !atm_found) { // ???
-                        if ((atm_fileObj[n].path == path) && (atm_fileObj[n].block == block) && (atm_fileObj[n].line == line) &&
-                            (atm_fileObj[n].sample == sample) && (atm_fileObj[n].weight == weight)) { // ???
-                                atm_fileObj[n].rms += weight * xrms;
-                                atm_fileObj[n].npts += weight;
-                                atm_fileObj[n].var += weight * xrms * xrms;
-                                atm_found = 1;
-                        }
-                        n++;
+                    if (xcam != 0) continue; // Track_Identifier? why check this?
+                    status = MtkLatLonToBls(path, 275, xlat, xlon, &block, &fline, &fsample); // assign ATM lat/lon to each block; why block and not pixel?
+                    if (status != MTK_SUCCESS) {
+                        if (block == -1) continue;
+                        printf("%f %f %d %f %f", xlat, xlon, block, fline, fsample); // why float for line-sample?
+                        return 1;
                     }
-                    if (!atm_found) atm_fileObj = (atm_type * ) realloc(atm_fileObj, (atm_np + 1) * sizeof(atm_type));
-                }
-                if (!atm_fileObj) {
-                    fprintf(stderr,  "main: couldn't malloc/realloc atm_fileObj\n");
-                    return 0;
-                }
-                if (!atm_found) {
-                    atm_fileObj[atm_np].path = path;
-                    atm_fileObj[atm_np].orbit = orbitlist[j];
-                    atm_fileObj[atm_np].block = block;
-                    atm_fileObj[atm_np].line = line;
-                    atm_fileObj[atm_np].sample = sample;
-                    atm_fileObj[atm_np].lat = xlat;
-                    atm_fileObj[atm_np].lon = xlon;
-                    atm_fileObj[atm_np].weight = weight;
-                    read_misr_data(cf_fname, line, sample, &cf);
-                    read_misr_data(ca_fname, line, sample, &ca);
-                    read_misr_data(an_fname, line, sample, &an);
-                    atm_fileObj[atm_np].cloud = -1;
-                    if (cm_exist == 1) {
-                        read_misr_data(cm_fname, line, sample, &cm);
-                        if (cm > 0) atm_fileObj[atm_np].cloud = 0;
-                        else {
-                            if (cm == CMASKED) atm_fileObj[atm_np].cloud = 1;
-                        }
+                    line = rint(fline); // rounds int
+                    sample = rint(fsample);
+                    printf("ATM lat/lon to MISR pixel: line: %d; sample: %d \n" , line, sample);
+
+                    sprintf(cf_fname, "%s/Cf/surf_p%03d_o%06d_b%03d_cf.dat", misr_dir, path, orbitlist[j], block);
+                    if (access(cf_fname, F_OK) == -1) continue;
+                    sprintf(ca_fname, "%s/Ca/surf_p%03d_o%06d_b%03d_ca.dat", misr_dir, path, orbitlist[j], block);
+                    if (access(ca_fname, F_OK) == -1) continue;
+                    sprintf(an_fname, "%s/An/surf_p%03d_o%06d_b%03d_an.dat", misr_dir, path, orbitlist[j], block);
+                    if (access(an_fname, F_OK) == -1) continue;
+                    sprintf(cm_fname, "%s/An/lsdcm_p%03d_o%06d_b%03d_an.dat", cm_dir, path, orbitlist[j], block);
+
+                    cm_exist = 1;
+                    if (access(cm_fname, F_OK) == -1) {
+                        cm_exist = 0;
                     }
-                    atm_fileObj[atm_np].an = an;
-                    atm_fileObj[atm_np].ca = ca;
-                    atm_fileObj[atm_np].cf = cf;
-                    atm_fileObj[atm_np].npts = weight;
-                    atm_fileObj[atm_np].rms = weight * xrms;
-                    atm_fileObj[atm_np].var = weight * xrms * xrms;
-                    atm_np++;
-                    printf("%d %d %d %d %d %f %f %f\n", atm_np, path, block, line, sample, an, cf, ca);
-                }
+                    printf("Success: %d %d %f %f %f %d %d %d\n", path, orbitlist[j], xlat, xlon, xrms, block, line, sample);
+
+                    // up to here................................
+
+                    atm_found = 0;
+                    if (atm_np == 0) atm_fileObj = (atm_type * ) malloc(sizeof(atm_type)); // 1st round to create mem-
+                    else {
+                        n = 0;
+                        while ((n < atm_np) && !atm_found) { // what is this stopping? // we start to fill the fileObj with n
+                            if ((atm_fileObj[n].path == path) && (atm_fileObj[n].block == block) && (atm_fileObj[n].line == line) &&
+                                (atm_fileObj[n].sample == sample) && (atm_fileObj[n].weight == weight)) { // what is this condition?
+                                    atm_fileObj[n].rms += weight * xrms; // ???
+                                    atm_fileObj[n].npts += weight; // ???
+                                    atm_fileObj[n].var += weight * xrms * xrms; // ????
+                                    atm_found = 1;
+                            }
+                            n++;
+                        }
+                        if (!atm_found) atm_fileObj = (atm_type * ) realloc(atm_fileObj, (atm_np + 1) * sizeof(atm_type));
+                    }
+                    if (!atm_fileObj) {
+                        fprintf(stderr,  "main: couldn't malloc/realloc atm_fileObj\n");
+                        return 0;
+                    }
+                    if (!atm_found) {
+                        atm_fileObj[atm_np].path = path;
+                        atm_fileObj[atm_np].orbit = orbitlist[j];
+                        atm_fileObj[atm_np].block = block;
+                        atm_fileObj[atm_np].line = line;
+                        atm_fileObj[atm_np].sample = sample;
+                        atm_fileObj[atm_np].lat = xlat;
+                        atm_fileObj[atm_np].lon = xlon;
+                        atm_fileObj[atm_np].weight = weight;
+                        read_misr_data(cf_fname, line, sample, &cf);
+                        read_misr_data(ca_fname, line, sample, &ca);
+                        read_misr_data(an_fname, line, sample, &an);
+                        atm_fileObj[atm_np].cloud = -1;
+                        if (cm_exist == 1) {
+                            read_misr_data(cm_fname, line, sample, &cm);
+                            if (cm > 0) atm_fileObj[atm_np].cloud = 0;
+                            else {
+                                if (cm == CMASKED) atm_fileObj[atm_np].cloud = 1;
+                            }
+                        }
+                        atm_fileObj[atm_np].an = an;
+                        atm_fileObj[atm_np].ca = ca;
+                        atm_fileObj[atm_np].cf = cf;
+                        atm_fileObj[atm_np].npts = weight;
+                        atm_fileObj[atm_np].rms = weight * xrms;
+                        atm_fileObj[atm_np].var = weight * xrms * xrms;
+                        atm_np++;
+                        printf("%d %d %d %d %d %f %f %f\n", atm_np, path, block, line, sample, an, cf, ca);
+                    }
                 }
                 fclose(fp);
-                    }
+            }
                 //monthday[month][day] = 1;
             //}
         }
