@@ -1,5 +1,5 @@
 Exe = /home/mare/Ehsan_lab/MISR-roughness/exe_dir
-src = extract_ATM_AnCaCf.c
+src = extract_ATM_AnCaCf_Ehsan.c
 program = ATMtocsv
 
 all:

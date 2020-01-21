@@ -73,7 +73,7 @@ int read_misr_data(char *fname, int line, int sample, double *data)
 	return 0;
     }
 	
-    if (fread(array_data, sizeof(double), nlines * nsamples, f) != nlines * nsamples) {
+    if (fread(array_data, sizeof(double), (nlines * nsamples), f) != nlines * nsamples) { // On success, it reads n items from the file and returns n. On error or end of the file, it returns a number less than n.
 	fprintf(stderr,  "read_data: couldn't read data in %s\n", fname);
 	return 0;
     }
@@ -105,16 +105,18 @@ char *strsub(char *s, char *a, char *b)
 int main(char argc, char *argv[]) {
     DIR *dirp;
     FILE *fp, *fm;
-    struct dirent *entryObj; // ptr to fileObj == struct
+    struct dirent *entryObjPtr; // ptr to fileObj == struct
     //char atm_dir[256] = "/home/mare/Nolin/SeaIce/ILATM2.002";
     //char misr_dir[256] = "/home/mare/Nolin/2013/MaskedSurf/April_sdcmClearHC";
     //char atmfile[256] = "/home/mare/Nolin/SeaIce/ILATM2.002/combined_atm.csv";
     //char atmmodel[256] = "/home/mare/Nolin/SeaIce/ILATM2.002/SeaIce_Apr2013_atmmodel.csv";
+
     // inputes
-    char atm_dir[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016"; // ATM files == ILATM2 csv files
+    char atm_dir[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/EhsanTest"; // ATM files == ILATM2 csv files
     char misr_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul"; // surf dat files
     char cm_dir[256] = "/home3/mare/Nolin/2016/MaskedSurf/Jul_sdcmClearHC_LandMasked"; // cloud mask data == lsdcm dat files
     //char atmfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/combined_atm.csv";
+
     // output
     char atmmodel[256] = "/home/mare/Ehsan_lab/MISR-roughness/atm_to_csv/SeaIce_Jul2016_atmmodel_cloud_var.csv";
     // char atmmodel[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel_cloud_var.csv"; // old
@@ -130,12 +132,12 @@ int main(char argc, char *argv[]) {
     //char lsmask_fname[256];
     //unsigned char lsmask;
     char xfile[256];
-    char **atm_flist = 0;
+    char **atm_fileList = 0;
     char syear[4];
     char sday[2];
     char smonth[2];
-    char stime[32];
-    char etime[32];
+    char ATMStartTime[32];
+    char ATMEndTime[32];
     char str[16];
     char *words;
     char *sline = NULL;
@@ -146,7 +148,7 @@ int main(char argc, char *argv[]) {
     int path;
     int atm_nfiles = 0;
     int misr_nfiles = 0;
-    int atm_np = 0;
+    int atm_rowNum = 0;
     int i, j, k, n, w;
     int block;
     int atm_found;
@@ -167,37 +169,38 @@ int main(char argc, char *argv[]) {
     int nocloud_x, cloud_x, misscloud_x;
     size_t slen = 0;
     ssize_t read;
+    int ATMnRow = 0;
 
     // Get list of available ATM csv files /////////////////////////////////////////////////////////////////////////////
     dirp = opendir(atm_dir);
     if (dirp) {
-    	while ((entryObj = readdir(dirp)) != NULL) { // num of iterations == num of atm files available == atm_nfiles == entryObj is ptr to fileObj, we create it for every iteration
-		    if (strstr(entryObj->d_name, "combine")) continue; // d_name is string of fileName in fileObj
-		    if (strstr(entryObj->d_name, "SeaIce")) continue;
-		    if (!strstr(entryObj->d_name, ".csv")) continue;
-		    if (atm_flist == 0) {
-                atm_flist = (char **) malloc(sizeof(char *));
-                if (!atm_flist) {
-                    printf("main: couldn't malloc atm_flist\n");
+    	while ((entryObjPtr = readdir(dirp)) != NULL) { // num of iterations == num of ATM files available == atm_nfiles == entryObjPtr is ptr to fileObj, we create it for every iteration = ATM csv file available
+		    if (strstr(entryObjPtr->d_name, "combine")) continue; // d_name is string of fileName in fileObj
+		    if (strstr(entryObjPtr->d_name, "SeaIce")) continue;
+		    if (!strstr(entryObjPtr->d_name, ".csv")) continue;
+		    if (atm_fileList == 0) {
+                atm_fileList = (char **) malloc(sizeof(char *));
+                if (!atm_fileList) {
+                    printf("main: couldn't malloc atm_fileList\n");
                     return 0;
                 }
             }
             else {
-                atm_flist = (char **) realloc(atm_flist, (atm_nfiles + 1) * sizeof(char *));
-                if (!atm_flist) {
-                    printf("getFileList: couldn't realloc atm_flist\n");
+                atm_fileList = (char **) realloc(atm_fileList, (atm_nfiles + 1) * sizeof(char *));
+                if (!atm_fileList) {
+                    printf("getFileList: couldn't realloc atm_fileList\n");
                     return 0;
                 }
             }
-            atm_flist[atm_nfiles] = (char *) malloc(strlen(entryObj->d_name) + 1);
-            if (!atm_flist[atm_nfiles]) {
-                printf("main: couldn't malloc atm_flist[%d]\n", atm_nfiles);
+            atm_fileList[atm_nfiles] = (char *) malloc(strlen(entryObjPtr->d_name) + 1);
+            if (!atm_fileList[atm_nfiles]) {
+                printf("main: couldn't malloc atm_fileList[%d]\n", atm_nfiles);
                 return 0;
             }
-            strcpy(atm_flist[atm_nfiles], entryObj->d_name);
+            strcpy(atm_fileList[atm_nfiles], entryObjPtr->d_name); // fill the list with available ATM files
             atm_nfiles ++;
         }
-    	closedir (dirp);
+    	closedir (dirp); // close the stream
     }
     else {
         strcat(message, "Can't open ");
@@ -205,47 +208,48 @@ int main(char argc, char *argv[]) {
         perror (message);
         return EXIT_FAILURE;
     }
+    printf("num of ATM files read: %d \n" , atm_nfiles);
+    printf("\n");
     // Get list of available ATM csv files /////////////////////////////////////////////////////////////////////////////
 
 
     //for (i = 0; i < atm_nfiles; i++) {
-	//printf("%d %s\n", i, atm_flist[i]);
+	//printf("%d %s\n", i, atm_fileList[i]);
     //}
 
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    for (i = 0; i < atm_nfiles; i++) { // i is num of available ATM files in the list
-        printf("processing atm file: %s \n", atm_flist[i]);
+    for (i = 0; i < atm_nfiles; i++) { // i = num of available ATM files in the list
+        printf("processing ATM file: %s \n", atm_fileList[i]);
         //memset(syear, '\0', sizeof(syear));
-        strncpy(syear, (atm_flist[i] + 7), 4); // get year from file name; why not in ptr format?
+        strncpy(syear, (atm_fileList[i] + 7), 4); // get year from file name; why not in ptr format?
         syear[4] = '\0'; // problem, why syear is printed as empty?
         char* yearCopy = strdup(syear); // replaced every syear with yearCopy
         
         //memset(smonth, '\0', sizeof(smonth));
-        strncpy(smonth, (atm_flist[i] + 11), 2); // get month from file name; how?
+        strncpy(smonth, (atm_fileList[i] + 11), 2); // get month from file name; how?
         smonth[2] = '\0';
         month = atoi(smonth);
 
         //memset(sday, '\0', sizeof(sday));
-        strncpy(sday, (atm_flist[i] + 13), 2); // get dat from file name
+        strncpy(sday, (atm_fileList[i] + 13), 2); // get dat from file name
         sday[2] = '\0';
         printf("yr: %s mon: %d day: %s \n", yearCopy, month, sday);
 
         for (k  = -1; k < 2; k++) { // k=days; yesterday (-1) or tmrw (+1) == 0.5 of the ATM overpass; today=o
-            printf("k = day is= %d \n", k);
+            printf("k day is: %d \n", k);
             day = atoi(sday) + k;
             printf("day of ATM file: %d \n" , day);
-            sprintf(stime, "%s-%02d-%02dT00:00:00Z", yearCopy, month, day); // start time
-            sprintf(etime, "%s-%02d-%02dT23:59:59Z", yearCopy, month, day); // end time
-            printf("process atm: %s %s %s\n", atm_flist[i], stime, etime);
+            sprintf(ATMStartTime, "%s-%02d-%02dT00:00:00Z", yearCopy, month, day); // start time
+            sprintf(ATMEndTime, "%s-%02d-%02dT23:59:59Z", yearCopy, month, day); // end time
+            printf("ATM file & info: %s, %s, %s\n", atm_fileList[i], ATMStartTime, ATMEndTime);
+
             if (k == 0) weight = 1.0; // for today k=0; w=1 of the ATM overpass;
             else weight = 0.5; // yesterday or tmrw; weight=0.5 of the ATM overpass
             //if (monthday[month][day] == 0) {
-            status = MtkTimeRangeToOrbitList(stime, etime, &orbitcnt, &orbitlist); // outputs are orbitCount and list
+            status = MtkTimeRangeToOrbitList(ATMStartTime, ATMEndTime, &orbitcnt, &orbitlist); // outputs are orbitCount and list
             //printf("status: %d \n" , status);
             if (status != MTK_SUCCESS) return 1;
-
-            //printf("loop in all found orbits... to find surf files... \n");
 
             for (j = 0; j < orbitcnt; j++) { // what is orbitcnt? orbitCount; Q- orbit during each day?
                 //printf("orbit-counter: %d in orbit: %d \n" , j, orbitlist[j]);
@@ -253,20 +257,19 @@ int main(char argc, char *argv[]) {
                 if (status != MTK_SUCCESS) return 1;
                 //printf("MISR orbit & path in this k: \n");
                 //printf("orbit %d goes to path: %d \n", orbitlist[j], path); // MISR: checking orbit and path of MISR
-                sprintf(fname, "%s/%s", atm_dir, atm_flist[i]); // ATM: create full path of ATM file(i)
-                fp = fopen(fname, "r"); // create stream=fp for ATM file
+                sprintf(fname, "%s/%s", atm_dir, atm_fileList[i]); // ATM: create full path of each ATM file(i)
+                fp = fopen(fname, "r"); // create stream = fp for ATM file == open ATM file
                 if (!fp) {
                     fprintf(stderr, "main: couldn't open %s \n", fname);
                     return 1;
                 }
-                printf("opening new ATM file to get lat/lon info: %s \n", fname); // the ATM file
-
-                //int nLine = 0;
+                printf("\nopening ATM file (%d) for path (%d) to read each sample/row info: %s \n", i, path, fname); // the ATM file
+                // now associate each ATM row/sample to 3 MISR surf files
                 while ((read = getline(&sline, &slen, fp)) != -1) { // get/read each line of ATM csv
                     //printf("Retrieved line of length \n"); //%zu :\n", read);
                     //printf("%s\n", sline);
-                    //printf("nLine: %d \n" , nLine);
-                    words = strtok (sline," ,"); // gets the 1st token
+                    //printf("ATMnRow: %d \n" , ATMnRow);
+                    words = strtok (sline," ,"); // get the 1st token
                     w = 0;
                     //printf ("%s\n",words);
 //                    if (!strcmp(words, "#")) { // if line starts with #, skip it
@@ -277,7 +280,7 @@ int main(char argc, char *argv[]) {
                     //printf("\n returnNo is: %d \n" , ret);
                     if (strcmp(words, "#") == 0) { // Q- how about this one? --> skip lines with #
                         //printf("\n -ret is: %d \n" , ret);
-                        //printf("found # in csv file; skipping the line in csv \n");
+                        //printf("found # in csv file; skipping the row in csv \n");
                         continue;
                     }
                     while (words != NULL) { // parse line w/o # until we get to the last word in a line
@@ -285,24 +288,24 @@ int main(char argc, char *argv[]) {
                         if (w == 1) xlat = atof(words); // ATM lat
                         if (w == 2) xlon = atof(words); // ATM lon
                         if (w == 6) xrms = atof(words); // roughness = target/label (cm)
-                        if (w == 10) xcam = atof(words); // Track_Identifier- Q- why?
+                        if (w == 10) xcam = atof(words); // Track_Identifier == 0 == nadir ATM camera view
                         words = strtok (NULL, " ,");
                         w++;
                     }
-                    if (xcam != 0) {
-                        //printf("xcam not zero... skipping the ATM sample= %f \n" , xcam);
-                        continue; // Track_Identifier? Q- why check this?
+                    if (xcam != 0) { // if not ATM nadir; we only use nadier
+                        //printf("xcam not nadier (%f)... skipping the ATM sample/row \n" , xcam);
+                        continue;
                     }
-                    status = MtkLatLonToBls(path, 275, xlat, xlon, &block, &fline, &fsample); // assign ATM lat/lon to each block; Q- why block and not pixel?
+                    status = MtkLatLonToBls(path, 275, xlat, xlon, &block, &fline, &fsample); // assign each ATM xlat/xlon/row to each MISR block; Q- why block and not pixel?
                     if (status != MTK_SUCCESS) {
-                        if (block == -1) continue;
+                        if (block == -1) continue; // Q- why -1 ???
                         printf("ERROR for: %f %f %d %f %f", xlat, xlon, block, fline, fsample); // Q- why float for line-sample?
                         return 1;
                     }
                     line = rint(fline); // rounds int
                     sample = rint(fsample); // Q- why round this?
                     //printf("ATM lat/lon to MISR pixel: line: %d; sample: %d \n" , line, sample);
-                    // now select surf files based on the extracted info from ATM files
+                    /* now find/define MISR surf files based on the extracted info from each ATM row; we should look into these files */
                     sprintf(cf_fname, "%s/Cf/surf_p%03d_o%06d_b%03d_cf.dat", misr_dir, path, orbitlist[j], block);
                     //if (access(cf_fname, F_OK) == -1) continue; // check if file is accessible
                     sprintf(ca_fname, "%s/Ca/surf_p%03d_o%06d_b%03d_ca.dat", misr_dir, path, orbitlist[j], block);
@@ -315,65 +318,76 @@ int main(char argc, char *argv[]) {
 //                    if (access(cm_fname, F_OK) == -1) {
 //                        cm_exist = 0;
 //                    }
-                    printf("SUCCESS: %d, %d, %f, %f, %f, %d, %d, %d \n", path, orbitlist[j], xlat, xlon, xrms, block, line, sample); // for each csv row == label info
+                    //printf("SUCCESSFULLY FOUND: %d, %d, %f, %f, %f, %d, %d, %d \n", path, orbitlist[j], xlat, xlon, xrms, block, line, sample); // for each csv row == label info
 
                     // up to here................................
+                    atm_found = 0; // off-false
+                    printf("atm_found1: %d \n" , atm_found);
 
-                    atm_found = 0; // ???
-                    if (atm_np == 0) atm_fileObj = (atm_type * ) malloc(sizeof(atm_type)); // 1st round to create mem-
+                    printf("atm_rowNum1: %d \n" , atm_rowNum);
+                    if (atm_rowNum == 0) atm_fileObj = (atm_type * ) malloc(sizeof(atm_type)); // 1st allocate mem-- for each row of csv file
                     else {
                         n = 0;
-                        while ((n < atm_np) && !atm_found) { // what is this stopping? // we start to fill the fileObj with n
+                        while ((n < atm_rowNum) && !atm_found) { // Q- what is this stopping?
+                            printf("check pointInGrid n: %d, atm_rowNum2: %d \n" , n, atm_rowNum);
+                            /* we start to fill the fileObj with n */
                             if ((atm_fileObj[n].path == path) && (atm_fileObj[n].block == block) && (atm_fileObj[n].line == line) &&
-                                (atm_fileObj[n].sample == sample) && (atm_fileObj[n].weight == weight)) { // what is this condition?
-
-                                    atm_fileObj[n].rms += weight * xrms; // weighted ATM roughness
-                                    atm_fileObj[n].npts += weight; // collect/add num of points
-                                    atm_fileObj[n].var += weight * xrms * xrms; // ????
-                                    atm_found = 1;
+                                (atm_fileObj[n].sample == sample) && (atm_fileObj[n].weight == weight)) { // Q- what is this condition? why check to be the same? in same day in same pixel????
+                                    printf("ATM point found in pixel at n=%d\n" , n);
+                                    atm_fileObj[n].rms += weight * xrms; // sum of weighted ATM roughness
+                                    atm_fileObj[n].npts += weight; // sum of num of points
+                                    atm_fileObj[n].var += weight * xrms * xrms; // sum of what???? variance?
+                                    atm_found = 1; // Q- found in what? pixel??? // turns on here==1
+                                    printf("\n");
                             }
                             n++;
                         }
-                        if (!atm_found) atm_fileObj = (atm_type * ) realloc(atm_fileObj, (atm_np + 1) * sizeof(atm_type));
+                        //printf("notFound1= %d \n" , cond);
+                        if (!atm_found) atm_fileObj = (atm_type * ) realloc(atm_fileObj, (atm_rowNum + 1) * sizeof(atm_type));
                     }
-                    if (!atm_fileObj) {
+                    /*check if mem- is allocated*/
+                    if (!atm_fileObj) { // Q- how not is compared here?
                         fprintf(stderr,  "main: couldn't malloc/realloc atm_fileObj\n");
                         return 0;
                     }
-                    if (!atm_found) {
-                        atm_fileObj[atm_np].path = path;
-                        atm_fileObj[atm_np].orbit = orbitlist[j];
-                        atm_fileObj[atm_np].block = block;
-                        atm_fileObj[atm_np].line = line;
-                        atm_fileObj[atm_np].sample = sample;
-                        atm_fileObj[atm_np].lat = xlat;
-                        atm_fileObj[atm_np].lon = xlon;
-                        atm_fileObj[atm_np].weight = weight;
-                        atm_fileObj[atm_np].cloud = -1;
+                    printf("atm_found2= %d \n" , atm_found);
+                    if (!atm_found) { // if not turned on = true = 1 == still 0
+                        printf("pick new ATMpoint\n");
+                        atm_fileObj[atm_rowNum].path = path;
+                        atm_fileObj[atm_rowNum].orbit = orbitlist[j];
+                        atm_fileObj[atm_rowNum].block = block;
+                        atm_fileObj[atm_rowNum].line = line;
+                        atm_fileObj[atm_rowNum].sample = sample;
+                        atm_fileObj[atm_rowNum].lat = xlat;
+                        atm_fileObj[atm_rowNum].lon = xlon;
+                        atm_fileObj[atm_rowNum].weight = weight;
+                        atm_fileObj[atm_rowNum].cloud = -1; // Q- why -1?
 
-                        read_misr_data(cf_fname, line, sample, &cf);
+                        read_misr_data(cf_fname, line, sample, &cf); // returns 1 pixel value
                         read_misr_data(ca_fname, line, sample, &ca);
                         read_misr_data(an_fname, line, sample, &an);
 
                         if (cm_exist == 1) {
                             read_misr_data(cm_fname, line, sample, &cm); // cloud mask
-                            if (cm > 0) atm_fileObj[atm_np].cloud = 0;
+                            if (cm > 0) atm_fileObj[atm_rowNum].cloud = 0;
                             else {
-                                if (cm == CMASKED) atm_fileObj[atm_np].cloud = 1;
+                                if (cm == CMASKED) atm_fileObj[atm_rowNum].cloud = 1; // Q-???
                             }
                         }
-                        atm_fileObj[atm_np].an = an;
-                        atm_fileObj[atm_np].ca = ca;
-                        atm_fileObj[atm_np].cf = cf;
-                        atm_fileObj[atm_np].npts = weight;
-                        atm_fileObj[atm_np].rms = weight * xrms;
-                        atm_fileObj[atm_np].var = weight * xrms * xrms;
-                        atm_np++;
-                        printf("%d %d %d %d %d %f %f %f\n", atm_np, path, block, line, sample, an, cf, ca);
+                        atm_fileObj[atm_rowNum].an = an;
+                        atm_fileObj[atm_rowNum].ca = ca;
+                        atm_fileObj[atm_rowNum].cf = cf;
+                        atm_fileObj[atm_rowNum].npts = weight;
+                        atm_fileObj[atm_rowNum].rms = weight * xrms;
+                        atm_fileObj[atm_rowNum].var = weight * xrms * xrms;
+                        atm_rowNum++;
+                        printf("\n");
+                        //printf("%d %d %d %d %d %f %f %f\n", atm_rowNum, path, block, line, sample, an, cf, ca);
                     }
-                    //nLine++;
+                ATMnRow++; // counts how many rows are read
                 } // get/read each line of ATM csv
-                fclose(fp);
+                printf("numRows read from csv: %d \n" , ATMnRow);
+                fclose(fp); // fp=ATM file closed
             } // for each orbit num
                 //monthday[month][day] = 1;
             //}
@@ -386,7 +400,7 @@ int main(char argc, char *argv[]) {
     double min_rms = 1e23;
     //fp = fopen(atmfile, "w");
     fm = fopen(atmmodel, "w"); // create and open a csv file to write into it; return the ptr
-    printf("atm_np = %d \n", atm_np);
+    printf("\nfinal atm_rowNum after checking all ATM files, k days, orbits= %d \n", atm_rowNum);
     cloud_pts = 0;
     nocloud_pts = 0;
     misscloud_pts = 0;
@@ -394,17 +408,19 @@ int main(char argc, char *argv[]) {
     nocloud_x = 0;
     misscloud_x = 0;
     orbit_x = 0;
-    for (n = 0; n < atm_np; n++) {
-        atm_fileObj[n].rms /= atm_fileObj[n].npts;
+
+    for (n = 0; n < atm_rowNum; n++) { // Q- why here? why num of points here? what is this num?
+        atm_fileObj[n].rms /= atm_fileObj[n].npts; // average roughness
         atm_fileObj[n].var = sqrt(atm_fileObj[n].var / atm_fileObj[n].npts - atm_fileObj[n].rms * atm_fileObj[n].rms);
-        if (atm_fileObj[n].an > 0) {
+
+        if (atm_fileObj[n].an > 0) { // surf refl > 0
             natm_valid++;
-            avg_valid_rms += atm_fileObj[n].rms;
+            avg_valid_rms += atm_fileObj[n].rms; // sum all
             if (atm_fileObj[n].rms > max_rms) max_rms = atm_fileObj[n].rms;
             if (atm_fileObj[n].rms < min_rms) min_rms = atm_fileObj[n].rms;
             if (atm_fileObj[n].weight == 0.5) natm_half_weight++;
         }
-        avg_rms += atm_fileObj[n].rms;
+        avg_rms += atm_fileObj[n].rms; // sum with initial value
 
         if (atm_fileObj[n].npts > max_npts) max_npts = atm_fileObj[n].npts;
 
@@ -447,10 +463,10 @@ int main(char argc, char *argv[]) {
     }
     //fclose(fp);
     fclose(fm);
-    avg_rms /= atm_np;
+    avg_rms /= atm_rowNum; // Q- why?
     avg_valid_rms /= natm_valid;
 
-    printf("Number of Total ATM rms points = %d\n", atm_np);
+    printf("Number of Total ATM rms points = %d\n", atm_rowNum);
     printf("Number of Valid ATM rms points = %d\n", natm_valid);
     printf("Number of Valid ATM rms with weight of 1.0  = %d\n", natm_valid - natm_half_weight);
     printf("Number of Valid ATM rms with weight of 0.5  = %d\n", natm_half_weight);
