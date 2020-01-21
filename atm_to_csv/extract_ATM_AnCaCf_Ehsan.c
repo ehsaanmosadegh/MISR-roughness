@@ -148,7 +148,7 @@ int main(char argc, char *argv[]) {
     int path;
     int atm_nfiles = 0;
     int misr_nfiles = 0;
-    int atm_rowNum = 0;
+    int ATM_npRow = 0;
     int i, j, k, n, w;
     int block;
     int atm_found;
@@ -323,13 +323,13 @@ int main(char argc, char *argv[]) {
                     // up to here................................
                     atm_found = 0; // off-false
                     printf("atm_found1: %d \n" , atm_found);
+                    printf("atm_np1: %d \n" , ATM_npRow);
 
-                    printf("atm_rowNum1: %d \n" , atm_rowNum);
-                    if (atm_rowNum == 0) atm_fileObj = (atm_type * ) malloc(sizeof(atm_type)); // 1st allocate mem-- for each row of csv file
+                    if (ATM_npRow == 0) atm_fileObj = (atm_type * ) malloc(sizeof(atm_type)); // 1st allocate mem-- for each row of csv file
                     else {
                         n = 0;
-                        while ((n < atm_rowNum) && !atm_found) { // Q- what is this stopping?
-                            printf("check pointInGrid n: %d, atm_rowNum2: %d \n" , n, atm_rowNum);
+                        while ((n < ATM_npRow) && !atm_found) { // Q- what is this stopping?
+                            printf("check pointInGrid n: %d, atm_rowNum2: %d \n" , n, ATM_npRow);
                             /* we start to fill the fileObj with n */
                             if ((atm_fileObj[n].path == path) && (atm_fileObj[n].block == block) && (atm_fileObj[n].line == line) &&
                                 (atm_fileObj[n].sample == sample) && (atm_fileObj[n].weight == weight)) { // Q- what is this condition? why check to be the same? in same day in same pixel????
@@ -343,7 +343,7 @@ int main(char argc, char *argv[]) {
                             n++;
                         }
                         //printf("notFound1= %d \n" , cond);
-                        if (!atm_found) atm_fileObj = (atm_type * ) realloc(atm_fileObj, (atm_rowNum + 1) * sizeof(atm_type));
+                        if (!atm_found) atm_fileObj = (atm_type * ) realloc(atm_fileObj, (ATM_npRow + 1) * sizeof(atm_type));
                     }
                     /*check if mem- is allocated*/
                     if (!atm_fileObj) { // Q- how not is compared here?
@@ -353,15 +353,15 @@ int main(char argc, char *argv[]) {
                     printf("atm_found2= %d \n" , atm_found);
                     if (!atm_found) { // if not turned on = true = 1 == still 0
                         printf("pick new ATMpoint\n");
-                        atm_fileObj[atm_rowNum].path = path;
-                        atm_fileObj[atm_rowNum].orbit = orbitlist[j];
-                        atm_fileObj[atm_rowNum].block = block;
-                        atm_fileObj[atm_rowNum].line = line;
-                        atm_fileObj[atm_rowNum].sample = sample;
-                        atm_fileObj[atm_rowNum].lat = xlat;
-                        atm_fileObj[atm_rowNum].lon = xlon;
-                        atm_fileObj[atm_rowNum].weight = weight;
-                        atm_fileObj[atm_rowNum].cloud = -1; // Q- why -1?
+                        atm_fileObj[ATM_npRow].path = path;
+                        atm_fileObj[ATM_npRow].orbit = orbitlist[j];
+                        atm_fileObj[ATM_npRow].block = block;
+                        atm_fileObj[ATM_npRow].line = line;
+                        atm_fileObj[ATM_npRow].sample = sample;
+                        atm_fileObj[ATM_npRow].lat = xlat;
+                        atm_fileObj[ATM_npRow].lon = xlon;
+                        atm_fileObj[ATM_npRow].weight = weight;
+                        atm_fileObj[ATM_npRow].cloud = -1; // Q- why -1?
 
                         read_misr_data(cf_fname, line, sample, &cf); // returns 1 pixel value
                         read_misr_data(ca_fname, line, sample, &ca);
@@ -369,22 +369,22 @@ int main(char argc, char *argv[]) {
 
                         if (cm_exist == 1) {
                             read_misr_data(cm_fname, line, sample, &cm); // cloud mask
-                            if (cm > 0) atm_fileObj[atm_rowNum].cloud = 0;
+                            if (cm > 0) atm_fileObj[ATM_npRow].cloud = 0;
                             else {
-                                if (cm == CMASKED) atm_fileObj[atm_rowNum].cloud = 1; // Q-???
+                                if (cm == CMASKED) atm_fileObj[ATM_npRow].cloud = 1; // Q-???
                             }
                         }
-                        atm_fileObj[atm_rowNum].an = an;
-                        atm_fileObj[atm_rowNum].ca = ca;
-                        atm_fileObj[atm_rowNum].cf = cf;
-                        atm_fileObj[atm_rowNum].npts = weight;
-                        atm_fileObj[atm_rowNum].rms = weight * xrms;
-                        atm_fileObj[atm_rowNum].var = weight * xrms * xrms;
-                        atm_rowNum++;
+                        atm_fileObj[ATM_npRow].an = an;
+                        atm_fileObj[ATM_npRow].ca = ca;
+                        atm_fileObj[ATM_npRow].cf = cf;
+                        atm_fileObj[ATM_npRow].npts = weight;
+                        atm_fileObj[ATM_npRow].rms = weight * xrms;
+                        atm_fileObj[ATM_npRow].var = weight * xrms * xrms;
+                        ATM_npRow++;
                         printf("\n");
-                        //printf("%d %d %d %d %d %f %f %f\n", atm_rowNum, path, block, line, sample, an, cf, ca);
+                        //printf("%d %d %d %d %d %f %f %f\n", ATM_npRow, path, block, line, sample, an, cf, ca);
                     }
-                ATMnRow++; // counts how many rows are read
+                ATMnRow++; // E- counts how many rows are read
                 } // get/read each line of ATM csv
                 printf("numRows read from csv: %d \n" , ATMnRow);
                 fclose(fp); // fp=ATM file closed
@@ -400,7 +400,7 @@ int main(char argc, char *argv[]) {
     double min_rms = 1e23;
     //fp = fopen(atmfile, "w");
     fm = fopen(atmmodel, "w"); // create and open a csv file to write into it; return the ptr
-    printf("\nfinal atm_rowNum after checking all ATM files, k days, orbits= %d \n", atm_rowNum);
+    printf("\nfinal ATM_npRow after checking all ATM files, k days, orbits= %d \n", ATM_npRow);
     cloud_pts = 0;
     nocloud_pts = 0;
     misscloud_pts = 0;
@@ -409,7 +409,7 @@ int main(char argc, char *argv[]) {
     misscloud_x = 0;
     orbit_x = 0;
 
-    for (n = 0; n < atm_rowNum; n++) { // Q- why here? why num of points here? what is this num?
+    for (n = 0; n < ATM_npRow; n++) { // Q- why here? why num of points here? what is this num?
         atm_fileObj[n].rms /= atm_fileObj[n].npts; // average roughness
         atm_fileObj[n].var = sqrt(atm_fileObj[n].var / atm_fileObj[n].npts - atm_fileObj[n].rms * atm_fileObj[n].rms);
 
@@ -463,10 +463,10 @@ int main(char argc, char *argv[]) {
     }
     //fclose(fp);
     fclose(fm);
-    avg_rms /= atm_rowNum; // Q- why?
+    avg_rms /= ATM_npRow; // Q- why?
     avg_valid_rms /= natm_valid;
 
-    printf("Number of Total ATM rms points = %d\n", atm_rowNum);
+    printf("Number of Total ATM rms points = %d\n", ATM_npRow);
     printf("Number of Valid ATM rms points = %d\n", natm_valid);
     printf("Number of Valid ATM rms with weight of 1.0  = %d\n", natm_valid - natm_half_weight);
     printf("Number of Valid ATM rms with weight of 0.5  = %d\n", natm_half_weight);
