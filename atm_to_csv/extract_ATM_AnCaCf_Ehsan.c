@@ -148,7 +148,7 @@ int main(char argc, char *argv[]) {
     int path;
     int atm_nfiles = 0;
     int misr_nfiles = 0;
-    int ATM_npRow = 0;
+    int ATM_np = 0;
     int i, j, k, n, w;
     int block;
     int atm_found;
@@ -169,7 +169,7 @@ int main(char argc, char *argv[]) {
     int nocloud_x, cloud_x, misscloud_x;
     size_t slen = 0;
     ssize_t read;
-    int ATMnRow = 0;
+    //int ATMnRow = 0;
 
     // Get list of available ATM csv files /////////////////////////////////////////////////////////////////////////////
     dirp = opendir(atm_dir);
@@ -220,7 +220,7 @@ int main(char argc, char *argv[]) {
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     for (i = 0; i < atm_nfiles; i++) { // i = num of available ATM files in the list
-        printf("processing ATM file: %s \n", atm_fileList[i]);
+        printf("========== ATM file: %s \n", atm_fileList[i]);
         //memset(syear, '\0', sizeof(syear));
         strncpy(syear, (atm_fileList[i] + 7), 4); // get year from file name; why not in ptr format?
         syear[4] = '\0'; // problem, why syear is printed as empty?
@@ -237,12 +237,12 @@ int main(char argc, char *argv[]) {
         printf("yr: %s mon: %d day: %s \n", yearCopy, month, sday);
 
         for (k  = -1; k < 2; k++) { // k=days; yesterday (-1) or tmrw (+1) == 0.5 of the ATM overpass; today=o
-            printf("k day is: %d \n", k);
+            printf("===k: %d \n", k);
             day = atoi(sday) + k;
-            printf("day of ATM file: %d \n" , day);
+            printf("day: %d \n" , day);
             sprintf(ATMStartTime, "%s-%02d-%02dT00:00:00Z", yearCopy, month, day); // start time
             sprintf(ATMEndTime, "%s-%02d-%02dT23:59:59Z", yearCopy, month, day); // end time
-            printf("ATM file & info: %s, %s, %s\n", atm_fileList[i], ATMStartTime, ATMEndTime);
+            printf("ATM file info: %s, %s, %s\n", atm_fileList[i], ATMStartTime, ATMEndTime);
 
             if (k == 0) weight = 1.0; // for today k=0; w=1 of the ATM overpass;
             else weight = 0.5; // yesterday or tmrw; weight=0.5 of the ATM overpass
@@ -252,7 +252,7 @@ int main(char argc, char *argv[]) {
             if (status != MTK_SUCCESS) return 1;
 
             for (j = 0; j < orbitcnt; j++) { // what is orbitcnt? orbitCount; Q- orbit during each day?
-                //printf("orbit-counter: %d in orbit: %d \n" , j, orbitlist[j]);
+                printf("=== next orbit: (%d) for k_day (%d)\n" , orbitlist[j], k);
                 status = MtkOrbitToPath(orbitlist[j], &path); // what is path, given the orbit? or which path the orbit belong to?
                 if (status != MTK_SUCCESS) return 1;
                 //printf("MISR orbit & path in this k: \n");
@@ -263,12 +263,13 @@ int main(char argc, char *argv[]) {
                     fprintf(stderr, "main: couldn't open %s \n", fname);
                     return 1;
                 }
-                printf("\nopening ATM file (%d) for path (%d) to read each sample/row info: %s \n", i, path, fname); // the ATM file
+                printf("\n______open ATM fileNum(%d), orbit/path(%d), in day_k(%d), WhileLoop each sample/row info from: %s \n\n", i, path, k, fname); // the ATM file
+                //printf("_________________________________________________________________________________________\n");
                 // now associate each ATM row/sample to 3 MISR surf files
-                while ((read = getline(&sline, &slen, fp)) != -1) { // get/read each line of ATM csv
+                while ((read = getline(&sline, &slen, fp)) != -1) { // read each line of each ATM csv
+                    //printf("read each ATM line\n");
                     //printf("Retrieved line of length \n"); //%zu :\n", read);
-                    //printf("%s\n", sline);
-                    //printf("ATMnRow: %d \n" , ATMnRow);
+                    //printf("ATM line: %s\n", sline);
                     words = strtok (sline," ,"); // get the 1st token
                     w = 0;
                     //printf ("%s\n",words);
@@ -279,7 +280,6 @@ int main(char argc, char *argv[]) {
                     int ret = strcmp(words, "#");
                     //printf("\n returnNo is: %d \n" , ret);
                     if (strcmp(words, "#") == 0) { // Q- how about this one? --> skip lines with #
-                        //printf("\n -ret is: %d \n" , ret);
                         //printf("found # in csv file; skipping the row in csv \n");
                         continue;
                     }
@@ -298,9 +298,12 @@ int main(char argc, char *argv[]) {
                     }
                     status = MtkLatLonToBls(path, 275, xlat, xlon, &block, &fline, &fsample); // assign each ATM xlat/xlon/row to each MISR block; Q- why block and not pixel?
                     if (status != MTK_SUCCESS) {
-                        if (block == -1) continue; // Q- why -1 ???
-                        printf("ERROR for: %f %f %d %f %f", xlat, xlon, block, fline, fsample); // Q- why float for line-sample?
-                        return 1;
+                        if (block == -1) { //Q- why/when it gets -1?
+                            //printf("lat/lon to block = %d, continue! \n", block);
+                            continue;
+                        } // Q- why -1 ???
+//                        printf("ERROR for: %f %f %d %f %f", xlat, xlon, block, fline, fsample); // Q- why float for line-sample?
+//                        return 1;
                     }
                     line = rint(fline); // rounds int
                     sample = rint(fsample); // Q- why round this?
@@ -318,50 +321,52 @@ int main(char argc, char *argv[]) {
 //                    if (access(cm_fname, F_OK) == -1) {
 //                        cm_exist = 0;
 //                    }
-                    //printf("SUCCESSFULLY FOUND: %d, %d, %f, %f, %f, %d, %d, %d \n", path, orbitlist[j], xlat, xlon, xrms, block, line, sample); // for each csv row == label info
+                    printf("FOUND: MISR-ATM info: %d, %d, %d, %d, %d, %f, %f, %f\n", path, orbitlist[j], block, line, sample, xlat, xlon, xrms); // for each csv row == label info
 
-                    // up to here................................
-                    atm_found = 0; // off-false
-                    printf("atm_found1: %d \n" , atm_found);
-                    printf("atm_np1: %d \n" , ATM_npRow);
+                    atm_found = 0; // a switch to ...
+                    //printf("atm_found1: %d \n" , atm_found);
+                    //printf("atm_np1: %d \n" , ATM_np);
 
-                    if (ATM_npRow == 0) atm_fileObj = (atm_type * ) malloc(sizeof(atm_type)); // 1st allocate mem-- for each row of csv file
+                    if (ATM_np == 0) atm_fileObj = (atm_type *) malloc(sizeof(atm_type)); // 1st allocate mem-- for each row of csv file
                     else {
                         n = 0;
-                        while ((n < ATM_npRow) && !atm_found) { // Q- what is this stopping?
-                            printf("check pointInGrid n: %d, atm_rowNum2: %d \n" , n, ATM_npRow);
-                            /* we start to fill the fileObj with n */
+                        while ((n < ATM_np) && !atm_found) { // Q- what is this stopping? == checks all points inside fileObj?
+                            /* we compare new path/block/... (associated with ATM point/row) with every n path available in fileObj;
+                             * if similar found, ATM point is in MISR pixel and we sum rms/otherValues to previous ones in fileObj */
+                            //printf("check if new point is in pixel...\n");
                             if ((atm_fileObj[n].path == path) && (atm_fileObj[n].block == block) && (atm_fileObj[n].line == line) &&
                                 (atm_fileObj[n].sample == sample) && (atm_fileObj[n].weight == weight)) { // Q- what is this condition? why check to be the same? in same day in same pixel????
-                                    printf("ATM point found in pixel at n=%d\n" , n);
-                                    atm_fileObj[n].rms += weight * xrms; // sum of weighted ATM roughness
-                                    atm_fileObj[n].npts += weight; // sum of num of points
+                                    printf("point is in MISR pixel for day=(%d), we sum it with previous ones.\n\n" , k);
+                                    atm_fileObj[n].rms += weight * xrms; // sum of weighted ATM roughness in the same pixel?
+                                    atm_fileObj[n].npts += weight; // sum of num of points in the same pixel?
                                     atm_fileObj[n].var += weight * xrms * xrms; // sum of what???? variance?
                                     atm_found = 1; // Q- found in what? pixel??? // turns on here==1
-                                    printf("\n");
                             }
+//                            else{
+//                                printf("ATM point not in MISR pixel\n");
+//                            }
                             n++;
                         }
                         //printf("notFound1= %d \n" , cond);
-                        if (!atm_found) atm_fileObj = (atm_type * ) realloc(atm_fileObj, (ATM_npRow + 1) * sizeof(atm_type));
+                        if (!atm_found) atm_fileObj = (atm_type * ) realloc(atm_fileObj, (ATM_np + 1) * sizeof(atm_type));
                     }
-                    /*check if mem- is allocated*/
+                    /* check if mem- is allocated */
                     if (!atm_fileObj) { // Q- how not is compared here?
                         fprintf(stderr,  "main: couldn't malloc/realloc atm_fileObj\n");
                         return 0;
                     }
-                    printf("atm_found2= %d \n" , atm_found);
+                    //printf("atm_found2= %d \n" , atm_found);
                     if (!atm_found) { // if not turned on = true = 1 == still 0
-                        printf("pick new ATMpoint\n");
-                        atm_fileObj[ATM_npRow].path = path;
-                        atm_fileObj[ATM_npRow].orbit = orbitlist[j];
-                        atm_fileObj[ATM_npRow].block = block;
-                        atm_fileObj[ATM_npRow].line = line;
-                        atm_fileObj[ATM_npRow].sample = sample;
-                        atm_fileObj[ATM_npRow].lat = xlat;
-                        atm_fileObj[ATM_npRow].lon = xlon;
-                        atm_fileObj[ATM_npRow].weight = weight;
-                        atm_fileObj[ATM_npRow].cloud = -1; // Q- why -1?
+                        //printf("pick new ATMpoint\n");
+                        atm_fileObj[ATM_np].path = path;
+                        atm_fileObj[ATM_np].orbit = orbitlist[j];
+                        atm_fileObj[ATM_np].block = block;
+                        atm_fileObj[ATM_np].line = line;
+                        atm_fileObj[ATM_np].sample = sample;
+                        atm_fileObj[ATM_np].lat = xlat;
+                        atm_fileObj[ATM_np].lon = xlon;
+                        atm_fileObj[ATM_np].weight = weight;
+                        atm_fileObj[ATM_np].cloud = -1; // Q- why -1?
 
                         read_misr_data(cf_fname, line, sample, &cf); // returns 1 pixel value
                         read_misr_data(ca_fname, line, sample, &ca);
@@ -369,24 +374,25 @@ int main(char argc, char *argv[]) {
 
                         if (cm_exist == 1) {
                             read_misr_data(cm_fname, line, sample, &cm); // cloud mask
-                            if (cm > 0) atm_fileObj[ATM_npRow].cloud = 0;
+                            if (cm > 0) atm_fileObj[ATM_np].cloud = 0;
                             else {
-                                if (cm == CMASKED) atm_fileObj[ATM_npRow].cloud = 1; // Q-???
+                                if (cm == CMASKED) atm_fileObj[ATM_np].cloud = 1; // Q-???
                             }
                         }
-                        atm_fileObj[ATM_npRow].an = an;
-                        atm_fileObj[ATM_npRow].ca = ca;
-                        atm_fileObj[ATM_npRow].cf = cf;
-                        atm_fileObj[ATM_npRow].npts = weight;
-                        atm_fileObj[ATM_npRow].rms = weight * xrms;
-                        atm_fileObj[ATM_npRow].var = weight * xrms * xrms;
-                        ATM_npRow++;
-                        printf("\n");
-                        //printf("%d %d %d %d %d %f %f %f\n", ATM_npRow, path, block, line, sample, an, cf, ca);
+                        atm_fileObj[ATM_np].an = an;
+                        atm_fileObj[ATM_np].ca = ca;
+                        atm_fileObj[ATM_np].cf = cf;
+                        atm_fileObj[ATM_np].npts = weight;
+                        atm_fileObj[ATM_np].rms = weight * xrms;
+                        atm_fileObj[ATM_np].var = weight * xrms * xrms;
+
+                        ATM_np++;
+                        //printf("ATM_np updates.........................\n");
+                        //printf("%d %d %d %d %d %f %f %f\n", ATM_np, path, block, line, sample, an, cf, ca);
                     }
-                ATMnRow++; // E- counts how many rows are read
+                    printf("go to next ATM line...\n");  // E- counts how many rows are read
                 } // get/read each line of ATM csv
-                printf("numRows read from csv: %d \n" , ATMnRow);
+                printf("*** close csv and go to next orbit ============\n");
                 fclose(fp); // fp=ATM file closed
             } // for each orbit num
                 //monthday[month][day] = 1;
@@ -394,13 +400,14 @@ int main(char argc, char *argv[]) {
         }
     }
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // up to here................................
 
     double max_npts = -1e23;
     double max_rms = -1e23;
     double min_rms = 1e23;
     //fp = fopen(atmfile, "w");
     fm = fopen(atmmodel, "w"); // create and open a csv file to write into it; return the ptr
-    printf("\nfinal ATM_npRow after checking all ATM files, k days, orbits= %d \n", ATM_npRow);
+    printf("\nfinal ATM_np after checking all ATM files, k days, orbits= %d \n", ATM_np);
     cloud_pts = 0;
     nocloud_pts = 0;
     misscloud_pts = 0;
@@ -409,7 +416,7 @@ int main(char argc, char *argv[]) {
     misscloud_x = 0;
     orbit_x = 0;
 
-    for (n = 0; n < ATM_npRow; n++) { // Q- why here? why num of points here? what is this num?
+    for (n = 0; n < ATM_np; n++) { // Q- why here? why num of points here? what is this num?
         atm_fileObj[n].rms /= atm_fileObj[n].npts; // average roughness
         atm_fileObj[n].var = sqrt(atm_fileObj[n].var / atm_fileObj[n].npts - atm_fileObj[n].rms * atm_fileObj[n].rms);
 
@@ -463,10 +470,10 @@ int main(char argc, char *argv[]) {
     }
     //fclose(fp);
     fclose(fm);
-    avg_rms /= ATM_npRow; // Q- why?
+    avg_rms /= ATM_np; // Q- why?
     avg_valid_rms /= natm_valid;
 
-    printf("Number of Total ATM rms points = %d\n", ATM_npRow);
+    printf("Number of Total ATM rms points = %d\n", ATM_np);
     printf("Number of Valid ATM rms points = %d\n", natm_valid);
     printf("Number of Valid ATM rms with weight of 1.0  = %d\n", natm_valid - natm_half_weight);
     printf("Number of Valid ATM rms with weight of 0.5  = %d\n", natm_half_weight);
