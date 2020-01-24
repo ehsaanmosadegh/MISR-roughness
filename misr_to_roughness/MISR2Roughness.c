@@ -131,14 +131,15 @@ int write_data(char *fname, double *data, int nlines, int nsamples)
 //#####################################################################################################
 
 int pixel2grid(int path, int block, int line, int sample, double* xlat, double* xlon, int* r, int* c)
-{ // receives path-block-line-sample and updates/outputs xlat,xlon,r,c
+{ // receives path-block-line-sample as pointer(mem-add) and updates/outputs xlat,xlon,r,c in mem-
+
 int status;
 char *errs[] = MTK_ERR_DESC;
 double lat, lon;
 /* parameters for grid stereographic : 				*/
 /* MOD44W.A2000055.h14v01.005.2009212173527_MOD44W_250m_GRID.dat	*/ 
 //printf("lat before: %d \n", lat);
-status = MtkBlsToLatLon(path, 275, block, line * 1.0, sample * 1.0, &lat, &lon);
+status = MtkBlsToLatLon(path, 275, block, line * 1.0, sample * 1.0, &lat, &lon); // returns lat/lon of a pixel
 //printf("lat after: %d \n", lat);
 
 if (status != MTK_SUCCESS) 
@@ -156,8 +157,8 @@ double lat0 = 90.0;
 // out
 *xlat = lat; // updates value at xlat == lat
 *xlon = lon; // updates value at xlon == lon
-*c = rint((lon - lon0)/psize);
-*r = rint(-(lat - lat0)/psize);
+*c = rint((lon - lon0)/psize); // Q- what is c?
+*r = rint(-(lat - lat0)/psize); // Q- what is r?
 
 return 1;
 }
@@ -417,6 +418,9 @@ int main(char argc, char *argv[]) {
 
     printf("Processing MISR files ...\n");
     for (i = 0; i < misr_nfiles; i++) { // i= loop for each num of surf MISR files found
+
+        /* ******************* find the path and orbit from file labels ***************************** */
+
         if (strstr(misr_fileList[i], "_p")) {   // search for _P in the file name, find _P in each surf file
             strncpy(spath, strstr(misr_fileList[i], "_p") + 2, 3); // find path
             spath[3] = 0; // Q- why? fills the 3 or 4 element?
@@ -444,6 +448,8 @@ int main(char argc, char *argv[]) {
         }
         // fix file labeling here ???????????????????????????????????????????????????????????????????????????????????????????????
 
+        /* ******************* labelling ca, cf, ca surf files ***************************** */
+
         //printf("misr list file: %s \n", misr_fileList[i]);
         sprintf(an_fname, "%s/%s", surf_masked_dir, misr_fileList[i]);      // stores surf fileName into an_fname buffer
         printf("an_fname: %s \n", an_fname);
@@ -455,7 +461,6 @@ int main(char argc, char *argv[]) {
         strsub(cf_fname, "An", "Cf"); // why this? // substitute an with cf in any format
         strsub(cf_fname, "_an", "_cf"); // substitute an with cfront!
         //printf("cf_fname after: %s \n",cf_fname);
-        printf("\n");
 
         // fix acceess here ???????????????????????????????????????????????????????????????????????????????????????????????
         // check if cf_fname is accessible
@@ -477,7 +482,7 @@ int main(char argc, char *argv[]) {
         // check if file is accessible, returns 0
         //if (access(ca_fname, F_OK) == -1) continue; // check if file exists, returns 0
 
-        printf("reading MISR surf file data\n");
+        printf("reading data from MISR surf file...\n");
         /* read MISR surf files */
         if (!read_data(an_fname, nlines, nsamples, &an_data)) return 0; // we fill an_data array from: an_fname
         //printf("%d %s\n", i, an_fname);
