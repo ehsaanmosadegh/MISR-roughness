@@ -1,5 +1,7 @@
 /* Ehsan Jan 15, 2020
-from dir: /home/mare/Nolin/SeaIce/Code/C
+originally from dir: /home/mare/Nolin/SeaIce/Code/C
+name: atm_to_misr_pixels.c
+usage: associates ATM roughness values to surf refl MISR pixels
 */
 
 #include <stdio.h>
@@ -63,18 +65,18 @@ int read_misr_data(char *fname, int line, int sample, double *data)
 
     f = fopen(fname, "r");
     if (!f) {
-	fprintf(stderr,  "read_data: couldn't open %s\n", fname);
+	fprintf(stderr,  "read_surf_data: couldn't open %s\n", fname);
 	return 0;
     }
 	
     array_data = (double *) malloc(nlines * nsamples * sizeof(double));
     if (!array_data) {
-	fprintf(stderr,  "read_data: couldn't malloc data\n");
+	fprintf(stderr,  "read_surf_data: couldn't malloc data\n");
 	return 0;
     }
 	
     if (fread(array_data, sizeof(double), (nlines * nsamples), f) != nlines * nsamples) { // On success, it reads n items from the file and returns n. On error or end of the file, it returns a number less than n.
-	fprintf(stderr,  "read_data: couldn't read data in %s\n", fname);
+	fprintf(stderr,  "read_surf_data: couldn't read data in %s\n", fname);
 	return 0;
     }
 
@@ -111,13 +113,13 @@ int main(char argc, char *argv[]) {
     //char atmmodel[256] = "/home/mare/Nolin/SeaIce/ILATM2.002/SeaIce_Apr2013_atmmodel.csv";
 
     // inputes
-    char atm_dir[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/april_atm_Ehsan"; // ATM files == ILATM2 csv files
+    char atm_dir[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/EhsanTest"; // ATM files == ILATM2 csv files
     char surf_masked_file_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul"; // surf dat files
     char cm_dir[256] = "/home3/mare/Nolin/2016/MaskedSurf/Jul_sdcmClearHC_LandMasked"; // cloud mask data == lsdcm dat files
     //char atmfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/combined_atm.csv";
 
     // output
-    char atmmodel[256] = "/home/mare/Ehsan_lab/MISR-roughness/atm_to_csv/Ehsan_Apr2016_atmmodel_cloud_var.csv";
+    char atmmodel[256] = "/home/mare/Ehsan_lab/MISR-roughness/atm_to_misr_pixels/Ehsan_Apr2016_atmmodel_cloud_var.csv";
     // char atmmodel[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel_cloud_var.csv"; // old
     //char lsmask_dir[256] = "/home/mare/Nolin/SeaIce/LWData/MISR_LandSeaMask";
     char message[256];
@@ -147,7 +149,7 @@ int main(char argc, char *argv[]) {
     int path;
     int atm_nfiles = 0;
     int misr_nfiles = 0;
-    int ATM_FO_element = 0;
+    int ATM_fileObj_element = 0;
     int i, j, k, n, w;
     int block;
     int atm_found;
@@ -252,7 +254,7 @@ int main(char argc, char *argv[]) {
             if (status != MTK_SUCCESS) return 1;
 
             for (j = 0; j < orbitcnt; j++) { // what is orbitcnt? orbitCount; Q- orbit during each day?
-                printf("for: next orbit: (%d) for k_day (%d)\n" , orbitlist[j], k);
+                printf("processing MISR orbit: (%d); k_day (%d)\n" , orbitlist[j], k);
                 status = MtkOrbitToPath(orbitlist[j], &path); // what is path, given the orbit? or which path the orbit belong to?
                 if (status != MTK_SUCCESS) return 1;
                 //printf("MISR orbit & path in this k: \n");
@@ -264,7 +266,7 @@ int main(char argc, char *argv[]) {
                     return 1;
                 }
 
-                printf("\n______open ATM fileNum(%d), orbit/path(%d), in day_k(%d), WhileLoop each sample/row info from: %s \n\n", i, path, k, fname); // the ATM file
+                //printf("\n______open ATM fileNum(%d), orbit/path(%d), in day_k(%d), WhileLoop each sample/row info from: %s \n\n", i, path, k, fname); // the ATM file
                 // now associate each ATM row/sample to 3 MISR surf files
                 while ((read = getline(&sline, &slen, fp)) != -1) { // read each line of each ATM csv
                     // printf("--- processing ATM line (%d) in file (%d) \n", ATMnewLine, i);  // E- counts how many rows are read
@@ -330,17 +332,17 @@ int main(char argc, char *argv[]) {
                     atm_found = 0; // a switch to check every new point, reset to zero for every new entry=ATM line
                     //printf("atm_found1: %d \n" , atm_found);
 
-                    if (ATM_FO_element == 0) atm_fileObj = (atm_type *) malloc(sizeof(atm_type)); // 1st allocate mem-- for each row of csv file
-                    else { /* for 2nd ATM_FO_element and the rest */
+                    if (ATM_fileObj_element == 0) atm_fileObj = (atm_type *) malloc(sizeof(atm_type)); // 1st allocate mem-- for each row of csv file
+                    else { /* for 2nd ATM_fileObj_element and the rest */
                         n = 0;
-                        while ((n < ATM_FO_element) && !atm_found) { // checks all points inside fileObj until pixel is found
+                        while ((n < ATM_fileObj_element) && !atm_found) { // checks all points inside fileObj until pixel is found
                             /* we compare new path/block/... (associated with ATM point/row) with every n path available in fileObj;
                              * if similar pixel was found, ATM point is in MISR pixel and we sum rms/npts to previous pixel values in fileObj,
                              * esle: */
                             if ((atm_fileObj[n].path == path) && (atm_fileObj[n].block == block) && (atm_fileObj[n].line == line) &&
                                 (atm_fileObj[n].sample == sample) && (atm_fileObj[n].weight == weight)) {   // Q- what is this condition? why check to be the same? in same day in same pixel????
                                     //printf(">>> FOUND: ATM point in MISR pixel: summing with past ones...\n");
-                                    printf(">>> FOUND: ATM in MISR pixel >>> day: (%d), path: (%d), block: (%d), line: (%d), sample: (%d)\n\n", k, path, block, line, sample);
+                                    //printf(">>> FOUND: ATM in MISR pixel >>> day: (%d), path: (%d), block: (%d), line: (%d), sample: (%d)\n\n", k, path, block, line, sample);
                                     atm_fileObj[n].rms += weight * xrms; // sum of weighted ATM roughness in the same pixel?
                                     atm_fileObj[n].npts += weight; // sum of num of points in the same pixel?
                                     atm_fileObj[n].var += weight * xrms * xrms; // sum of what???? variance?
@@ -349,7 +351,7 @@ int main(char argc, char *argv[]) {
                             n++; // iterate to next point in file Obj
                         }
                         /* if ATM point not found in previous MISR pixels so far, we allocate mem- for new the new point in atm_fileObj */
-                        if (!atm_found) atm_fileObj = (atm_type * ) realloc(atm_fileObj, (ATM_FO_element + 1) * sizeof(atm_type));
+                        if (!atm_found) atm_fileObj = (atm_type * ) realloc(atm_fileObj, (ATM_fileObj_element + 1) * sizeof(atm_type));
                     }
                     /* check if mem- is allocated */
                     if (!atm_fileObj) {
@@ -359,41 +361,46 @@ int main(char argc, char *argv[]) {
                     /* since the new ATM point was not found in previous MISR pixels, we add it as new dataPoint in a new pixel */
                     if (!atm_found) { /* if we could not find any MISR pixel associated to ATM data location,
  *                                      we add that point as new pixel along ATM flight path */
-                        atm_fileObj[ATM_FO_element].path = path;
-                        atm_fileObj[ATM_FO_element].orbit = orbitlist[j];
-                        atm_fileObj[ATM_FO_element].block = block;
-                        atm_fileObj[ATM_FO_element].line = line;
-                        atm_fileObj[ATM_FO_element].sample = sample;
-                        atm_fileObj[ATM_FO_element].lat = xlat;
-                        atm_fileObj[ATM_FO_element].lon = xlon;
-                        atm_fileObj[ATM_FO_element].weight = weight;
-                        atm_fileObj[ATM_FO_element].cloud = -1; // Q- why -1?
+                        atm_fileObj[ATM_fileObj_element].path = path;
+                        atm_fileObj[ATM_fileObj_element].orbit = orbitlist[j];
+                        atm_fileObj[ATM_fileObj_element].block = block;
+                        atm_fileObj[ATM_fileObj_element].line = line;
+                        atm_fileObj[ATM_fileObj_element].sample = sample;
+                        atm_fileObj[ATM_fileObj_element].lat = xlat;
+                        atm_fileObj[ATM_fileObj_element].lon = xlon;
+                        atm_fileObj[ATM_fileObj_element].weight = weight;
+                        atm_fileObj[ATM_fileObj_element].cloud = -1; // Q- why -1?
 
                         read_misr_data(cf_fname, line, sample, &cf); // returns 1 pixel value
                         read_misr_data(ca_fname, line, sample, &ca);
                         read_misr_data(an_fname, line, sample, &an);
+//                        printf("an: %f \n" , an);
+//                        printf("cf: %f \n" , cf);
+//                        printf("ca: %f \n" , ca);
+                        //printf("\n");
+
 
                         if (cm_exist == 1) {
                             read_misr_data(cm_fname, line, sample, &cm); // cloud mask
-                            if (cm > 0) atm_fileObj[ATM_FO_element].cloud = 0;
+                            if (cm > 0) atm_fileObj[ATM_fileObj_element].cloud = 0;
                             else {
-                                if (cm == CMASKED) atm_fileObj[ATM_FO_element].cloud = 1; // Q-???
+                                if (cm == CMASKED) atm_fileObj[ATM_fileObj_element].cloud = 1; // Q-???
                             }
                         }
-                        atm_fileObj[ATM_FO_element].an = an;
-                        atm_fileObj[ATM_FO_element].ca = ca;
-                        atm_fileObj[ATM_FO_element].cf = cf;
-                        atm_fileObj[ATM_FO_element].npts = weight;
-                        atm_fileObj[ATM_FO_element].rms = weight * xrms;
-                        atm_fileObj[ATM_FO_element].var = weight * xrms * xrms;
+                        atm_fileObj[ATM_fileObj_element].an = an;
+                        atm_fileObj[ATM_fileObj_element].ca = ca;
+                        atm_fileObj[ATM_fileObj_element].cf = cf;
+                        atm_fileObj[ATM_fileObj_element].npts = weight;
+                        atm_fileObj[ATM_fileObj_element].rms = weight * xrms;
+                        atm_fileObj[ATM_fileObj_element].var = weight * xrms * xrms;
 
-                        ATM_FO_element++; // increment for every fileObj element
-                        //printf("ATM_FO_element updates.........................\n");
-                        //printf("%d %d %d %d %d %f %f %f\n", ATM_FO_element, path, block, line, sample, an, cf, ca);
+                        ATM_fileObj_element++; // increment for every fileObj element
+                        //printf("ATM_fileObj_element updates.........................\n");
+                        //printf("%d %d %d %d %d %f %f %f\n", ATM_fileObj_element, path, block, line, sample, an, cf, ca);
                     }
                     ATMnewLine++;
                 } // get/read each line of ATM csv
-                printf("*** close csv and go to next orbit\n");
+                //printf("*** close csv and go to next orbit\n");
                 fclose(fp); // fp=ATM file closed
             }   // for each orbit num
                 //monthday[month][day] = 1;
@@ -406,7 +413,8 @@ int main(char argc, char *argv[]) {
     double min_rms = 1e23;
     //fp = fopen(atmfile, "w");
     fm = fopen(atmmodel, "w"); // create and open a csv file to write into it; return the ptr
-    printf("\nfinal ATM_FO_element after checking all ATM files, k days, orbits= %d \n", ATM_FO_element);
+    printf("writing data into output...");
+    printf("\nnum of elements in ATM_fileObj_element= %d after checking all ATM files, k days, orbits\n", ATM_fileObj_element);
     cloud_pts = 0;
     nocloud_pts = 0;
     misscloud_pts = 0;
@@ -415,66 +423,57 @@ int main(char argc, char *argv[]) {
     misscloud_x = 0;
     orbit_x = 0;
 
-    for (n = 0; n < ATM_FO_element; n++) {  // Q- what are the num of points here? the MISR pixels that ATM found for them? is it size of elements in atm_fileObj?
+    for (n = 0; n < ATM_fileObj_element; n++) {  // num of points= the MISR pixels that ATM found for them == size of elements in atm_fileObj
         atm_fileObj[n].rms /= atm_fileObj[n].npts; // average weighted roughness // Q- atm_fileObj is for each what? pixel? or
         atm_fileObj[n].var = sqrt(atm_fileObj[n].var / atm_fileObj[n].npts - atm_fileObj[n].rms * atm_fileObj[n].rms);
 
-        if (atm_fileObj[n].an > 0) { // surf refl > 0
-            natm_valid++;
-            avg_valid_rms += atm_fileObj[n].rms; // sum all
-            if (atm_fileObj[n].rms > max_rms) max_rms = atm_fileObj[n].rms;
-            if (atm_fileObj[n].rms < min_rms) min_rms = atm_fileObj[n].rms;
+        if (atm_fileObj[n].an > 0) {    // Q- why an camera is checked? can camera be negative? surf refl > 0
+            natm_valid++; // increment
+            avg_valid_rms += atm_fileObj[n].rms; // sum roughness of every valid pixel/element; Q- wby we vheck valid refl value?
+            if (atm_fileObj[n].rms > max_rms) max_rms = atm_fileObj[n].rms; // Q- can roughness be negative? and minus? // set the max roughness value
+            if (atm_fileObj[n].rms < min_rms) min_rms = atm_fileObj[n].rms; // set min roughness value
             if (atm_fileObj[n].weight == 0.5) natm_half_weight++;
         }
+
         avg_rms += atm_fileObj[n].rms; // sum with initial value
 
-        if (atm_fileObj[n].npts > max_npts) max_npts = atm_fileObj[n].npts;
+        if (atm_fileObj[n].npts > max_npts) max_npts = atm_fileObj[n].npts; // collect num of points
 
         //fprintf(fp, "%d, %d, %d, %d, %d, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf\n", atm_fileObj[n].path, atm_fileObj[n].orbit, atm_fileObj[n].block, atm_fileObj[n].line, atm_fileObj[n].sample, atm_fileObj[n].lat, atm_fileObj[n].lon, atm_fileObj[n].an, atm_fileObj[n].ca, atm_fileObj[n].cf, atm_fileObj[n].rms, atm_fileObj[n].weight, atm_fileObj[n].npts);
+        /* why check this condition? */
         if ((atm_fileObj[n].cloud == 0) || (atm_fileObj[n].cloud == 1) || // E- check this condition
             ((atm_fileObj[n].cloud == -1) && (atm_fileObj[n].an > 0) && (atm_fileObj[n].ca > 0) && (atm_fileObj[n].cf > 0))) {
-            if (orbit_x==0) {
-                printf("path, orbit, block, weight, cloud, nocloud, misscloud\n");
+            if (orbit_x==0) { // Q-why zero?
+                printf("path, orbit, block, weight, cloud, nocloud, misscloud, orbit_x= %d\n", orbit_x);
             }
-            if (atm_fileObj[n].orbit != orbit_x) {
-                printf("%d, %d, %d, %lf, %d, %d, %d\n", path_x, orbit_x, block_x, weight_x, cloud_x, nocloud_x, misscloud_x);
+            int atm_orbit = atm_fileObj[n].orbit;
+            //printf("atm_orbit: %d \n" , atm_orbit);
+            if (atm_orbit != orbit_x) { // if atm_orbit not zero
+                //printf("path_x: %d \n" , path_x);
+                printf("\n%d, %d, %d, %lf, %d, %d, %d\n", path_x, orbit_x, block_x, weight_x, cloud_x, nocloud_x, misscloud_x); // Q- whats x?
+                //printf("path_x: %d \n" , path_x);
                 path_x = atm_fileObj[n].path;
                 orbit_x = atm_fileObj[n].orbit;
                 block_x = atm_fileObj[n].block;
                 weight_x = atm_fileObj[n].weight;
-                nocloud_x = 0;
                 cloud_x = 0;
+                nocloud_x = 0;
                 misscloud_x = 0;
             }
-            if (atm_fileObj[n].cloud == 0) {
+            if (atm_fileObj[n].cloud == 0) { // no-cloud
                 nocloud_pts += 1;
                 nocloud_x += 1;
             }
-            if (atm_fileObj[n].cloud == 1) {
+            if (atm_fileObj[n].cloud == 1) { // cloudy
                 cloud_pts += 1;
                 cloud_x += 1;
             }
-            if (atm_fileObj[n].cloud == -1) {
+            if (atm_fileObj[n].cloud == -1) { // miss-cloud
                 misscloud_pts += 1;
                 misscloud_x += 1;
             }
 
-            fprintf(fm, "%d, %d, %d, %d, %d, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %d, %lf\n", \
-                atm_fileObj[n].path,\ // 0
-             atm_fileObj[n].orbit, \ // 1
-             atm_fileObj[n].block, \ // 2
-             atm_fileObj[n].line, \
-             atm_fileObj[n].sample, \
-             atm_fileObj[n].lat,\
-             atm_fileObj[n].lon, \
-             atm_fileObj[n].an, \ // 7
-             atm_fileObj[n].ca, \ // 8
-             atm_fileObj[n].cf, \ // 9
-             atm_fileObj[n].rms, \ // 10
-             atm_fileObj[n].weight, \ // 11
-             atm_fileObj[n].npts, \ // 12
-             atm_fileObj[n].cloud, \ // 13
-             atm_fileObj[n].var); // 14
+            fprintf(fm, "%d, %d, %d, %d, %d, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %d, %lf\n", atm_fileObj[n].path, atm_fileObj[n].orbit, atm_fileObj[n].block, atm_fileObj[n].line, atm_fileObj[n].sample, atm_fileObj[n].lat, atm_fileObj[n].lon, atm_fileObj[n].an, atm_fileObj[n].ca, atm_fileObj[n].cf, atm_fileObj[n].rms, atm_fileObj[n].weight, atm_fileObj[n].npts, atm_fileObj[n].cloud, atm_fileObj[n].var); // 14
 
             path_x = atm_fileObj[n].path;
             orbit_x = atm_fileObj[n].orbit;
@@ -484,15 +483,15 @@ int main(char argc, char *argv[]) {
     }
     //fclose(fp);
     fclose(fm);
-    avg_rms /= ATM_FO_element; // Q- why?
+    avg_rms /= ATM_fileObj_element; // Q- why?
     avg_valid_rms /= natm_valid;
-
-    printf("Number of Total ATM rms points = %d\n", ATM_FO_element);
+    printf("**************************************\n");
+    printf("Number of Total ATM rms points = %d\n", ATM_fileObj_element);
     printf("Number of Valid ATM rms points = %d\n", natm_valid);
     printf("Number of Valid ATM rms with weight of 1.0  = %d\n", natm_valid - natm_half_weight);
     printf("Number of Valid ATM rms with weight of 0.5  = %d\n", natm_half_weight);
     printf("Total Average rms = %lf %lf\n", avg_rms, max_npts);
-    printf("Averge valid rms = %lf\n", avg_valid_rms);
+    printf("Average valid rms = %lf\n", avg_valid_rms);
     printf("Max valid rms = %lf\n", max_rms);
     printf("Min valid rms = %lf\n", min_rms);
     printf("Number of cloud points = %d\n", cloud_pts);
