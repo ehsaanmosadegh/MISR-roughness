@@ -253,6 +253,13 @@ int main(char argc, char *argv[]) {
             //printf("status: %d \n" , status);
             if (status != MTK_SUCCESS) return 1;
 
+            /*check orbit list*/
+            int e;
+            printf("MISR orbits found for k_day: (%d) \n", k);
+            for (e=0; e<orbitcnt; e++) {
+                printf("orbit: %d\n" , orbitlist[e]);
+            }
+
             for (j = 0; j < orbitcnt; j++) { // what is orbitcnt? orbitCount; Q- orbit during each day?
                 printf("processing MISR orbit: (%d); k_day (%d)\n" , orbitlist[j], k);
                 status = MtkOrbitToPath(orbitlist[j], &path); // what is path, given the orbit? or which path the orbit belong to?
