@@ -52,11 +52,11 @@ double *latdata = 0;
 int nlines = 512;
 int nsamples = 2048;
 
-int read_misr_data(char *fname, int line, int sample, double *data);
+int read_data(char *fname, int line, int sample, double *data);
 //int write_data(char *fname, double *data, int nlines, int nsamples);
 char *strsub(char *s, char *a, char *b);
 
-int read_misr_data(char *fname, int line, int sample, double *data)
+int read_data(char *fname, int line, int sample, double *data)
 {
     FILE *f;
     int nlines = 512;
@@ -65,18 +65,18 @@ int read_misr_data(char *fname, int line, int sample, double *data)
 
     f = fopen(fname, "r");
     if (!f) {
-	fprintf(stderr,  "read_surf_data: couldn't open %s\n", fname);
+	fprintf(stderr,  "read_data_func: couldn't open %s\n", fname);
 	return 0;
     }
 	
     array_data = (double *) malloc(nlines * nsamples * sizeof(double));
     if (!array_data) {
-	fprintf(stderr,  "read_surf_data: couldn't malloc data\n");
+	fprintf(stderr,  "read_data_func: couldn't malloc data\n");
 	return 0;
     }
 	
     if (fread(array_data, sizeof(double), (nlines * nsamples), f) != nlines * nsamples) { // On success, it reads n items from the file and returns n. On error or end of the file, it returns a number less than n.
-	fprintf(stderr,  "read_surf_data: couldn't read data in %s\n", fname);
+	fprintf(stderr,  "read_data_func: couldn't read data in %s\n", fname);
 	return 0;
     }
 
@@ -108,14 +108,14 @@ int main(char argc, char *argv[]) {
     FILE *fp, *fm;
     struct dirent *entryObjPtr; // ptr to fileObj == struct
     //char atm_dir[256] = "/home/mare/Nolin/SeaIce/ILATM2.002";
-    //char surf_masked_file_dir[256] = "/home/mare/Nolin/2013/MaskedSurf/April_sdcmClearHC";
+    //char surf_masked_dir[256] = "/home/mare/Nolin/2013/MaskedSurf/April_sdcmClearHC";
     //char atmfile[256] = "/home/mare/Nolin/SeaIce/ILATM2.002/combined_atm.csv";
     //char atmmodel[256] = "/home/mare/Nolin/SeaIce/ILATM2.002/SeaIce_Apr2013_atmmodel.csv";
 
     // inputes
-    char atm_dir[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/EhsanTest"; // ATM files == ILATM2 csv files
-    char surf_masked_file_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul"; // surf dat files
-    char cm_dir[256] = "/home3/mare/Nolin/2016/MaskedSurf/Jul_sdcmClearHC_LandMasked"; // cloud mask data == lsdcm dat files
+    char atm_dir[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/july_atm_Ehsan/ehsan_test_for_atm20160714"; // ATM files == ILATM2 csv files
+    char surf_masked_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul"; // surf dat files
+    char cloud_masked_dir[256] = "/home3/mare/Nolin/2016/MaskedSurf/Jul_sdcmClearHC_LandMasked"; // cloud mask data == lsdcm dat files
     //char atmfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/combined_atm.csv";
 
     // output
@@ -236,7 +236,7 @@ int main(char argc, char *argv[]) {
         //memset(sday, '\0', sizeof(sday));
         strncpy(sday, (atm_fileList[i] + 13), 2); // get dat from file name
         sday[2] = '\0';
-        printf("yr: %s mon: %d day: %s \n", yearCopy, month, sday);
+        printf("yr: %s; mon: %d; day: %s \n", yearCopy, month, sday);
 
         for (k  = -1; k < 2; k++) { // k=days; yesterday (-1) or tmrw (+1) == 0.5 of the ATM overpass; today=o
             printf("for: k: %d \n", k);
@@ -255,7 +255,7 @@ int main(char argc, char *argv[]) {
 
             /*check orbit list*/
             int e;
-            printf("MISR orbits found for k_day: (%d) \n", k);
+            printf("\nlist of MISR orbits found for k_day: %d (%d) \n", day, k);
             for (e=0; e<orbitcnt; e++) {
                 printf("orbit: %d\n" , orbitlist[e]);
             }
@@ -319,13 +319,13 @@ int main(char argc, char *argv[]) {
                     sample = rint(fsample); // Q- why round this?
                     //printf("ATM lat/lon to MISR pixel: line: %d; sample: %d \n" , line, sample);
                     /* now find/define MISR surf files based on the extracted info from each ATM row; we should look into these files */
-                    sprintf(cf_fname, "%s/Cf/surf_p%03d_o%06d_b%03d_cf.dat", surf_masked_file_dir, path, orbitlist[j], block);
+                    sprintf(cf_fname, "%s/Cf/surf_p%03d_o%06d_b%03d_cf.dat", surf_masked_dir, path, orbitlist[j], block);
                     //if (access(cf_fname, F_OK) == -1) continue; // check if file is accessible
-                    sprintf(ca_fname, "%s/Ca/surf_p%03d_o%06d_b%03d_ca.dat", surf_masked_file_dir, path, orbitlist[j], block);
+                    sprintf(ca_fname, "%s/Ca/surf_p%03d_o%06d_b%03d_ca.dat", surf_masked_dir, path, orbitlist[j], block);
                     //if (access(ca_fname, F_OK) == -1) continue;
-                    sprintf(an_fname, "%s/An/surf_p%03d_o%06d_b%03d_an.dat", surf_masked_file_dir, path, orbitlist[j], block);
+                    sprintf(an_fname, "%s/An/surf_p%03d_o%06d_b%03d_an.dat", surf_masked_dir, path, orbitlist[j], block);
                     //if (access(an_fname, F_OK) == -1) continue;
-                    sprintf(cm_fname, "%s/An/lsdcm_p%03d_o%06d_b%03d_an.dat", cm_dir, path, orbitlist[j], block); // lsdcm =?
+                    sprintf(cm_fname, "%s/An/lsdcm_p%03d_o%06d_b%03d_an.dat", cloud_masked_dir, path, orbitlist[j], block); // lsdcm =?
 
                     cm_exist = 1; // to associate with line=358
 //                    if (access(cm_fname, F_OK) == -1) {
@@ -378,9 +378,9 @@ int main(char argc, char *argv[]) {
                         atm_fileObj[ATM_fileObj_element].weight = weight;
                         atm_fileObj[ATM_fileObj_element].cloud = -1; // Q- why -1?
 
-                        read_misr_data(cf_fname, line, sample, &cf); // returns 1 pixel value
-                        read_misr_data(ca_fname, line, sample, &ca);
-                        read_misr_data(an_fname, line, sample, &an);
+                        read_data(cf_fname, line, sample, &cf); // returns 1 pixel value
+                        read_data(ca_fname, line, sample, &ca);
+                        read_data(an_fname, line, sample, &an);
 //                        printf("an: %f \n" , an);
 //                        printf("cf: %f \n" , cf);
 //                        printf("ca: %f \n" , ca);
@@ -388,7 +388,7 @@ int main(char argc, char *argv[]) {
 
 
                         if (cm_exist == 1) {
-                            read_misr_data(cm_fname, line, sample, &cm); // cloud mask
+                            read_data(cm_fname, line, sample, &cm); // cloud mask
                             if (cm > 0) atm_fileObj[ATM_fileObj_element].cloud = 0;
                             else {
                                 if (cm == CMASKED) atm_fileObj[ATM_fileObj_element].cloud = 1; // Q-???
