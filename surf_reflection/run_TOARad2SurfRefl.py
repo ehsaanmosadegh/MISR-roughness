@@ -26,26 +26,24 @@ import datetime as dt
 # path of root dir that inclides all prcessing directories
 root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir'
 
-### input files
-
+########## input files
 # path to TOA radiance data
-toa_dir_name = 'toa_radiance_July_2016/test1' # path to toa dir; should be defined for each project
+toa_dir_name = 'toa_radiance_July_2016' # path to toa dir; should be defined for each project
 
 # path to downloaded GP GMP geometric files
-geo_param_dir_name = 'misr_dl_July_2016/test1' # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
+geo_param_dir_name = 'misr_dl_July_2016' # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
 
 # path to txt file (we are not uing it anymore)
 study_domain_POB_file = 'study_domain_POB.txt'
 
 
-### output file
-
+########## output file
 # define output directory == surface reflectance data
-surf_refl_dir_name = 'surf_reflectance_July_2016/test1'
+surf_refl_dir_name = 'surf_reflectance_July_2016'
 
 # other settings - do not change 
 band_no = 2 # 3 for red band
-exe_name = 'SurfSeaIce' # name of executable for cmd command
+exe_name = 'TOARad2SurfRefl' # name of executable for cmd command
 
 # directory path setting - by USER
 ############################################################################### toa_file
@@ -255,7 +253,7 @@ def run_C_exe_from_cmd(exe_name, toa_file, GP_GMP_file_fullpath, band_no, surf_f
 	cmd = ('%s %s \"%s\" \"%s\" %s %s' %(exe_name, toa_file, GP_GMP_file_fullpath, band_no, surf_file_fullpath, surf_img_fullpath)) # band=? before surf_file_fullpath; bandshould be 2 similar to run_TOA.py
 	# run the cmd command
 	return_value_of_cmd = subprocess.call(cmd, shell=True)
-	#print('-> return value of cmd= %s' %return_value_of_cmd)
+	print('-> return value of cmd= %s' %return_value_of_cmd)
 
 	if (return_value_of_cmd < 0): # what it means?
 		print('-> ERROR: %s.exe NOT found in $PATH. Exiting...' %exe_name) 
@@ -270,11 +268,12 @@ def run_C_exe_from_cmd(exe_name, toa_file, GP_GMP_file_fullpath, band_no, surf_f
 if __name__ == '__main__':
 
 	start_time = dt.datetime.now()
-	print('-> start time: %s' %start_time)
+	print("-> running program: %s" % exe_name)
+	print('-> start time: %s' % start_time)
 	print(" ")
 	main()
 	end_time = dt.datetime.now()
-	print('-> end time= %s' %end_time)
-	print('-> runtime duration= %s' %(end_time-start_time))
+	print('-> end time= %s' % end_time)
+	print('-> runtime duration= %s' % (end_time-start_time))
 	print(" ")
 	print('######################## SurfSeaIce COMPLETED SUCCESSFULLY ########################')
