@@ -21,32 +21,31 @@ import os, subprocess
 import datetime as dt
 
 ###############################################################################
-# directory path setting - by USER
+##### directory path setting (by USER) ########################################
 
 # path of root dir that inclides all prcessing directories
 root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir'
 
-########## input files
-# path to TOA radiance data
-toa_dir_name = 'toa_radiance_July_2016' # path to toa dir; should be defined for each project
+#===== input files ============================================================
+# path to TOA radiance data (toa-rad_*)
+toa_dir_name = 'toa_radiance/proj_july_1_2016' # path to toa dir; should be defined for each project
 
-# path to downloaded GP GMP geometric files
-geo_param_dir_name = 'misr_dl_July_2016' # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
+# path to downloaded geometric files (GP-GMP)
+geo_param_dir_name = 'misr_download_files/dl_july_1_16_2016' # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
 
 # path to txt file (we are not uing it anymore)
 study_domain_POB_file = 'study_domain_POB.txt'
 
-
-########## output file
+#===== output file ============================================================
 # define output directory == surface reflectance data
-surf_refl_dir_name = 'surf_reflectance_July_2016'
+surf_refl_dir_name = 'surf_reflectance/july_14_2016'
 
-# other settings - do not change 
-band_no = 2 # 3 for red band
+#===== other settings (if you change exe name and/or band number) =========================================
+band_no = 2 # 3 for red band; 0,1,2
 exe_name = 'TOARad2SurfRefl' # name of executable for cmd command
 
-# directory path setting - by USER
-############################################################################### toa_file
+##### directory path setting (by USER) ########################################
+###############################################################################
 
 def main():
 	# create a list of POB from the POB list
