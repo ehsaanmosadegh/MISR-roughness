@@ -113,13 +113,14 @@ int main(char argc, char *argv[]) {
     //char atmmodel[256] = "/home/mare/Nolin/SeaIce/ILATM2.002/SeaIce_Apr2013_atmmodel.csv";
 
     // inputes
-    char atm_dir[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/july_atm_Ehsan/ehsan_test_for_atm20160714"; // ATM files == ILATM2 csv files
-    char surf_masked_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul"; // surf dat files
+    char atm_dir[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/july_atm_Ehsan/ehsan_test_for_atm20160714"; // start from ATM files == ILATM2 csv files
+    // char surf_masked_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul"; // surf dat files
+    char surf_masked_dir[256] = "/home/mare/Ehsan_lab/misr_proceesing_dir/masked_surf_refl"; // from LandMask.c; produce surf_masked files for specific day
     char cloud_masked_dir[256] = "/home3/mare/Nolin/2016/MaskedSurf/Jul_sdcmClearHC_LandMasked"; // cloud mask data == lsdcm dat files
     //char atmfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/combined_atm.csv";
 
     // output
-    char atmmodel[256] = "/home/mare/Ehsan_lab/MISR-roughness/atm_to_misr_pixels/Ehsan_Apr2016_atmmodel_cloud_var.csv";
+    char atmmodel[256] = "/home/mare/Ehsan_lab/MISR-roughness/atm_to_misr_pixels/Ehsan_14sJuly2016_atmmodel_cloud_var.csv";
     // char atmmodel[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel_cloud_var.csv"; // old
     //char lsmask_dir[256] = "/home/mare/Nolin/SeaIce/LWData/MISR_LandSeaMask";
     char message[256];
