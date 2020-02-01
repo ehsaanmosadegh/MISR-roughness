@@ -22,8 +22,7 @@
 #define DAMPING 3.25
 #define VERBOSE 0
 
-typedef struct
-{
+typedef struct { // 20
 double ah2o, nh2o;
 double ao3,  no3; 
 double ao2,  no2,  po2;
@@ -44,7 +43,7 @@ double Resa3,Resa4;
 double Resr1, Resr2, Resr3;
 double Rest1,Rest2;
 double Rest3,Rest4;
-} coef_atmos;
+} coef_atmos_fileObj;
 
 char fname[4][256];
 int path = 0;
@@ -67,14 +66,14 @@ double stddev;
 double displayMax = -1.0;
 png_structp png_ptr = 0;
 png_infop info_ptr = 0;
-coef_atmos *smac_coefs = 0;
+coef_atmos_fileObj *smac_coefs = 0;
 int demlines = 3480;
 int demsamples = 3720;
 double *psdata = 0, *uwdata = 0, *uo3data = 0;
 double solarZenith = -1.0;
 
-int SMAC(double tetas, double tetav, double phis, double phiv, double uh2o, double uo3, 
-	double taup550, double pression, double rad_toa, double *r_surf, char *fichier_wl);
+int SMAC(double tetas, double tetav, double phis, double phiv, double uh2o, double uo3,
+         double taup550, double pression, double toa_reflectance, double *surf_refl, char *fichier_wl);
 int toa2surf(void);
 int pixel2grid(int path, int block, int line, int sample, int *j, int *i);
 char *data2image(double *data, int ny, int nx, int mode);
@@ -173,103 +172,112 @@ return 1;
 }
 
 //#####################################################################################################
+//int toa2surf_original(void) {
 
-int toa2surf(void)
-{
+int toa2surf(void) {
 int j, i;
-double toa, sunAz, sunZen, camAz, camZen, press, tau, h2o, o3, surf;
+double toa_rad, sunAz, sunZen, camAz, camZen, press, tau, h2o, o3, toa_refl;
 char fname[256];
 int indx; //Ehsan
 
 
-if (noData)
-	{
+if (noData) {
 	for (i = 0; i < nlines * nsamples; i ++) data[i] = NO_DATA;
 	return 1;
 	}
 
 // printf("\n");
 // printf("before loop\n");
-// printf("toa : %f \n", toa);
-// printf("surf: %f \n", surf);
+// printf("toa_rad : %f \n", toa_rad);
+// printf("toa_refl: %f \n", toa_refl);
 
 strcpy(fname, "coef_MISR3_CONT.dat");
 tau = 0.05;
 
 for (j = 0; j < nlines; j ++)
-	for (i = 0; i < nsamples; i ++)
-		{
+	for (i = 0; i < nsamples; i ++) {
 		// indx = i + j * nsamples; // E: why index is this?
 		// printf("\n");
 		// printf("new index: %d\n", indx);
 		// printf("before update\n");
-		// printf("toa : %f \n", toa);
-		// printf("surf: %f \n", surf);
+		// printf("toa_rad : %f \n", toa_rad);
+		// printf("toa_refl: %f \n", toa_refl);
 		//printf("toa2surf: for j, lines= %d, i, samples= %d, nsamples= %d, nlines= %d, index is: %d\n", j, i, nsamples, nlines, indx);
-		toa = data[i + j * nsamples]; // ??? how iterates inside index? // what is toa? refl OR rad? // toa=is each pixel digital number// what is surf?
+		toa_rad = data[i + j * nsamples]; // toa_rad=is each pixel digital number// data array is filled from previous step in main
 
 		// printf("\n");
-		// printf("toa updates\n");
-		// printf("toa : %f \n", toa);
-		// printf("surf: %f \n", surf);
+		// printf("toa_rad updates\n");
+		// printf("toa_rad : %f \n", toa_rad);
+		// printf("toa_refl: %f \n", toa_refl);
 
 		sunAz = sa[i + j * nsamples];
 		sunAz -= 180.0;
 		// E:
-		if (sunAz < 0.0)
-		{
+		if (sunAz < 0.0) {
 		//printf("sunAz condition\n"); //Ehsan
 		sunAz += 360.0;
 		sunZen = sz[i + j * nsamples];
 		}
 		// E:
-		if (camera == 1)
-			{
+		if (camera == 1) {
 			//printf("camera\n"); //Ehsan
 			camAz = cfa[i + j * nsamples];
 			camZen = cfz[i + j * nsamples];
-			}
-		else if (camera == 4)
-			{
+		}
+		else if (camera == 4) {
 			camAz = ana[i + j * nsamples];
 			camZen = anz[i + j * nsamples];
-			}
-		else
-			{
+		}
+		else {
 			camAz = caa[i + j * nsamples];
 			camZen = caz[i + j * nsamples];
-			}
+		}
 		// E: to deal with no data
-		if (toa == NO_DATA || sunAz == NO_DATA || sunZen == NO_DATA || camAz == NO_DATA || camZen == NO_DATA)
-			{
+		if (toa_rad == NO_DATA || sunAz == NO_DATA || sunZen == NO_DATA || camAz == NO_DATA || camZen == NO_DATA) {
 			//printf("no data\n");
 			data[i + j * nsamples] = NO_DATA;
-			}
+		}
 		// E: to deal with train dropout
-		else if (toa == TDROPOUT)
-			{
-			//printf("toa\n"); //Ehsan
+		else if (toa_rad == TDROPOUT) {
+			//printf("toa_rad\n"); //Ehsan
 			data[i + j * nsamples] = TDROPOUT;
-			}
-		else
-			{
+		}
+		else { // final checking ...?
 			// printf("\n");
 			// printf("before getPressure\n");
-			// printf("toa : %f \n", toa);
-			// printf("surf: %f \n", surf);
+			// printf("toa_rad : %f \n", toa_rad);
+			// printf("toa_refl: %f \n", toa_refl);
 
 			//printf("go inside getPressur\n"); //Ehsan
-			if (!getPressure(path, block, j, i, &press, &h2o, &o3)) return 0;
+			if (!getPressure(path, block, j, i, &press, &h2o, &o3)) return 0; // we dont need it anymore cos we dont use SMAC anymore?
 
 			// printf("\n");
-			// printf("before SMAC toa=surface\n");
-			// printf("toa  : %f \n", toa);
-			// printf("surf : %f \n", surf);
-			// printf("&surf: %f\n", &surf);
+			// printf("before SMAC toa_rad=surface\n");
+			// printf("toa_rad  : %f \n", toa_rad);
+			// printf("toa_refl : %f \n", toa_refl);
+			// printf("&toa_refl: %f\n", &toa_refl);
 
-			if (!SMAC(sunZen, camZen, sunAz, camAz, h2o, o3, tau, press, toa, &surf, fname)) return 0; // Q- where surf is coming from?
-			if (surf < 0.0) surf = 0.0;
-			data[i + j * nsamples] = surf;
+
+            /* Ehsan 31 jan 2020: */
+            /* we don't use SMAC anymore; we use toa_rad-->toa_refl directly from here*/
+            // from BlockStats2.c code: we convert toa_rad to toa_refl
+            if (databuf.data.u16[j][i] < fillbuf.data.u16[0][0] && cfbuf.data.f[j/lf][i/sf] > 0.0) {
+                data[index][i + j * nsamples[index]] = (databuf.data.u16[j][i] >> 2) * scalebuf.data.d[0][0] * cfbuf.data.f[j/lf][i/sf];
+                nvalid[index] ++;
+            }
+            else {
+                data[index][i + j * nsamples[index]] = -1.0;
+            }
+
+
+
+            /* renamed toa_refl--> toa_refl */
+			//if (!SMAC(sunZen, camZen, sunAz, camAz, h2o, o3, tau, press, toa_rad, &toa_refl, fname)) return 0; // Q- where toa_refl is coming from? m? toa_refl is our output. it is defined in this function and then we pass its mem-add as the arg and then inside of the function it is defined as r_surf which is a ptr
+			
+			toa_refl =
+			if (toa_refl < 0.0) toa_refl = 0.0;
+			printf("outside of SMAC surf_refl: %.2lf \n\n", toa_refl);
+			data[i + j * nsamples] = toa_refl;
 			}
 		}
 		
@@ -278,28 +286,28 @@ return 1;
 
 //#####################################################################################################
 
-int SMAC(double tetas, double tetav, double phis, double phiv, double uh2o, double uo3, 
-	double taup550, double pression, double rad_toa, double* r_surf, char* fichier_wl) 
-{ // start with r_surf==rad_toa // Ehsan
+int SMAC(double tetas, double tetav, double phis, double phiv, double uh2o, double uo3,
+         double taup550, double pression, double toa_reflectance, double *surf_refl, char *fichier_wl)  // r_surf is ptr to surf, it is updated inside this function
+{ // start with surf_refl==toa_reflectance // Ehsan
 // printf("\n");
 // printf("in to SMAC\n");
-// printf("toa : %lf\n", rad_toa);
-// printf("surf: %lf\n", r_surf);
+// printf("toa : %lf\n", toa_reflectance);
+// printf("surf: %lf\n", surf_refl);
 
 /* Declarations SMAC */
 /*-------------------*/
 double cksi;
-double s;
+double spherical_albedo;
 double m;
-double tg;
+double gaseous_transmittance;
 double us,uv,dphi;
 double wo;
 
 double crd=180./M_PI;
 double cdr=M_PI/180.;
 
-double to3,th2o,to2, tco2;
-double  tco, tno2,tch4;
+double trans_o3,trans_h2o,trans_o2, trans_co2;
+double  trans_co, trans_no2,trans_ch4;
 double ttetas,ttetav,ksiD;
 double atm_ref;
 
@@ -312,16 +320,14 @@ double pressure, Peq ;
 double Res_ray, Res_aer, Res_6s;
 double ray_phase, ray_ref, aer_ref, aer_phase ;
 
-FILE *fcoef;
+FILE *coef_filePtr;
 
-if (smac_coefs == 0)
-	{
+if (smac_coefs == 0) {
 /* Reservation memoire de la structure */
 /*-------------------------------------*/
 		
- smac_coefs = (coef_atmos *)malloc(sizeof(coef_atmos));
- if (!smac_coefs)
- 	{
+ smac_coefs = (coef_atmos_fileObj *)malloc(sizeof(coef_atmos_fileObj));
+ if (!smac_coefs) {
  	fprintf(stderr, "C: SMAC: couldn't malloc smac_coefs\n");
  	return 0;
  	}
@@ -329,37 +335,35 @@ if (smac_coefs == 0)
 /* Lecture des coefficients  */
 /*---------------------------*/
 
-	fcoef=fopen(fichier_wl,"r");
-	if (!fcoef)
-		{
+	coef_filePtr=fopen(fichier_wl, "r"); // ptr to fileObj==stream
+	if (!coef_filePtr){
 		fprintf(stderr, "C: SMAC: erreur d'ouverture du fichier de coefficients (E: error opening the coefficient file): %s\n", fichier_wl);
 		return 0;
 		}
 
-   fscanf(fcoef,"%lf %lf", &(smac_coefs->ah2o),&(smac_coefs->nh2o));
-   fscanf(fcoef,"%lf %lf", &(smac_coefs->ao3),&(smac_coefs->no3));
-   fscanf(fcoef,"%lf %lf %lf", &(smac_coefs->ao2),&(smac_coefs->no2),&(smac_coefs->po2));
-   fscanf(fcoef,"%lf %lf %lf", &(smac_coefs->aco2),&(smac_coefs->nco2),&(smac_coefs->pco2));
-   fscanf(fcoef,"%lf %lf %lf", &(smac_coefs->ach4),&(smac_coefs->nch4),&(smac_coefs->pch4));
-   fscanf(fcoef,"%lf %lf %lf", &(smac_coefs->ano2),&(smac_coefs->nno2),&(smac_coefs->pno2));
-   fscanf(fcoef,"%lf %lf %lf", &(smac_coefs->aco),&(smac_coefs->nco),&(smac_coefs->pco));
-   fscanf(fcoef,"%lf %lf %lf %lf", &(smac_coefs->a0s),&(smac_coefs->a1s),&(smac_coefs->a2s),&(smac_coefs->a3s));
-   fscanf(fcoef,"%lf %lf %lf %lf", &(smac_coefs->a0T),&(smac_coefs->a1T),&(smac_coefs->a2T),&(smac_coefs->a3T));
-   fscanf(fcoef,"%lf %lf", &(smac_coefs->taur),&(smac_coefs->sr));
-   fscanf(fcoef,"%lf %lf", &(smac_coefs->a0taup),&(smac_coefs->a1taup));
-   fscanf(fcoef,"%lf %lf", &(smac_coefs->wo),&(smac_coefs->gc));
-   fscanf(fcoef,"%lf %lf %lf", &(smac_coefs->a0P),&(smac_coefs->a1P),&(smac_coefs->a2P));
-   fscanf(fcoef,"%lf %lf", &(smac_coefs->a3P),&(smac_coefs->a4P));
-   fscanf(fcoef,"%lf %lf", &(smac_coefs->Rest1),&(smac_coefs->Rest2));
-   fscanf(fcoef,"%lf %lf", &(smac_coefs->Rest3),&(smac_coefs->Rest4));
-   fscanf(fcoef,"%lf %lf %lf", &(smac_coefs->Resr1),&(smac_coefs->Resr2),&(smac_coefs->Resr3));
-   fscanf(fcoef,"%lf %lf", &(smac_coefs->Resa1),&(smac_coefs->Resa2));
-   fscanf(fcoef,"%lf %lf", &(smac_coefs->Resa3),&(smac_coefs->Resa4));
+   fscanf(coef_filePtr, "%lf %lf", &(smac_coefs->ah2o), &(smac_coefs->nh2o));
+   fscanf(coef_filePtr, "%lf %lf", &(smac_coefs->ao3), &(smac_coefs->no3));
+   fscanf(coef_filePtr, "%lf %lf %lf", &(smac_coefs->ao2), &(smac_coefs->no2), &(smac_coefs->po2));
+   fscanf(coef_filePtr, "%lf %lf %lf", &(smac_coefs->aco2), &(smac_coefs->nco2), &(smac_coefs->pco2));
+   fscanf(coef_filePtr, "%lf %lf %lf", &(smac_coefs->ach4), &(smac_coefs->nch4), &(smac_coefs->pch4));
+   fscanf(coef_filePtr, "%lf %lf %lf", &(smac_coefs->ano2), &(smac_coefs->nno2), &(smac_coefs->pno2));
+   fscanf(coef_filePtr, "%lf %lf %lf", &(smac_coefs->aco), &(smac_coefs->nco), &(smac_coefs->pco));
+   fscanf(coef_filePtr, "%lf %lf %lf %lf", &(smac_coefs->a0s), &(smac_coefs->a1s), &(smac_coefs->a2s), &(smac_coefs->a3s));
+   fscanf(coef_filePtr, "%lf %lf %lf %lf", &(smac_coefs->a0T), &(smac_coefs->a1T), &(smac_coefs->a2T), &(smac_coefs->a3T));
+   fscanf(coef_filePtr, "%lf %lf", &(smac_coefs->taur), &(smac_coefs->sr));
+   fscanf(coef_filePtr, "%lf %lf", &(smac_coefs->a0taup), &(smac_coefs->a1taup));
+   fscanf(coef_filePtr, "%lf %lf", &(smac_coefs->wo), &(smac_coefs->gc));
+   fscanf(coef_filePtr, "%lf %lf %lf", &(smac_coefs->a0P), &(smac_coefs->a1P), &(smac_coefs->a2P));
+   fscanf(coef_filePtr, "%lf %lf", &(smac_coefs->a3P), &(smac_coefs->a4P));
+   fscanf(coef_filePtr, "%lf %lf", &(smac_coefs->Rest1), &(smac_coefs->Rest2));
+   fscanf(coef_filePtr, "%lf %lf", &(smac_coefs->Rest3), &(smac_coefs->Rest4));
+   fscanf(coef_filePtr, "%lf %lf %lf", &(smac_coefs->Resr1), &(smac_coefs->Resr2), &(smac_coefs->Resr3));
+   fscanf(coef_filePtr, "%lf %lf", &(smac_coefs->Resa1), &(smac_coefs->Resa2));
+   fscanf(coef_filePtr, "%lf %lf", &(smac_coefs->Resa3), &(smac_coefs->Resa4));
    
-   fclose(fcoef);
+   fclose(coef_filePtr);
 
-	if (0)
-		{
+	if (0){
 		fprintf(stderr, "%f %f\n", (smac_coefs->ah2o),(smac_coefs->nh2o));
 		fprintf(stderr, "%f %f\n", (smac_coefs->ao3),(smac_coefs->no3));
 		fprintf(stderr, "%f %f %f\n", (smac_coefs->ao2),(smac_coefs->no2),(smac_coefs->po2));
@@ -396,11 +400,11 @@ m =  1./us + 1./uv;
 taup = (smac_coefs->a0taup) + (smac_coefs->a1taup) * taup550 ;
 
 /*------  3) gaseous transmissions (downward and upward paths)*/
-to3 = 1. ;
-th2o= 1. ;
-to2 = 1. ;
-tco2= 1. ;
-tch4= 1. ;
+trans_o3 = 1. ;
+trans_h2o= 1. ;
+trans_o2 = 1. ;
+trans_co2= 1. ;
+trans_ch4= 1. ;
  
 uo2=  pow (Peq , (smac_coefs->po2));
 uco2= pow (Peq , (smac_coefs->pco2));
@@ -409,15 +413,14 @@ uno2= pow (Peq , (smac_coefs->pno2));
 uco = pow (Peq , (smac_coefs->pco));
 
 /*------  4) if uh2o <= 0 and uo3 <= 0 no gaseous absorption is computed*/
-if( (uh2o > 0.) || ( uo3 > 0.) )
-{
-        to3   = exp ( (smac_coefs->ao3)  * pow ( (uo3 *m)  , (smac_coefs->no3)  ) ) ;
-        th2o  = exp ( (smac_coefs->ah2o) * pow ( (uh2o*m)  , (smac_coefs->nh2o) ) ) ;
-        to2   = exp ( (smac_coefs->ao2)  * pow ( (uo2 *m)  , (smac_coefs->no2)  ) ) ;
-        tco2  = exp ( (smac_coefs->aco2) * pow ( (uco2*m)  , (smac_coefs->nco2) ) ) ;
-        tch4  = exp ( (smac_coefs->ach4) * pow ( (uch4*m)  , (smac_coefs->nch4) ) ) ;
-        tno2  = exp ( (smac_coefs->ano2) * pow ( (uno2*m)  , (smac_coefs->nno2) ) ) ;
-        tco   = exp ( (smac_coefs->aco)  * pow ( (uco*m)   , (smac_coefs->nco) ) ) ;
+if( (uh2o > 0.) || ( uo3 > 0.) ) {
+    trans_o3   = exp ((smac_coefs->ao3) * pow ((uo3 * m)  , (smac_coefs->no3)  ) ) ;
+    trans_h2o  = exp ((smac_coefs->ah2o) * pow ((uh2o * m)  , (smac_coefs->nh2o) ) ) ;
+    trans_o2   = exp ((smac_coefs->ao2) * pow ((uo2 * m)  , (smac_coefs->no2)  ) ) ;
+    trans_co2  = exp ((smac_coefs->aco2) * pow ((uco2 * m)  , (smac_coefs->nco2) ) ) ;
+    trans_ch4  = exp ((smac_coefs->ach4) * pow ((uch4 * m)  , (smac_coefs->nch4) ) ) ;
+    trans_no2  = exp ((smac_coefs->ano2) * pow ((uno2 * m)  , (smac_coefs->nno2) ) ) ;
+    trans_co   = exp ((smac_coefs->aco) * pow ((uco * m)   , (smac_coefs->nco) ) ) ;
 }
  
 /*------  5) Total scattering transmission */
@@ -425,7 +428,7 @@ ttetas = (smac_coefs->a0T) + (smac_coefs->a1T)*taup550/us + ((smac_coefs->a2T)*P
 ttetav = (smac_coefs->a0T) + (smac_coefs->a1T)*taup550/uv + ((smac_coefs->a2T)*Peq + (smac_coefs->a3T))/(1.+uv) ; /* upward   */
 
 /*------  6) spherical albedo of the atmosphere */
-s = (smac_coefs->a0s) * Peq +  (smac_coefs->a3s) + (smac_coefs->a1s)*taup550 + (smac_coefs->a2s) *pow (taup550 , 2) ;
+spherical_albedo = (smac_coefs->a0s) * Peq +  (smac_coefs->a3s) + (smac_coefs->a1s)*taup550 + (smac_coefs->a2s) *pow (taup550 , 2) ;
 
 /*------  7) scattering angle cosine */
 cksi = - ( (us*uv) + (sqrt(1. - us*us) * sqrt (1. - uv*uv)*cos(dphi) ) );
@@ -483,7 +486,7 @@ Res_aer= ( (smac_coefs->Resa1) + (smac_coefs->Resa2) * ( taup * m *cksi ) + (sma
 
 
 /*---------Residu 6s-----------*/
-tautot=taup+taurz;
+tautot = taup + taurz;
 Res_6s= ( (smac_coefs->Rest1) + (smac_coefs->Rest2) * ( tautot * m *cksi ) 
         + (smac_coefs->Rest3) * pow( (tautot*m*cksi),2) ) + (smac_coefs->Rest4) * pow( (tautot*m*cksi),3);
 
@@ -491,30 +494,36 @@ Res_6s= ( (smac_coefs->Rest1) + (smac_coefs->Rest2) * ( tautot * m *cksi )
 
 atm_ref = ray_ref - Res_ray + aer_ref - Res_aer + Res_6s;
 
-/*-------- reflectance at toa*/ //gaseus transmitance
+/*-------- reflectance at toa*/ //gaseus transmittance
 
-tg      = th2o * to3 * to2 * tco2 * tch4* tco * tno2;
+gaseous_transmittance      = trans_h2o * trans_o3 * trans_o2 * trans_co2 * trans_ch4 * trans_co * trans_no2;
+
+
 
  /* reflectance at surface */
+ /* note: SMAC needs toa_reflectance value, we need to convert toa_radiance to toa_reflectance before using SMAC */
 /*------------------------*/
-// E: what is tg?
-// E: r_surf?== is it rad or refl for the surf?
-*r_surf = rad_toa - (atm_ref * tg);
-// E: what is going on here? rad_surf to refl_surf???
-*r_surf = *r_surf / ( (tg * ttetas * ttetav) + (*r_surf * s) );
+// E: what is gaseous_transmittance?
+// E: it says refl at surf, but how should we calculate it????????
+*surf_refl = toa_reflectance - (atm_ref * gaseous_transmittance); // what is this?
+printf("*surf_refl: %.2lf | toa_reflectance: %.2lf | atm_ref: %lf  | gaseous_transmittance: %lf \n" , *surf_refl , toa_reflectance, atm_ref, gaseous_transmittance);
+
+*surf_refl = *surf_refl / ((gaseous_transmittance * ttetas * ttetav) + (*surf_refl * spherical_albedo));
+printf("gaseous_transmittance: %.2lf, ttetas: %.2lf, ttetav: %.2lf, spherical_albedo: %.2lf \n" , gaseous_transmittance, ttetas, ttetav, spherical_albedo);
+
+printf("toa_reflectance: %.2lf | surf_refl: %.2lf \n" , toa_reflectance, *surf_refl); // why surf_refl is larger than toa-rad?
 
 // E: commented the below lines, and used the above lines
 
   // if (band != 3) {
-  // 	*r_surf = rad_toa - ray_ref;} // rad_toa is input to this function
+  // 	*surf_refl = toa_reflectance - ray_ref;} // toa_reflectance is input to this function
 
   // else {
-  // 	*r_surf = rad_toa;}
+  // 	*surf_refl = toa_reflectance;}
   
 // printf("\n");
 // printf("out of SMAC \n");
-// printf("toa : %lf \n", rad_toa);
-// printf("surf refl: %lf \n", r_surf);
+// printf("toa : %lf \n", toa_reflectance);
 
 return 1;
 }    
@@ -1746,29 +1755,25 @@ return 1;
 
 //#####################################################################################################
 
-int read_data(char* fname, double** data, int nlines, int nsamples) // define a dynamic array=fname
-{
+int read_data(char *fname, double **data, int nlines, int nsamples) { // define a dynamic array=fname
 FILE *f; // FILE structure, declare ptr 
 //printf("inside read_data...\n");
 //printf("processing fname: %s\n", fname);
 
 f = fopen(fname, "rb");
-if (!f)
-	{
+if (!f) {
 	fprintf(stderr, "C: read_data2: couldn't open %s\n", fname);
 	return 0;
 	}
 // 
 *data = (double *) malloc(nlines * nsamples * sizeof(double));
 
-if (!*data)
-	{
+if (!*data) {
 	fprintf(stderr, "C: read_data: couldn't malloc data\n");
 	return 0;
 	}
 	
-if (fread(*data, sizeof(double), nlines * nsamples, f) != nlines * nsamples)
-	{
+if (fread(*data, sizeof(double), nlines * nsamples, f) != nlines * nsamples) { // reads all data==pixels at once from file_ptr==stream into array_ptr in mem- @ ptr == data array; The total number of elements successfully read are returned as a size_t object == nlines * nsamples
 	fprintf(stderr, "C: read_data: couldn't read data %s\n", fname);
 	return 0;
 	}
@@ -1777,10 +1782,11 @@ fclose(f);
 return 1;
 }
 
-//############################################### main ######################################################
+//#####################################################################################################
+// main
+//#####################################################################################################
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 int i;
 char tmp_str[256]; // s=tmp_str
 //char* tmp_str[]=malloc(256); // s=tmp_str
@@ -1794,13 +1800,12 @@ if (argc < 6)
 strcpy(fname[0], argv[1]);
 strcpy(fname[1], argv[2]);
 band = atoi(argv[3]);
-strcpy(fname[2], argv[4]);
+strcpy(fname[2], argv[4]); // is path to camera_dir/surf_file_name update later
 strcpy(fname[3], argv[5]);
 
 //printf("processing fname[0]: %s\n", fname[0]);
 
-if (strstr(fname[0], "_P"))
-	{
+if (strstr(fname[0], "_P")) {
 	strncpy(tmp_str, strstr(fname[0], "_P")+2, 3); // strstr: points to begining of"_p"+2
 	tmp_str[3] = 0;
 	//printf("path: %s\n", tmp_str);
@@ -1808,22 +1813,19 @@ if (strstr(fname[0], "_P"))
 	memset(tmp_str, '\0', sizeof tmp_str);
 	//printf("path: %d\n", path);
 	}
-else
-	{
+else {
 	fprintf(stderr, "C: No path info in file name \n"); // %(fname[0]));
 	return 1;
 	}
 
-if (strstr(fname[0], "_O"))
-	{
+if (strstr(fname[0], "_O")) {
 	strncpy(tmp_str, strstr(fname[0], "_O")+2, 6); // based on pointer; move pointer 2 characters forward and copy 6 characters to s
 	//printf("orbit: %s\n", tmp_str);
 	tmp_str[6] = 0;
 	orbit = atoi(tmp_str);
 	memset(tmp_str, '\0', sizeof tmp_str);
 	}
-else
-	{
+else {
 	fprintf(stderr, "C: No orbit info in file name %s\n", fname[0]);
 	return 1;
 	}
@@ -1846,8 +1848,7 @@ else
 if 		(strstr(fname[0], "_cf")) camera = 1;
 else if (strstr(fname[0], "_an")) camera = 4;
 else if (strstr(fname[0], "_ca")) camera = 7;
-else
-	{
+else {
 	fprintf(stderr, "C: Unsupported camera\n");
 	return 1;
 	}
@@ -1860,8 +1861,7 @@ nlines = 512;
 nsamples = 2048;
 zoom = 64;
 // if band != red, based on data files
-if ((band != 2) && (camera != 4))
-    {
+if ((band != 2) && (camera != 4)) {
     nlines = 128;
     nsamples = 512;
     zoom = 16;
