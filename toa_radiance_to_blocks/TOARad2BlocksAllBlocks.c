@@ -37,6 +37,10 @@
 
 
 // Global variables
+
+int doTOARadiance = 0; // Ehsan: turns on TOAradiance
+int doBRFConversion = 1; // Ehsan: turn on BRF conversion
+
 char fname[3][256];
 int PNG_NLINES, PNG_NSAMPLES, ZOOM;
 // int ZOOM = 16;
@@ -55,12 +59,15 @@ double *data = 0;
 int noData = 0;
 int nvalid = 0;
 int ndropouts = 0;
-int minnaert = 0;
+int minnaert = 0; // set to zero to turn off the correction
+
 double min;
 double max;
 double mean;
 double stddev;
 double meanSZ;
+int FileLines, FileSamples;
+
 // double displayMax = -1.0;
 //png_structp png_ptr = 0;
 //png_infop info_ptr = 0;
@@ -84,7 +91,7 @@ int write_data(char *fname, double *data, int nlines, int nsamples);
 int read_data(char *fname, double **data, int nlines, int nsamples);
 
 
-///////////////////////////////////// data2image ////////////////////////////////////////////
+// /////////////////////////////////// data2image ////////////////////////////////////////////
 // Q- what does this do? turn off? E: turnedoff 
 // char *data2image(double *data, int nlines, int nsamples, int mode)
 // {
@@ -349,13 +356,12 @@ return 1;
 
 int readEllipsoidFile(char *fname) // gets the hdf file
 {
-
-MTKt_DataBuffer databuf = MTKT_DATABUFFER_INIT;
-MTKt_DataBuffer scalebuf = MTKT_DATABUFFER_INIT;
+MTKt_DataBuffer radianceBuffer = MTKT_DATABUFFER_INIT;
+MTKt_DataBuffer scaleFactorBuffer = MTKT_DATABUFFER_INIT;
 MTKt_DataBuffer fillbuf = MTKT_DATABUFFER_INIT;
-MTKt_DataBuffer cfbuf = MTKT_DATABUFFER_INIT;
-MTKt_DataBuffer sabuf = MTKT_DATABUFFER_INIT;
-MTKt_DataBuffer szbuf = MTKT_DATABUFFER_INIT;
+MTKt_DataBuffer conversionFactorBuffer = MTKT_DATABUFFER_INIT;
+MTKt_DataBuffer solarAzimuthBuffer = MTKT_DATABUFFER_INIT;
+MTKt_DataBuffer solarZenithBuffer = MTKT_DATABUFFER_INIT;
 char gridName[256];
 char fieldName[256];
 int status;
@@ -385,24 +391,29 @@ if (filetype != MTK_GRP_ELLIPSOID_GM)
 	return 0;
 	}
 
+//----------------------------------------------------------------------------------------
 strcpy(gridName, "GeometricParameters"); 
 strcpy(fieldName, "SolarZenith");
 
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: grid=%s, field=%s\n", gridName, fieldName);
-status = MtkReadBlock(fname, gridName, fieldName, block, &szbuf);
+
+status = MtkReadBlock(fname, gridName, fieldName, block, &solarZenithBuffer);
+
 if (status != MTK_SUCCESS) 
 	{
 	fprintf(stderr, "readEllipsoidFile: MtkReadBlock1 failed!!!, status = %d (%s) \n", status, errs[status]);
 	return 0;
 	}
-if (VERBOSE) fprintf(stderr, "readEllipsoidFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s) \n", 
-	szbuf.nline, szbuf.nsample, szbuf.datasize, szbuf.datatype, types[szbuf.datatype]);
 
-if (szbuf.nline != 8 || szbuf.nsample != 32)
+if (VERBOSE) fprintf(stderr, "readEllipsoidFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s) \n", 
+	solarZenithBuffer.nline, solarZenithBuffer.nsample, solarZenithBuffer.datasize, solarZenithBuffer.datatype, types[solarZenithBuffer.datatype]);
+
+if (solarZenithBuffer.nline != 8 || solarZenithBuffer.nsample != 32)
 	{
-	fprintf(stderr, "readEllipsoidFile: %s is not 8x32: (%d, %d)\n", fieldName, szbuf.nline, szbuf.nsample);
+	fprintf(stderr, "readEllipsoidFile: %s is not 8x32: (%d, %d)\n", fieldName, solarZenithBuffer.nline, solarZenithBuffer.nsample);
 	return 0;
 	}
+
 tmp = (double *) malloc(8 * 32 * sizeof(double));
 if (!tmp)
 	{
@@ -414,24 +425,24 @@ n = 0; // E: counts n
 for (j = 0; j < 8; j ++) // E: whats going on here? j=row?
 	for (i = 0; i < 32; i ++) // i=col?
 		{
-		if (szbuf.data.d[j][i] >= 0.0) // ?
+		if (solarZenithBuffer.data.d[j][i] >= 0.0) // ?
 			{
 			n ++;
-			tmp[i + j * 32] = szbuf.data.d[j][i];
+			tmp[i + j * 32] = solarZenithBuffer.data.d[j][i];
 			}
 		else tmp[i + j * 32] = NO_DATA;
 		}
 if (n != 256)
 	if (VERBOSE) fprintf(stderr, "readEllipsoidFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 
-printf("C: n1 is: %d \n" , (n));
+//printf("C: n1 is: %d \n" , (n));
 
 if (n > 0) // if n positive
 	{
-	printf("n1 = pos: %d \n", (n));
+	//printf("n1 = pos: %d \n", (n));
 	getDataStats(tmp, 8, 32);
 	meanSZ = mean;
-	printf("meanSZ: %lf \n" , (meanSZ));
+	//printf("meanSZ: %lf \n" , (meanSZ));
 
 	// E- turned off to try to include blocks=1-6
 	// if (meanSZ >= 80.0) // E- why 80? what is 80?! skips the blocks 1-6 here
@@ -450,6 +461,9 @@ else // n is neg
 	return 1;
 	}
 
+//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+
 if 		(band == 0) { strcpy(gridName, "BlueBand"); strcpy(fieldName, "Blue Radiance/RDQI"); }
 else if (band == 1) { strcpy(gridName, "GreenBand"); strcpy(fieldName, "Green Radiance/RDQI"); }
 else if (band == 2) { strcpy(gridName, "RedBand"); strcpy(fieldName, "Red Radiance/RDQI"); }
@@ -462,7 +476,8 @@ else
 
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: grid=%s, field=%s\n", gridName, fieldName);
 
-status = MtkReadBlock(fname, gridName, fieldName, block, &databuf);
+status = MtkReadBlock(fname, gridName, fieldName, block, &radianceBuffer); // radiance data 
+
 if (status != MTK_SUCCESS) 
 	{
 	fprintf(stderr, "readEllipsoidFile: MtkReadBlock2 failed!!!, status = %d (%s)\n", status, errs[status]);
@@ -470,14 +485,16 @@ if (status != MTK_SUCCESS)
 	}
 	
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
-	databuf.nline, databuf.nsample, databuf.datasize, databuf.datatype, types[databuf.datatype]);
+	radianceBuffer.nline, radianceBuffer.nsample, radianceBuffer.datasize, radianceBuffer.datatype, types[radianceBuffer.datatype]);
 	
-//if (databuf.nline != 512 || databuf.nsample != 2048)
-if (databuf.nline != PNG_NLINES || databuf.nsample != PNG_NSAMPLES) // leave it here only for error checking
+//if (radianceBuffer.nline != 512 || radianceBuffer.nsample != 2048)
+if (radianceBuffer.nline != PNG_NLINES || radianceBuffer.nsample != PNG_NSAMPLES) // leave it here only for error checking
 	{
-	fprintf(stderr, "readEllipsoidFile: databuf is not 512x2048: (%d, %d)\n", databuf.nline, databuf.nsample);
+	fprintf(stderr, "readEllipsoidFile: radianceBuffer is not 512x2048: (%d, %d)\n", radianceBuffer.nline, radianceBuffer.nsample);
 	return 0;
 	}
+
+//----------------------------------------------------------------------------------------
 
 status = MtkFillValueGet(fname, gridName, fieldName, &fillbuf);
 if (status != MTK_SUCCESS) 
@@ -501,15 +518,19 @@ if (filetype ==  MTK_GRP_ELLIPSOID_GM || filetype ==  MTK_GRP_ELLIPSOID_LM)
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: FillValue: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s), value=%u\n", 
 	fillbuf.nline, fillbuf.nsample, fillbuf.datasize, fillbuf.datatype, types[fillbuf.datatype], fillbuf.data.u16[0][0]);
 
-status = MtkGridAttrGet(fname, gridName, "Scale factor", &scalebuf);
+//----------------------------------------------------------------------------------------
+
+status = MtkGridAttrGet(fname, gridName, "Scale factor", &scaleFactorBuffer);
 if (status != MTK_SUCCESS) 
 	{
 	fprintf(stderr, "readEllipsoidFile: MtkGridAttrGet failed!!!, status = %d (%s)\n", status, errs[status]);
 	return 0;
 	}
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: Scale factor: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s), value=%f\n", 
-	scalebuf.nline, scalebuf.nsample, scalebuf.datasize, scalebuf.datatype, types[scalebuf.datatype], scalebuf.data.d[0][0]);
-	
+	scaleFactorBuffer.nline, scaleFactorBuffer.nsample, scaleFactorBuffer.datasize, scaleFactorBuffer.datatype, types[scaleFactorBuffer.datatype], scaleFactorBuffer.data.d[0][0]);
+
+//----------------------------------------------------------------------------------------
+
 if (band == 0) { strcpy(gridName, "BRF Conversion Factors"); strcpy(fieldName, "BlueConversionFactor"); }
 else if (band == 1) { strcpy(gridName, "BRF Conversion Factors"); strcpy(fieldName, "GreenConversionFactor"); }
 else if (band == 2) { strcpy(gridName, "BRF Conversion Factors"); strcpy(fieldName, "RedConversionFactor"); }
@@ -522,7 +543,7 @@ else
 
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: grid=%s, field=%s\n", gridName, fieldName);
 
-status = MtkReadBlock(fname, gridName, fieldName, block, &cfbuf);
+status = MtkReadBlock(fname, gridName, fieldName, block, &conversionFactorBuffer); // conversion factor
 if (status != MTK_SUCCESS) 
 	{
 	fprintf(stderr, "readEllipsoidFile: MtkReadBlock3 failed!!!, status = %d (%s)\n", status, errs[status]);
@@ -530,15 +551,17 @@ if (status != MTK_SUCCESS)
 	}
 	
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
-	cfbuf.nline, cfbuf.nsample, cfbuf.datasize, cfbuf.datatype, types[cfbuf.datatype]);
+	conversionFactorBuffer.nline, conversionFactorBuffer.nsample, conversionFactorBuffer.datasize, conversionFactorBuffer.datatype, types[conversionFactorBuffer.datatype]);
 
-if (cfbuf.nline != 8 || cfbuf.nsample != 32)
+if (conversionFactorBuffer.nline != 8 || conversionFactorBuffer.nsample != 32)
 	{
-	fprintf(stderr, "readEllipsoidFile: cfbuf is not 8x32: (%d, %d)\n", cfbuf.nline, cfbuf.nsample);
+	fprintf(stderr, "readEllipsoidFile: conversionFactorBuffer is not 8x32: (%d, %d)\n", conversionFactorBuffer.nline, conversionFactorBuffer.nsample);
 	return 0;
 	}
 
-brfcf1 = (double *) malloc(8 * 32 * sizeof(double));
+//----------------------------------------------------------------------------------------
+
+brfcf1 = (double *) malloc(8 * 32 * sizeof(double)); // biDirectional refl factor conv-factor
 
 if (!brfcf1)
 	{
@@ -550,24 +573,24 @@ n = 0;
 for (j = 0; j < 8; j ++)
 	for (i = 0; i < 32; i ++)
 		{
-		if (cfbuf.data.f[j][i] > 0.0) 
+		if (conversionFactorBuffer.data.f[j][i] > 0.0) 
 			{
 			n ++;
-			brfcf1[i + j * 32] = cfbuf.data.f[j][i];
+			brfcf1[i + j * 32] = conversionFactorBuffer.data.f[j][i]; // brfcf1= biD refl factor conv-factor
 			}
 		else
 			brfcf1[i + j * 32] = NO_DATA;
 		}
 
 if (n != 256) 
-	if (VERBOSE) fprintf(stderr, "readEllipsoidFile: fewer than 256 valid in cfbuf: %d\n", n);
+	if (VERBOSE) fprintf(stderr, "readEllipsoidFile: fewer than 256 valid in conversionFactorBuffer: %d\n", n);
 
-printf("C: n2 is: %d \n" , (n));
+//printf("C: n2 is: %d \n" , (n));
 
 if (n > 0)
 	{
 	//brfcf2 = zoomArray(brfcf1, 8, 32, 64);
-	brfcf2 = zoomArray(brfcf1, 8, 32, ZOOM);
+	brfcf2 = zoomArray(brfcf1, 8, 32, ZOOM); // zoom to what? brfcf2 from brfcf1
 	if (!brfcf2) return 0;
 	}
 else // n is neg
@@ -576,21 +599,24 @@ else // n is neg
 	return 1;
 	}
 
+//----------------------------------------------------------------------------------------
+
 strcpy(gridName, "GeometricParameters"); 
 strcpy(fieldName, "SolarAzimuth");
 
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: grid=%s, field=%s\n", gridName, fieldName);
-status = MtkReadBlock(fname, gridName, fieldName, block, &sabuf);
+
+status = MtkReadBlock(fname, gridName, fieldName, block, &solarAzimuthBuffer);
 if (status != MTK_SUCCESS) 
 	{
 	fprintf(stderr, "readEllipsoidFile: MtkReadBlock4 failed!!!, status = %d (%s)\n", status, errs[status]);
 	return 0;
 	}
 if (VERBOSE) fprintf(stderr, "readEllipsoidFile: nline=%d, nsample=%d, datasize=%d, datatype=%d (%s)\n", 
-	sabuf.nline, sabuf.nsample, sabuf.datasize, sabuf.datatype, types[sabuf.datatype]);
-if (sabuf.nline != 8 || sabuf.nsample != 32)
+	solarAzimuthBuffer.nline, solarAzimuthBuffer.nsample, solarAzimuthBuffer.datasize, solarAzimuthBuffer.datatype, types[solarAzimuthBuffer.datatype]);
+if (solarAzimuthBuffer.nline != 8 || solarAzimuthBuffer.nsample != 32)
 	{
-	fprintf(stderr, "readEllipsoidFile: %s is not 8x32: (%d, %d)\n", fieldName, sabuf.nline, sabuf.nsample);
+	fprintf(stderr, "readEllipsoidFile: %s is not 8x32: (%d, %d)\n", fieldName, solarAzimuthBuffer.nline, solarAzimuthBuffer.nsample);
 	return 0;
 	}
 tmp = (double *) malloc(8 * 32 * sizeof(double));
@@ -604,10 +630,10 @@ n = 0;
 for (j = 0; j < 8; j ++)
 	for (i = 0; i < 32; i ++)
 		{
-		if (sabuf.data.d[j][i] >= 0.0) 
+		if (solarAzimuthBuffer.data.d[j][i] >= 0.0) 
 			{
 			n ++;
-			tmp[i + j * 32] = sabuf.data.d[j][i];
+			tmp[i + j * 32] = solarAzimuthBuffer.data.d[j][i];
 			}
 		else tmp[i + j * 32] = NO_DATA;
 		}
@@ -615,7 +641,7 @@ for (j = 0; j < 8; j ++)
 if (n != 256)
 	if (VERBOSE) fprintf(stderr, "readEllipsoidFile: fewer than 256 valid in %s: %d\n", fieldName, n);
 
-printf("C: n3 is: %d \n" , (n));
+//printf("C: n3 is: %d \n" , (n));
 
 if (n > 0)
 	{
@@ -648,109 +674,194 @@ else // E- means n is negative
 	return 1;
 	}
 
-nlines = databuf.nline;
-nsamples = databuf.nsample;
-data = (double *) malloc(nlines * nsamples * sizeof(double));
-if (!data)
+//-------------------------------------------------------------------------------------------
+//-------------------------------------------- doTOARadiance --------------------------------
+
+if (doTOARadiance)
 	{
-	fprintf(stderr, "readEllipsoidFile: data malloc failed!!!\n");
+	printf("\n>>> NOTE: doTOARadiance is on, we calculate TOA radiance\n");
+
+	nlines = radianceBuffer.nline;
+	nsamples = radianceBuffer.nsample;
+
+	data = (double *) malloc(nlines * nsamples * sizeof(double));
+
+	if (!data)
+		{
+		fprintf(stderr, "readEllipsoidFile: data malloc failed!!!\n");
+		return 0;
+		}
+
+	for (j = 0; j < nlines; j ++)
+		for (i = 0; i < nsamples; i ++)
+			{
+			if (radianceBuffer.data.u16[j][i] < fillbuf.data.u16[0][0])
+
+				data[i + j * nsamples] = (radianceBuffer.data.u16[j][i] >> 2) * scaleFactorBuffer.data.d[0][0]; // * conversionFactorBuffer.data.f[j / FileLines][i / FileSamples]
+
+			else 
+				data[i + j * nsamples] = NO_DATA;
+			}
+	//----------------------------------------------------------------------------------------
+	/* Minnaert Correction */   // Ehsan - needed?
+
+	if (minnaert) // if minnert=1 from python run script, we run this section....
+	{
+	printf("\n>>> NOTE: minnaert correction is on!\n");
+	for (j = 0; j < nlines; j ++)
+		for (i = 0; i < nsamples; i ++)
+			{
+			radiance = data[i + j * nsamples];
+			if (radiance == NO_DATA) continue;
+			// solarAzimuth = sa[i + j * 2048];
+			solarAzimuth = sa[i + j * PNG_NSAMPLES];  // defined inside main
+
+			if (solarAzimuth == NO_DATA) 
+				{
+				data[i + j * nsamples] = NO_DATA;
+				continue;
+				}
+			// solarZenith = sz[i + j * 2048];
+			solarZenith = sz[i + j * PNG_NSAMPLES]; // defined inside main
+			if (solarZenith == NO_DATA)
+				{
+				data[i + j * nsamples] = NO_DATA; 
+				continue;
+				}
+
+			// Ehsan - turnedoff - for calculating terrain
+			// if (!getAspectSlope(j, i, &terrainAspect, &terrainSlope)) return 0; 
+
+			// if (terrainAspect == NO_DATA) E: turnedoff
+			// 	{
+			// 	data[i + j * nsamples] = NO_DATA; // update data
+			// 	continue;
+			// 	}
+			// if (terrainSlope == NO_DATA)
+			// 	{
+			// 	data[i + j * nsamples] = NO_DATA; // update data
+			// 	continue;
+			// 	}
+
+			// // Ehsan - how about this section?
+			// solarAzimuth -= 180.0;
+			// if (solarAzimuth < 0.0) solarAzimuth += 360.0;
+			// solarAzimuth *= p180;
+			// solarZenith *= p180;
+			// terrainAspect *= p180; 
+			// terrainSlope *= p180;
+			// // Ehsan for correction?
+			// cosi = cos(solarZenith) * cos(terrainSlope) + sin(solarZenith) * sin(terrainSlope) * cos(terrainAspect - solarAzimuth);
+			// if (cosi <= 0.0) // Ehsan: cosi is used for correction, turnedoff
+			// 	{
+			// 	fprintf(stderr, "readEllipsoidFile: cosi = %14.6f, ta = %14.6f, sa = %14.6f, ta - sa = %14.6f\n", 
+			// 		cosi, terrainAspect / p180, solarAzimuth / p180, (terrainAspect - solarAzimuth)  / p180);
+			// 	// we don't need to correct for terrain dropouts
+			// 	data[i + j * nsamples] = TDROPOUT; E: turnedoff
+			// 	continue;
+			// 	}
+
+			// // we don't need to correct for slope and aspect. AN
+				// data[i + j * nsamples] = (radiance * cos(terrainSlope)) / (pow(cosi, 0.17) * pow(cos(terrainSlope), 0.17)); E: turnedoff
+			}
+	}
+
+	//----------------------------------------------------------------------------------------
+
+	for (j = 0; j < nlines; j ++) // check for no-data
+		for (i = 0; i < nsamples; i ++)
+			{ // QA check?
+			if (data[i + j * nsamples] == NO_DATA) continue; // what is this slice?
+			// if (data[i + j * nsamples] == TDROPOUT) continue; Ehsan - turnedoff
+			//if (brfcf2[i + j * 2048] == NO_DATA) 
+			if (brfcf2[i + j * PNG_NSAMPLES] == NO_DATA) // Q- what does it do?
+				{
+				data[i + j * nsamples] = NO_DATA;
+				continue;
+				}
+			
+			//data[i + j * nsamples] *= brfcf2[i + j * 2048];
+			//we don't need png files
+
+			//data[i + j * nsamples] *= brfcf2[i + j * PNG_NSAMPLES]; //output is data???
+			}
+
+	if (VERBOSE) fprintf(stderr, "readEllipsoidFile: data is %d x %d\n", nlines, nsamples);
+
+	return 1; // returns data array
+	}
+
+//-------------------------------------------------------------------------------------------
+//-------------------------------------------- doBRFConversion --------------------------------
+
+if (doBRFConversion)
+	{
+	printf("\n>>> NOTE: doBRFConversion is on, we calculate TOA BRF conversion\n");
+
+FileLines = radianceBuffer.nline / conversionFactorBuffer.nline; // radianceBuffer and conversionFactorBuffer come from MtkReadBlock==read data in mem-
+FileSamples = radianceBuffer.nsample / conversionFactorBuffer.nsample;	// so data is in mem-
+	
+if (data != 0) free(data);
+
+nlines = radianceBuffer.nline; // from Radiance
+nsamples = radianceBuffer.nsample;
+
+data = (double *) malloc(nlines * nsamples * sizeof(double));
+
+if (!data) // check mem-allocation is right
+	{
+	printf("doBRFConversion: malloc of double array failed!!!\n");
+	nlines = 0;
+	nsamples = 0;
+	nvalid = 0;
 	return 0;
 	}
 
-for (j = 0; j < nlines; j ++)
-	for (i = 0; i < nsamples; i ++)
-		{
-		if (databuf.data.u16[j][i] < fillbuf.data.u16[0][0]) 
-			data[i + j * nsamples] = (databuf.data.u16[j][i] >> 2) * 
-				scalebuf.data.d[0][0];
-		else 
-			data[i + j * nsamples] = NO_DATA;
-		}
+nvalid = 0; // *************   here: conversion from toa-rad to toa-reflectance
+if (doBRFConversion)
+    {
+    for (j = 0; j < nlines; j++)
+        for (i = 0; i < nsamples; i++)
+            {
+            if (radianceBuffer.data.u16[j][i] < fillbuf.data.u16[0][0] && // check this condition definitely to see what it filters
+                conversionFactorBuffer.data.f[j / FileLines][i / FileSamples] > 0.0)  // Q- why we need this condition?
+                {
+                data[i + j * nsamples] = (radianceBuffer.data.u16[j][i] >> 2) * scaleFactorBuffer.data.d[0][0] * conversionFactorBuffer.data.f[j / FileLines][i / FileSamples]; // update data with these 3; is it toa_refl? or something else?
+                nvalid++;
+                }
+            else // what condition????
+                {
+                data[i + j * nsamples] = -1.0;
+                }
+            //printf("BRF data pixel: %lf\n" , data[i + j * nsamples]);
+            }
+    }
+else
+    {
+    for (j = 0; j < nlines; j++)
+        for (i = 0; i < nsamples; i++)
+            {
+            if (radianceBuffer.data.u16[j][i] < fillbuf.data.u16[0][0]) // Q- why we need this condition?
+                {
+                data[i + j * nsamples] = (radianceBuffer.data.u16[j][i] >> 2) * scaleFactorBuffer.data.d[0][0];
+                nvalid++;
+                }
+            else
+                {
+                data[i + j * nsamples] = -1.0;
+                }
+                //printf("notBRF data pixel: %lf\n" , data[i + j * nsamples]);
+            }
+    }
 
-/* Minnaert Correction */   // Ehsan - needed?
-if (minnaert)
-{
-for (j = 0; j < nlines; j ++)
-	for (i = 0; i < nsamples; i ++)
-		{
-		radiance = data[i + j * nsamples];
-		if (radiance == NO_DATA) continue;
-		// solarAzimuth = sa[i + j * 2048];
-		solarAzimuth = sa[i + j * PNG_NSAMPLES];  // defined inside main
+//if (!resizeData(index)) return 0;
 
-		if (solarAzimuth == NO_DATA) 
-			{
-			data[i + j * nsamples] = NO_DATA;
-			continue;
-			}
-		// solarZenith = sz[i + j * 2048];
-		solarZenith = sz[i + j * PNG_NSAMPLES]; // defined inside main
-		if (solarZenith == NO_DATA)
-			{
-			data[i + j * nsamples] = NO_DATA; 
-			continue;
-			}
-
-		// Ehsan - turnedoff - for calculating terrain
-		// if (!getAspectSlope(j, i, &terrainAspect, &terrainSlope)) return 0; 
-
-		// if (terrainAspect == NO_DATA) E: turnedoff
-		// 	{
-		// 	data[i + j * nsamples] = NO_DATA; // update data
-		// 	continue;
-		// 	}
-		// if (terrainSlope == NO_DATA)
-		// 	{
-		// 	data[i + j * nsamples] = NO_DATA; // update data
-		// 	continue;
-		// 	}
-
-		// // Ehsan - how about this section?
-		// solarAzimuth -= 180.0;
-		// if (solarAzimuth < 0.0) solarAzimuth += 360.0;
-		// solarAzimuth *= p180;
-		// solarZenith *= p180;
-		// terrainAspect *= p180; 
-		// terrainSlope *= p180;
-		// // Ehsan for correction?
-		// cosi = cos(solarZenith) * cos(terrainSlope) + sin(solarZenith) * sin(terrainSlope) * cos(terrainAspect - solarAzimuth);
-		// if (cosi <= 0.0) // Ehsan: cosi is used for correction, turnedoff
-		// 	{
-		// 	fprintf(stderr, "readEllipsoidFile: cosi = %14.6f, ta = %14.6f, sa = %14.6f, ta - sa = %14.6f\n", 
-		// 		cosi, terrainAspect / p180, solarAzimuth / p180, (terrainAspect - solarAzimuth)  / p180);
-		// 	// we don't need to correct for terrain dropouts
-		// 	data[i + j * nsamples] = TDROPOUT; E: turnedoff
-		// 	continue;
-		// 	}
-
-		// // we don't need to correct for slope and aspect. AN
-			// data[i + j * nsamples] = (radiance * cos(terrainSlope)) / (pow(cosi, 0.17) * pow(cos(terrainSlope), 0.17)); E: turnedoff
-		}
-}
-
-
-for (j = 0; j < nlines; j ++) // 
-	for (i = 0; i < nsamples; i ++)
-		{ // QA check?
-		if (data[i + j * nsamples] == NO_DATA) continue; // what is this slice?
-		// if (data[i + j * nsamples] == TDROPOUT) continue; Ehsan - turnedoff
-		//if (brfcf2[i + j * 2048] == NO_DATA) 
-		if (brfcf2[i + j * PNG_NSAMPLES] == NO_DATA) // Q- what does it do?
-			{
-			data[i + j * nsamples] = NO_DATA;
-			continue;
-			}
-		
-		//data[i + j * nsamples] *= brfcf2[i + j * 2048];
-		//we don't need png files
-
-		//data[i + j * nsamples] *= brfcf2[i + j * PNG_NSAMPLES]; //output is data???
-		}
-
-if (VERBOSE) fprintf(stderr, "readEllipsoidFile: data is %d x %d\n", nlines, nsamples);
-
-return 1; // and returns data array
-
+MtkDataBufferFree(&radianceBuffer);
+MtkDataBufferFree(&scaleFactorBuffer);
+MtkDataBufferFree(&fillbuf);
+MtkDataBufferFree(&conversionFactorBuffer);
+return 1;
+	}
 }
 ///////////////////////////////////////////////// readEllipsoidFile ////////////////////////////////////////
 
@@ -1223,7 +1334,7 @@ exit(1);*/
 //if (argc < 4)
 if (argc < 5) // this might happen later, cos I turnedoff fname[2]
 	{
-	fprintf(stderr, "Usage: TOARad2BlocksAllBlocks, MISR_GRP_ELLIPSOID_file, block, band, minnaert, toa_data_file \n"); // updated
+	fprintf(stderr, "Usage: TOARad2BlocksAllBlocks_exe, GRP_ELLIPSOID.hdf, block, band, minnaert, toa_data_file \n"); // updated
 	// fprintf(stderr, "Usage: TOA3 input-misr-file block band minnaert output-data-file output-image-file-Ehsan--noNeed\n"); old with image
 
 	return 1;
@@ -1231,14 +1342,14 @@ if (argc < 5) // this might happen later, cos I turnedoff fname[2]
 
 
 // Ehsan - we get the cmd line args from python script and chage them to input variables
-strcpy(fname[0], argv[1]);		// str- copy hdf file name to fname[0]
+strcpy(fname[0], argv[1]); // str- copy hdf file label to fname[0]
 block = atoi(argv[2]);	// int
 band = atoi(argv[3]);		// int; band=3 for red
 minnaert = atoi(argv[1]);		// int
 strcpy(fname[1], argv[5]);		// str- fname[1]= toa data file
 // strcpy(fname[2], argv[6]);		// str- image file; Ehsan - turnedoff 
 // printf("C: MISR_GRP_ELLIPSOID_file: %s \n" , fname[0]);
-printf("C: block: %d \n" , (block));
+//printf("C: block: %d \n" , (block));
 // printf("C: band: %d \n" , (band));
 // printf("C: minnert: %d \n" , (minnaert));
 // printf("C: toa_data_file: %s \n" , (fname[1]));
@@ -1303,12 +1414,12 @@ if ((band != 2) && (camera != 4)) // if not nadir==vertical camera... E: should 
     ZOOM = 16;
     }
 
-printf("C: nvalid0: %d \n" , (nvalid));
+//printf("C: nvalid0: %d \n" , (nvalid));
 
-if (!readEllipsoidFile(fname[0])) return 1; // read hdf file
+if (!readEllipsoidFile(fname[0])) return 1; // read hdf file and return <data> array
 
-printf("C: nvalid1: %d \n" , (nvalid));
-printf("C: noData: %d \n" , (noData));
+// printf("C: nvalid1: %d \n" , (nvalid));
+// printf("C: noData: %d \n" , (noData));
 
 if (noData) return 0; // why noData= return 0? what does it mean?
 
@@ -1324,7 +1435,7 @@ if (!data) return 1;
 
 if (!getDataStats(data, nlines, nsamples)) return 1;
 
-printf("C: nvalid-final: %d \n" , (nvalid));
+//printf("C: nvalid-final: %d \n" , (nvalid));
 
 if (nvalid > 0)
 	{
@@ -1333,7 +1444,7 @@ if (nvalid > 0)
 	// 	nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ, ndropouts); // formatted output to stdout
 	printf("\n");
 	printf("%s %03d  %06d  %03d  %s  %5d  %5d  %10d  %14.6f  %14.6f  %14.6f  %14.6f  %14.6f \n", 
-	"C:", path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??", 
+	">>> C:", path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??",
 		nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ ); // Ehsan - removed ndropouts, %10d from output
 
 	fflush(stdout); // flush to clean it
@@ -1341,6 +1452,7 @@ if (nvalid > 0)
 	if (!write_data(fname[1], data, nlines, nsamples)) return 1; // TOA writes hdf data into file fname[1] 
 	// if (!write_png(fname[2], data2image(data, nlines, nsamples, 1), nlines, nsamples)) return 1; E: turnedoff this function & data2image, fname[2]- anything that goes to this function
 	}
+printf("----------------------------------------------------------------------------------------------------------------------------------------");
 
 
 return 0;

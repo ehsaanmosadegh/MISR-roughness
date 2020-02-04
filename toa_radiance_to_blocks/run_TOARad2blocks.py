@@ -21,17 +21,17 @@ import glob, os, subprocess
 import datetime as dt
 
 ###############################################################################
-# directory path setting - by USER
+# directory path setting (by USER)
 
 # path of root dir that inclides all prcessing directories
 root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir'
 # update following 3 directories
-MISR_download_dir_name = 'misr_dl_July_2016/test1'
+MISR_download_dir_name = 'misr_download_files/dl_order_july_14_2016'
 #root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir'  # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
-output_dir_name = 'toa_radiance_July_2016/test1'	# path to toa dir 
+output_dir_name = 'toa_radiance/test_toa_refl_july_14_2016'	# path to toa dir 
 #root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir' # output of TOA run
 
-# directory path setting - by USER
+# directory path setting (by USER)
 ###############################################################################
 # other settings - do not change
 
