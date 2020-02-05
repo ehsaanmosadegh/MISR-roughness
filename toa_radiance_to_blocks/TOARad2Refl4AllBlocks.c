@@ -37,10 +37,11 @@
 
 
 // Global variables
-
+// setting for running for BRF conversion or toa radiance output- turn on (= 1) the option you need
 int doTOARadiance = 0; // Ehsan: turns on TOAradiance
 int doBRFConversion = 1; // Ehsan: turn on BRF conversion
 
+// other settings
 char fname[3][256];
 int PNG_NLINES, PNG_NSAMPLES, ZOOM;
 // int ZOOM = 16;
@@ -824,7 +825,7 @@ if (doBRFConversion)
         for (i = 0; i < nsamples; i++)
             {
             if (radianceBuffer.data.u16[j][i] < fillbuf.data.u16[0][0] && // check this condition definitely to see what it filters
-                conversionFactorBuffer.data.f[j / FileLines][i / FileSamples] > 0.0)  // Q- why we need this condition?
+                conversionFactorBuffer.data.f[j/FileLines][i/FileSamples] > 0.0)  // Q- why we need this condition?
                 {
                 data[i + j * nsamples] = (radianceBuffer.data.u16[j][i] >> 2) * scaleFactorBuffer.data.d[0][0] * conversionFactorBuffer.data.f[j / FileLines][i / FileSamples]; // update data with these 3; is it toa_refl? or something else?
                 nvalid++;

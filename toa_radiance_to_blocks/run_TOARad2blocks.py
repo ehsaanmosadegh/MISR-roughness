@@ -10,6 +10,7 @@
 #	outputs: toa_file_fullpath
 # to do: 
 # - add period labels to dir name tags
+# - padd block num with 3 digs
 # - 
 # notes: 
 #   - 
@@ -23,13 +24,17 @@ import datetime as dt
 ###############################################################################
 # directory path setting (by USER)
 
+# based on the application can be "toa_refl" OR "toa_rad"
+project_file_label = "toa_refl" # can be either toa_rad OR toa_refl based on the setting inside C-code
+project_date = "july_14_2016" # based on the date as label of the output dir
+
 # path of root dir that inclides all prcessing directories
 root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir'
+
 # update following 3 directories
-MISR_download_dir_name = 'misr_download_files/dl_order_july_14_2016'
-#root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir'  # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
-output_dir_name = 'toa_radiance/test_toa_refl_july_14_2016'	# path to toa dir 
-#root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir' # output of TOA run
+MISR_download_dir_name = 'misr_download_files/dl_order_july_14_2016' # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
+
+output_dir_name = "toa_radiance/"+project_file_label+"_"+project_date	# path to toa files 
 
 # directory path setting (by USER)
 ###############################################################################
@@ -39,7 +44,7 @@ exe_name = 'TOARad2blocks'
 block_range = [1,43] # [start, stop]; should match with block range in downloading step
 band_list = ['Red']
 band_num = 2
-# minnert = is set inside the program
+# minnert = is set inside the program; if=0 it will not run inside C-code
 
 # other settings - do not change
 ###############################################################################
@@ -56,7 +61,7 @@ def main():
 
 		for each_block in range(block_range[0], block_range[1]+1, 1): # why loop over 42 blocks in one hdf file
 
-			toa_file_fullpath = define_toa_rad_files(path, orbit, each_block, camera, output_dir)
+			toa_file_fullpath = define_toa_file(path, orbit, each_block, camera, output_dir, project_file_label)
 
 			# now run TOA from linux to process Ellipsoid data
 			run_from_cmd(exe_name, each_ellipsoid_file, each_block, band_no, minnaert, toa_file_fullpath)
@@ -65,17 +70,14 @@ def main():
 
 ###############################################################################
 
-def define_toa_rad_files(path, orbit, each_block, camera, output_dir):
+def define_toa_file(path, orbit, each_block, camera, output_dir, file_label):
 
-	if (each_block <= 9):
-		#print('-> block was: %s' %each_block)
-		each_block = str(each_block).rjust(2, '0')
-		#print('-> rjust performed, block is: %s' %each_block)
-	# else:
-	# 	pass
+	each_block = str(each_block).rjust(3, '0') # added 3 to right-adjust for 3-zero digits for all range of blocks
+	print('-> rjust performed, block is: %s' %each_block)
+
 
 	# toa output file names to CMD command --> to do: make function for this section
-	toa_file_pattern = ('toa_rad_%s_%s_B%s_%s.dat' %(path, orbit, each_block, camera)) # will be written by TOA
+	toa_file_pattern = (file_label+'_%s_%s_B%s_%s.dat' %(path, orbit, each_block, camera)) # will be written by TOA
 	toa_file_fullpath = os.path.join(output_dir, toa_file_pattern)
 	#print('-> toa radiance file= %s' % (toa_file_fullpath))
 
