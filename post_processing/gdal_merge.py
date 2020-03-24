@@ -1,0 +1,1 @@
+/Users/ehsanmos/Documents/MISR/mtk_root/GDAL-2.3.2/scripts/gdal_merge.py
