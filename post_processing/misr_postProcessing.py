@@ -8,8 +8,8 @@ purpose:
 to geo-reference MISR roughness data
 
 how to use: 
-You have to have Mtk and GDAL libraries installed with the same version (e.g 2.7) and set in PATH on your machine. 
-run this script with Python2.7 if you have compiled Mtk Python wrapper and GDAL with version 2.7. 
+You have to have Mtk and GDAL libraries installed with the same version (e.g 2.7) and have set them in PATH on your machine. 
+Use this script with Python2.7 if you have installed Mtk Python wrapper and GDAL with version 2.7. 
 
 to-do:
 
