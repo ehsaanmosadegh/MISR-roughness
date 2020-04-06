@@ -1,7 +1,21 @@
+"""
+comments/notes:
+-------------------------------------------------------------------------------------
+author: Ehsan Mosadegh (emosadegh@nevada.unr.edu & ehsanm@dri.edu)
+date: Jan 5, 2020
 
-##############################################################################################
+purpose: 
+to geo-reference MISR roughness data
+
+how to use: 
+You have to have Mtk and GDAL libraries installed with the same version (e.g 2.7) and set in PATH on your machine. 
+run this script with Python2.7 if you have compiled Mtk Python wrapper and GDAL with version 2.7. 
+
+to-do:
 
 
+
+"""
 ##############################################################################################
 
 import numpy as np
@@ -21,6 +35,10 @@ roughness_dir = "/Volumes/MISR_REPO/misr_roughness_data/mostRecent_with_roughnes
 # roughness_file = "roughness_P180_O088147_B001.dat"
 # roughness_file="roughness_P180_O088147_B002.dat"
 # roughness_file_fullPath = roughness_dir + roughness_file
+
+
+
+
 
 #rough_file_open = open(roughness_file)
 
@@ -75,6 +93,9 @@ roughness_dir = "/Volumes/MISR_REPO/misr_roughness_data/mostRecent_with_roughnes
 # print("proj code:" , proj_param_obj.projcode)
 # upper_left_corner = proj_param_obj.ulc  							# order should be: (lon,lat) == (X,Y) ==> CHECK the order
 # print("===> from hdf file: upper-left corners (lon,lat):" , upper_left_corner)
+
+
+
 
 
 paths = [180, 196, 212, 228]
