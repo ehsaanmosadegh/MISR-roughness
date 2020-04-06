@@ -1,10 +1,17 @@
 
+##############################################################################################
+
+
+##############################################################################################
+
 import numpy as np
 import os, glob
-import MisrToolkit as Mtk
-from MisrToolkit import *
+
 import gdal, ogr, os, osr 		# for gdal library
 
+import MisrToolkit as Mtk
+from MisrToolkit import *
+##############################################################################################
 
 misr_dir = "/Volumes/MISR_REPO/misr_roughness_data/test_p180/"
 misr_file = "MISR_AM1_GRP_ELLIPSOID_GM_P180_O088147_AN_F03_0024.hdf"
