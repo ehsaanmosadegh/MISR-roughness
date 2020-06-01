@@ -1,6 +1,17 @@
-"""
+'''
+author: Ehsan Mosadegh (emosadegh@nevada.unr.edu & ehsanm@dri.edu)
 
-"""
+date: June 1, 2020
+
+purpose: 
+to georeference roughness files
+
+how to use: 
+we should have Mtk and Gdal installed on the system. then, run this script with python2.7 on your system
+
+to-do tasks:
+
+'''
 ########################################################################################################################
 # import necessary libraries
 

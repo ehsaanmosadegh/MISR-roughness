@@ -1,21 +1,24 @@
 #!/usr/bin/python3
 #-------------------------------------------------------------------------------------
-# author: Ehsan Mosadegh (emosadegh@nevada.unr.edu & ehsanm@dri.edu)
-# date: Oct 2, 2019
-#
-# purpose: 
-# to download MISR Ellipsoid and Geometric data from NASA Langley server and QA check on downloaded data
-#
-# how to use: 
-# We use Python3, and ftplib library to communicate with the server.
-# change the setting on top of the script that says (USER) based on your local machine
-#
-# to-do tasks:
-# how get the file if starts with capital letter?
-# a new constraint for finding the dir pattern on remote server, not DIR, e.g. sparse and get "PullDir" as keyword and get the next numbers which are the dir names
+'''
+author: Ehsan Mosadegh (emosadegh@nevada.unr.edu & ehsanm@dri.edu)
+
+date: Oct 2, 2019
+
+purpose: 
+to download MISR Ellipsoid and Geometric data from NASA Langley server and QA check on downloaded data
+
+how to use: 
+We use Python3, and ftplib library to communicate with the server.
+change the setting on top of the script that says (USER) based on your local machine
+
+to-do tasks:
+how get the file if starts with capital letter?
+a new constraint for finding the dir pattern on remote server, not DIR, e.g. sparse and get "PullDir" as keyword and get the next numbers which are the dir names
+'''
 ##################################################################################################
 
-import os, os.path , glob
+import os, os.path, glob
 import ftplib
 from ftplib import FTP
 import datetime as dt
