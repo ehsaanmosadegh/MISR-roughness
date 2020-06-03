@@ -1,19 +1,21 @@
 '''
 author: Ehsan Mosadegh (emosadegh@nevada.unr.edu & ehsanm@dri.edu)
 
-date: June 1, 2020
+date: 
+	June 1, 2020
 
 purpose: 
-to georeference roughness files
+	to georeference roughness files
 
 how to use: 
 we should have Mtk and Gdal installed on the system. then, run this script with python2.7 on your system
 
 to-do tasks:
+	check different ways to 
 
 '''
 ########################################################################################################################
-# import necessary libraries
+#~ import necessary libraries
 
 import gdal, osr 			# python2.7
 # import rasterio 			# python2.7
@@ -24,7 +26,7 @@ import os, glob
 import datetime as dt
 
 ########################################################################################################################
-# define functions
+#~ define functions
 
 def main():
 
@@ -92,15 +94,7 @@ def main():
 			array2raster(b1_ul_lon, b1_ul_lat, x_res, y_res, ncols_img, nrows_img, raster_fullPath, roughness_array)
 		else:
 			#~ for blocks 2 and later we use offset from ulcorner of block-1
-			offset_y_from_b1 = offset_list[block_num]*275	# offset in y dir in mteres
-			offset_x_from_b1 = 512*275*block_num	# offset in x dir in mteres
-			print('-> offset x: %s m' % offset_x_from_b1)
-			print('-> offset y: %s m' % offset_y_from_b1)
-
-			ulx_new_block = b1_ulx + offset_x_from_b1
-			uly_new_block = b1_uly + offset_y_from_b1
-			print('-> ulx new: %s' %ulx_new_block)
-			print('-> uly new: %s' %uly_new_block)
+			ulx_new_block, uly_new_block = blockoffset2som(block_num, offset_list, b1_ulx, b1_uly)
 			block_ul_lat, block_ul_lon = Mtk.somxy_to_latlon(path, ulx_new_block, uly_new_block)	# order matters here
 			print('-> block_ul_lon: %s' % block_ul_lon)
 			print('-> block_ul_lat: %s' % block_ul_lat)
@@ -141,9 +135,22 @@ def array2raster(block_tl_lon, block_tl_lat, x_res, y_res, ncols_img, nrows_img,
 	return 0
 
 
+def blockoffset2som(block_num, offset_list, b1_ulx, b1_uly):
+	"changes block offset from tlcorner to SOMxy"
+	offset_x_from_b1 = 512*275*block_num	# offset in x dir in mteres
+	offset_y_from_b1 = offset_list[block_num]*275	# offset in y dir in mteres
+	print('-> offset x: %s m' % offset_x_from_b1)
+	print('-> offset y: %s m' % offset_y_from_b1)
+	ulx_new_block = b1_ulx + offset_x_from_b1
+	uly_new_block = b1_uly + offset_y_from_b1
+	print('-> ulx new: %s' %ulx_new_block)
+	print('-> uly new: %s' %uly_new_block)
+	return ulx_new_block, uly_new_block
+
+
 def extract_sorting_key_from_list_element(list_lmnt):
 	"sorting key is 3-digit block number based on labling of roughness files"
-	# split each file label and extract block number
+	#~ split each file label and extract block number
 	filename = list_lmnt.split("/")[-1]
 	sorting_key = filename.replace('.','_').split('_')[-2][-3:]
 	return sorting_key, filename 	# block number==block_num
