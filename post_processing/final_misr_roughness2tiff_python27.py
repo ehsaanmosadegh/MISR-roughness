@@ -47,7 +47,7 @@ def main():
 	# print("-> projection parameter code: %s" % proj_param_obj.projcode)
 	b1_ul_lat, b1_ul_lon, b1_lr_lat, b1_lr_lon, offset_list, b1_ulx, b1_uly = process_block1(proj_param_obj, path)
 	x_res, y_res = setup_resolution(b1_ul_lat, b1_ul_lon, b1_lr_lat, b1_lr_lon, ncols_img, nrows_img)
-	roughness_list = setup_roughness(misr_dir, path, extract_sorting_key_from_list_element)
+	roughness_list = setup_roughness_filelist(misr_dir, path, extract_sorting_key_from_list_element)
 	# for k in roughness_list:
 	#   print(k)
 
@@ -156,7 +156,7 @@ def extract_sorting_key_from_list_element(list_lmnt):
 	return sorting_key, filename 	# block number==block_num
 
 
-def setup_roughness(misr_dir, path, extract_sorting_key_from_list_element):		# function as arg parameter?
+def setup_roughness_filelist(misr_dir, path, extract_sorting_key_from_list_element):		# function as arg parameter?
 	"set up path directories for roughness images"
 	#~ roughness files
 	roughness_dir = misr_dir+"rough_files"    #"/Volumes/MISR_REPO/misr_roughness_data/mostRecent_with_roughness_labels/"
@@ -164,7 +164,7 @@ def setup_roughness(misr_dir, path, extract_sorting_key_from_list_element):		# f
 	roughness_file_pattern = 'roughness_P'+str(path)+'*.dat'   # for ELLIPSOID data - check file names 
 	# print("-> looking for pattern: %s" % roughness_file_pattern)
 	#~ make a list of available Ellipsoid files, the list will be list of file_fullpath-s 
-	roughness_list = glob.glob(os.path.join(roughness_dir, roughness_file_pattern))
+	roughness_list = glob.glob(os.path.join(roughness_dir, roughness_file_pattern))		# include filePattern to glob
 	#~ sort based on block numbers
 	roughness_list.sort(key=extract_sorting_key_from_list_element)  # sorts list elements in place
 	return roughness_list
