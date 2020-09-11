@@ -1,20 +1,26 @@
 #!/usr/bin/python3
 ###############################################################################
-# run_SurfSeaIce.py
-# author: Ehsna Mosadegh (emosadegh@nevada.unr.edu)
-# version history: 2 Dec 2019
-# usage:
-# - 
-# data required:
-#	inputs: 
-#	outputs: 
-# to do: 
-# - define study domain in terms of path-block
-# - check output dir, it not exists, creates it 
-# notes: 
-#   - use python3
-# debugging:
-#	-
+'''
+notes: this script runs TOARad2Refl.c code that converts TOA-radiance to TOA-reflectance data and
+then save data of each block to a single block
+
+
+run_SurfSeaIce.py -->????
+author: Ehsna Mosadegh (emosadegh@nevada.unr.edu)
+version history: 2 Dec 2019
+usage:
+- 
+data required:
+	inputs: 
+	outputs: 
+to do: 
+- define study domain in terms of path-block
+- check output dir, it not exists, creates it 
+notes: 
+  - use python3
+debugging:
+	-
+'''
 ###############################################################################
 
 import os, subprocess
@@ -24,11 +30,13 @@ import datetime as dt
 ##### directory path setting (by USER) ########################################
 
 # path of root dir that inclides all prcessing directories
-root_dir = '/home/mare/Ehsan_lab/misr_proceesing_dir'
+processing_dir =  '/Users/ehsanmos/Documents/RnD/MISR_lab/misr_processing_dir' 
 
-#===== input files ============================================================
+
+#===== input files ========
+
 # path to TOA radiance data (toa-rad_*)
-toa_dir_name = 'toa_radiance/july_14_2016' # path to toa dir; should be defined for each project
+toa_dir_name = 'toa_refl_path_117.nosync' 	# path to toa dir; 
 
 # path to downloaded geometric files (GP-GMP)
 geo_param_dir_name = 'misr_download_files/dl_order_july_14_2016' # path to hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
@@ -36,9 +44,13 @@ geo_param_dir_name = 'misr_download_files/dl_order_july_14_2016' # path to hdf r
 # path to txt file (we are not uing it anymore)
 study_domain_POB_file = 'study_domain_POB.txt'
 
-#===== output file ============================================================
+
+
+
+#===== output file ========
+
 # define output directory == surface reflectance data
-surf_refl_dir_name = 'surf_reflectance/july_14_2016'
+surf_refl_dir_name = 'surf_reflectance_from_'+toa_dir_name
 
 #===== other settings (if you change exe name and/or band number) =============
 band_no = 2 # 3 for red band; 0,1,2
@@ -48,15 +60,33 @@ exe_name = 'TOARad2SurfRefl' # name of executable for cmd command
 ###############################################################################
 
 
+
+
+
+
+
+
+
+		###############################################################################
+		###																			###
+		###																			###
+		###		 		do not change anything below this line						###
+		###																			###
+		###																			###
+		###############################################################################
+
+
+
+
 def main():
 	# create a list of POB from the POB list
-	# study_domain_POB_list = domain_POB_list_maker(root_dir, study_domain_POB_file)
+	# study_domain_POB_list = domain_POB_list_maker(processing_dir, study_domain_POB_file)
 	# print(study_domain_POB_list)
 
 	# make a list of all available toa files
-	toa_file_list, toa_dir = check_toa_files(root_dir, toa_dir_name)
+	toa_file_list, toa_dir = check_toa_files(processing_dir, toa_dir_name)
 	# check if geo param dir is available
-	geo_param_dir = check_GP_file_dir(root_dir, geo_param_dir_name)
+	geo_param_dir = check_GP_file_dir(processing_dir, geo_param_dir_name)
 
 	# pick each toa file and parse P,O,B
 	for toa_rad_file in toa_file_list:
@@ -75,7 +105,7 @@ def main():
 		GP_GMP_file_fullpath = return_val
 
 		# define output files for C code; to do: include GP file also
-		toa_file_fullpath, surf_file_fullpath, surf_img_fullpath = define_inputs_to_C(root_dir, surf_refl_dir_name, toa_path, toa_orbit, toa_block, camera, toa_dir, toa_rad_file)
+		toa_file_fullpath, surf_file_fullpath, surf_img_fullpath = define_inputs_to_C(processing_dir, surf_refl_dir_name, toa_path, toa_orbit, toa_block, camera, toa_dir, toa_rad_file)
 
 		# run the C program
 		run_C_exe_from_cmd(exe_name, toa_file_fullpath, GP_GMP_file_fullpath, band_no, surf_file_fullpath, surf_img_fullpath)
@@ -85,12 +115,12 @@ def main():
 
 ###############################################################################
 
-def check_toa_files(root_dir, toa_dir_name):
+def check_toa_files(processing_dir, toa_dir_name):
 	'''
 	looks at the toa dir and make a list of the available files from there
 	to do: check directory exists: toa_dir
 	'''
-	toa_dir = os.path.join(root_dir, toa_dir_name) # check exists
+	toa_dir = os.path.join(processing_dir, toa_dir_name) # check exists
 	print('-> toa dir: %s' %toa_dir)
 	toa_file_list = sorted(os.listdir(toa_dir))
 	print('-> list of toa files found: %s' %len(toa_file_list))
@@ -157,12 +187,12 @@ def parse_toa_files(toa_rad_file):
 
 ###############################################################################
 
-# def domain_POB_list_maker(root_dir, study_domain_POB_file):
+# def domain_POB_list_maker(processing_dir, study_domain_POB_file):
 # 	'''
 # 	creates a list of POB from the POB list
 # 	'''
 # 	study_domain_POB_list = [] # a list of desired toa_p-o-b --> ???????????????????????????? what is this list? where is it coming from? how can I make it for each project?  
-# 	with open(os.path.join(root_dir, study_domain_POB_file), 'r') as file_obj: # this list has a list of desired (path-orbit-block)
+# 	with open(os.path.join(processing_dir, study_domain_POB_file), 'r') as file_obj: # this list has a list of desired (path-orbit-block)
 # 		domain_POB_file = file_obj.readlines()
 
 # 		for line in domain_POB_file:
@@ -180,14 +210,14 @@ def parse_toa_files(toa_rad_file):
 
 ###############################################################################
 
-def define_inputs_to_C(root_dir, surf_refl_dir_name, toa_path, toa_orbit, toa_block, camera, toa_dir, toa_rad_file):
+def define_inputs_to_C(processing_dir, surf_refl_dir_name, toa_path, toa_orbit, toa_block, camera, toa_dir, toa_rad_file):
 	# to do: include GP file pattern,
 
 	toa_file_fullpath = os.path.join(toa_dir, toa_rad_file) # if toa file in the list is availabe in the dir, then pich the toa.dat -> fname1 = toa.dat
 	#print('-> toa path for C program: %s' %toa_file_fullpath)
 
 	# define output dir- add toa file fullpath
-	output_dir = os.path.join(root_dir, surf_refl_dir_name)
+	output_dir = os.path.join(processing_dir, surf_refl_dir_name)
 	#print("-> output dir: %s" % output_dir)
 	# to-do: check if output dir exists or not 
 
@@ -202,14 +232,14 @@ def define_inputs_to_C(root_dir, surf_refl_dir_name, toa_path, toa_orbit, toa_bl
 
 ###############################################################################
 
-def check_GP_file_dir(root_dir, geo_param_dir_name):
+def check_GP_file_dir(processing_dir, geo_param_dir_name):
 	'''
 	looks for a geometric parameter file that matches the path-orbit,
 	if finds the GP file returns a GP full path, else returns False
 	'''
 	# to-do: edit download script to seperate files to 2 folders for ellipoid and geometric, 
 	# here refer to only geometric dir and make a list only from geometric files
-	geo_param_dir = os.path.join(root_dir, geo_param_dir_name)
+	geo_param_dir = os.path.join(processing_dir, geo_param_dir_name)
 	print('-> geo-param dir: %s' % geo_param_dir)
 
 	return geo_param_dir
@@ -227,7 +257,7 @@ def check_GP_files(toa_path, toa_orbit, geo_param_dir):
 
 	# # to-do: edit download script to seperate files to 2 folders for ellipoid and geometric, 
 	# # here refer to only geometric dir and make a list only from geometric files
-	# geo_param_dir = os.path.join(root_dir, geo_param_dir_name)
+	# geo_param_dir = os.path.join(processing_dir, geo_param_dir_name)
 	# print('-> geo param dir= %s' % geo_param_dir)
 
 	# now make a list from all files in the GP directory
