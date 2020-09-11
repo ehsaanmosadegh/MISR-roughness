@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/python2.7
 #-------------------------------------------------------------------------------------
 '''
-author: Ehsan Mosadegh (emosadegh@nevada.unr.edu & ehsanm@dri.edu)
+author: Ehsan Mosadegh (emosadegh@nevada.unr.edu) 
 
 date: Oct 2, 2019
 
@@ -52,12 +52,12 @@ def main() :
 
 	#--- set local directory path
 
-	email_dir_path = '/Users/ehsanmos/Documents/MISR/MISR-roughness/email_orders/'
-	email_dir_name = 'emails_ellipsoid_apr2013_day1to16_p1to233_b1to40' 	# we create this.
+	email_dir_path = '/data/gpfs/home/emosadegh/MISR-roughness/email_orders/'
+	email_dir_name = 'emails_ellipsoid_apr2013_day1to16_p1to233_b1to40' 	# code creates this.
 
 
-	storage_dir_path = '/Volumes/Ehsanm_DRI/research/MISR/hdf_files'
-	storage_dir_name = 'ellipsoid_apr2013_day1to16_p1to233_b1to40' 	# code creates it, just define the folder
+	storage_dir_path = '/data/gpfs/assoc/misr_roughness/'
+	storage_dir_name = 'emails_ellipsoid_apr2013_day1to16_p1to233_b1to40' 	# code creates it, just define the folder
 
 
 	file_name_index = 0 		# [0 = elliposid; 1 = geometric; 2 = cloudmask]
