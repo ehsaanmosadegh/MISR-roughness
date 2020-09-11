@@ -13,6 +13,8 @@
 #include <math.h>
 #include <png.h>
 #include <dirent.h>
+#include <unistd.h>  // for access()
+
 
 #define NO_DATA -999999.0
 #define BACKGROUND -999998.0
@@ -22,46 +24,63 @@
 #define LMASKED -999994.0
 #define VERBOSE 0
 
-char fname[4][256];
+char misr_file_fullpath[4][256];
 unsigned char *mask = 0;
-char **ReflFileList = 0;
-int ReflFileNum;
+char **misr_file_list = 0;
+int misr_total_files_found;
 int max_nfiles = 0;
 int nlines = 512;
 int nsamples = 2048;
-double *data = 0;
-
+double* data = 0; // %lf
+ 
 png_structp png_ptr = 0;
 png_infop info_ptr = 0;
 
 char *data2image(double *data, int ny, int nx);
-int write_png(char *fname, char *image, int ny, int nx);
-int write_data(char *fname, double *data, int nlines, int nsamples);
-int read_data(char *fname, double **data, int nlines, int nsamples);
-int read_byte_data(char *fname, unsigned char **data, int nlines, int nsamples);
+int write_png(char *misr_file_fullpath, char *image, int ny, int nx);
+int write_data(char *misr_file_fullpath, double *data, int nlines, int nsamples);
+int read_data(char *misr_file_fullpath, double **data, int nlines, int nsamples);
+int read_byte_data(char *misr_file_fullpath, unsigned char **data, int nlines, int nsamples);
 int maskData(void);
 int getFileList(char *dir);
 char *strsub(char *s, char *a, char *b);
 
+int test_data_before_write_byEhsan(void);
+
 //#####################################################################################################
 
-int maskData(void)
-{
-int i, j, i2, j2;
-double z;
+int maskData(void) {
 
-for (j = 0; j < nlines; j ++)
-	for (i = 0; i < nsamples; i ++)
-		{
-		//z = data[i + j * nsamples];
-		//if (z == NO_DATA) continue;
-		//if (z == TDROPOUT) continue;
-		
-		if (mask[i + j * nsamples] == 0) continue;
-		data[i + j * nsamples] = LMASKED;
+	int i, j, i2, j2;
+	double z;
+
+	for (j = 0; j < nlines; j ++)
+		for (i = 0; i < nsamples; i ++) {
+			//z = data[i + j * nsamples];
+			//if (z == NO_DATA) continue;
+			//if (z == TDROPOUT) continue;
+			
+			if (mask[i + j * nsamples] == 0) continue;
+				// printf("data: %lf \n" , data[i + j * nsamples]);
+
+				data[i + j * nsamples] = LMASKED;
+			}
+
+	return 1;
+}
+
+//#####################################################################################################
+int test_data_before_write_byEhsan(void) {
+	int i, j;
+
+	for (j = 0; j < nlines; j ++)
+		for (i = 0; i < nsamples; i ++) {
+			
+			printf("pixel data before write is: %lf \n" , data[i + j * nsamples]);
+
 		}
 
-return 1;
+	return 1;
 }
 
 //#####################################################################################################
@@ -84,6 +103,7 @@ for (i = 0; i < nlines * nsamples; i ++)
 	if (z < min) min = z;
 	else if (z > max) max = z;
 	}
+
 if (VERBOSE) fprintf(stderr, "data2image: Gmin=%.3f, max=%.3f\n", min, max);
 if (max != min) dz =  255.0 / (max - min);
 else dz = 0.0;
@@ -116,336 +136,427 @@ return image;
 
 //#####################################################################################################
 
-int write_png(char *fname, char *image, int ny, int nx)
-{
-FILE *fp;
-png_bytepp row_ptrs;
-int j;
+// int write_png(char *misr_file_fullpath, char *image, int ny, int nx)
+// {
+// FILE *fp;
+// png_bytepp row_ptrs;
+// int j;
 
-row_ptrs = (png_bytepp) malloc(ny * sizeof(png_bytep));
-if (!row_ptrs)
-	{
-	fprintf(stderr, "write_png: couldn't malloc row_ptrs\n");
-	return 0;
-	}
-for (j = 0; j < ny; j ++) row_ptrs[j] = (png_bytep)(image + j * nx);
+// row_ptrs = (png_bytepp) malloc(ny * sizeof(png_bytep));
+// if (!row_ptrs)
+//  {
+//  fprintf(stderr, "write_png: couldn't malloc row_ptrs\n");
+//  return 0;
+//  }
+// for (j = 0; j < ny; j ++) row_ptrs[j] = (png_bytep)(image + j * nx);
 
-fp = fopen(fname, "wb");
-if (!fp)
-	{
-	fprintf(stderr, "write_png: couldn't open %s\n", fname);
-	return 0;
-	}
+// fp = fopen(misr_file_fullpath, "wb");
+// if (!fp)
+//  {
+//  fprintf(stderr, "write_png: couldn't open %s\n", misr_file_fullpath);
+//  return 0;
+//  }
 
-png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 
-	png_voidp_NULL, png_error_ptr_NULL, png_error_ptr_NULL);
-if (!png_ptr)
-	{
-	fclose(fp);
-	fprintf(stderr, "write_png: png_create_write_struct failed\n");
-	return 0;
-	}
+// png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 
+//  png_voidp_NULL, png_error_ptr_NULL, png_error_ptr_NULL);
+// if (!png_ptr)
+//  {
+//  fclose(fp);
+//  fprintf(stderr, "write_png: png_create_write_struct failed\n");
+//  return 0;
+//  }
 
-info_ptr = png_create_info_struct(png_ptr);
-if (!info_ptr)
-	{
-	png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
-	fclose(fp);
-	fprintf(stderr, "write_png: png_create_info_struct failed\n");
-	return 0;
-	}
+// info_ptr = png_create_info_struct(png_ptr);
+// if (!info_ptr)
+//  {
+//  png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
+//  fclose(fp);
+//  fprintf(stderr, "write_png: png_create_info_struct failed\n");
+//  return 0;
+//  }
 
-if (setjmp(png_jmpbuf(png_ptr)))
-	{
-	png_destroy_write_struct(&png_ptr, &info_ptr);
-	fclose(fp);
-	fprintf(stderr, "write_png: longjmp from png error\n");
-	return 0;
-	}
+// if (setjmp(png_jmpbuf(png_ptr)))
+//  {
+//  png_destroy_write_struct(&png_ptr, &info_ptr);
+//  fclose(fp);
+//  fprintf(stderr, "write_png: longjmp from png error\n");
+//  return 0;
+//  }
 
-png_init_io(png_ptr, fp);
+// png_init_io(png_ptr, fp);
 
-png_set_IHDR(png_ptr, info_ptr, nx, ny, 8, PNG_COLOR_TYPE_GRAY, 
-	PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+// png_set_IHDR(png_ptr, info_ptr, nx, ny, 8, PNG_COLOR_TYPE_GRAY, 
+//  PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 	
-png_set_rows(png_ptr, info_ptr, row_ptrs);
+// png_set_rows(png_ptr, info_ptr, row_ptrs);
 
-png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
-       
-png_destroy_write_struct(&png_ptr, &info_ptr);
+// png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+	   
+// png_destroy_write_struct(&png_ptr, &info_ptr);
 
-fclose(fp);
-if (row_ptrs) free(row_ptrs);
-return 1;
+// fclose(fp);
+// if (row_ptrs) free(row_ptrs);
+// return 1;
+// }
+
+//#####################################################################################################
+
+int write_data(char* misr_file_fullpath, double* data, int nlines, int nsamples) {
+	FILE *f;
+
+	f = fopen(misr_file_fullpath, "wb"); // write data to this file
+	if (!f) {
+		fprintf(stderr, " ERROR1: write_data: couldn't open file; %s\n", misr_file_fullpath);
+		return 0;
+		}
+		
+	if (fwrite(data, sizeof(double), (nlines * nsamples), f) != (nlines * nsamples)) {
+		fprintf(stderr, "ERROR2: write_data: total elements returned error, couldn't write data \n");
+		return 0;
+		}
+
+	// printf("pixel value/data= %lf" , *data);
+		
+	fclose(f);
+	return 1;
 }
 
 //#####################################################################################################
 
-int write_data(char *fname, double *data, int nlines, int nsamples)
-{
-FILE *f;
+int read_data(char* misr_file_fullpath, double** data, int nlines, int nsamples) {
 
-f = fopen(fname, "wb");
-if (!f)
-	{
-	fprintf(stderr, "write_data: couldn't open %s\n", fname);
-	return 0;
+	FILE *filePtr;
+
+	filePtr = fopen(misr_file_fullpath, "rb");
+
+	if (!filePtr) {
+		fprintf(stderr, "read_data: couldn't open %s\n", misr_file_fullpath);
+		return 0;
 	}
-	
-if (fwrite(data, sizeof(double), nlines * nsamples, f) != nlines * nsamples)
-	{
-	fprintf(stderr, "write_data: couldn't write data\n");
-	return 0;
+		
+	*data = (double *) malloc(nlines * nsamples * sizeof(double));
+
+	if (!*data) {
+		fprintf(stderr, "read_data: couldn't malloc data\n");
+		return 0;
 	}
-	
-fclose(f);
-return 1;
+		
+	if (fread(*data, sizeof(double), nlines * nsamples, filePtr) != nlines * nsamples) { // reads all pixels inside surf_file into <data>
+		fprintf(stderr, "read_data: couldn't read data\n");
+		return 0;
+	}
+		
+	fclose(filePtr);
+	return 1;
 }
 
 //#####################################################################################################
 
-int read_data(char *fname, double **data, int nlines, int nsamples) {
-FILE *filePtr;
+int read_byte_data(char *misr_file_fullpath, unsigned char **data, int nlines, int nsamples) {
 
-filePtr = fopen(fname, "rb");
+	FILE *f;
 
-if (!filePtr) {
-	fprintf(stderr, "read_data: couldn't open %s\n", fname);
-	return 0;
+	f = fopen(misr_file_fullpath, "rb");
+	if (!f)
+	{
+		fprintf(stderr, "read_byte_data: couldn't open %s \n", misr_file_fullpath);
+		return 0;
 	}
-	
-*data = (double *) malloc(nlines * nsamples * sizeof(double));
+		
+	*data = (unsigned char *) malloc(nlines * nsamples * sizeof(unsigned char));
+	if (!*data)
+	{
+		fprintf(stderr, "read_byte_data: couldn't malloc data \n");
+		return 0;
+	}
+		
+	if (fread(*data, sizeof(unsigned char), nlines * nsamples, f) != nlines * nsamples)
+	{
+		fprintf(stderr, "read_byte_data: couldn't read data2 \n");
+		return 0;
+	}
+		
+	fclose(f);
 
-if (!*data) {
-	fprintf(stderr, "read_data: couldn't malloc data\n");
-	return 0;
-	}
-	
-if (fread(*data, sizeof(double), nlines * nsamples, filePtr) != nlines * nsamples) { // reads all pixels inside surf_file into <data>
-	fprintf(stderr, "read_data: couldn't read data\n");
-	return 0;
-	}
-	
-fclose(filePtr);
-return 1;
+	return 1;
 }
 
 //#####################################################################################################
 
-int read_byte_data(char *fname, unsigned char **data, int nlines, int nsamples)
-{
-FILE *f;
+int getFileList(char* dir)
+{ // returns misr_file_list
+	// DIR* dirPtr;
+	struct dirent* entryPtr; //char* d_name
 
-f = fopen(fname, "rb");
-if (!f)
+	DIR* dirPtr = opendir(dir); // returns pointer to directory; creates stream; dtype=DIR
+	if (!dirPtr) { // if reverse is correct?
+		printf("getFileList: issue with dirPtr; couldn't open %s\n", dir);
+		return 0;
+		}
+		
+	while ((entryPtr = readdir(dirPtr)) != NULL)  // readdir returns a ptr to next entry in stream
 	{
-	fprintf(stderr, "read_byte_data: couldn't open %s \n", fname);
-	return 0;
+
+		//printf("entryPtr->d_name %s \n" , entryPtr->d_name);
+		if (strstr(entryPtr->d_name, ".hdr")) continue; //if returns a pointer, continue
+		if (!strstr(entryPtr->d_name, ".dat")) continue; //if not return pointer, continue
+		//if (!strstr(entryPtr->d_name, "sdcm_")) continue;
+		//if (!strstr(entryPtr->d_name, "rms_")) continue;
+		if (misr_file_list == 0) {
+			//printf("misr_total_files_found is zero, we pass \n");
+			misr_file_list = (char **) malloc(sizeof(char *));
+			if (!misr_file_list) {
+				printf("getFileList: couldn't malloc misr_file_list \n");
+				return 0;
+			}
+		}
+		else {
+			//printf("nfilesII= %d \n" , misr_total_files_found); E
+
+			if (misr_total_files_found > max_nfiles) {
+				misr_file_list = (char **) realloc(misr_file_list, (misr_total_files_found + 1) * sizeof(char *));
+				if (!misr_file_list) {
+					printf("getFileList: couldn't realloc misr_file_list\n");
+					return 0;
+				}
+			}
+		}
+
+		misr_file_list[misr_total_files_found] = (char *) malloc(strlen(entryPtr->d_name) + 1); // alloc mem-
+
+		if (!misr_file_list[misr_total_files_found]) {
+			printf("getFileList: couldn't malloc misr_file_list[misr_total_files_found]\n");
+			return 0;
+		}
+
+		strcpy(misr_file_list[misr_total_files_found], entryPtr->d_name); // fill file list=misr_file_list with files in dir == An/Cf/Ca at a time
+
+		//printf("misr_file_list= %s\n", misr_file_list[misr_total_files_found]); E
+		misr_total_files_found ++;
 	}
-	
-*data = (unsigned char *) malloc(nlines * nsamples * sizeof(unsigned char));
-if (!*data)
-	{
-	fprintf(stderr, "read_byte_data: couldn't malloc data \n");
-	return 0;
-	}
-	
-if (fread(*data, sizeof(unsigned char), nlines * nsamples, f) != nlines * nsamples)
-	{
-	fprintf(stderr, "read_byte_data: couldn't read data2 \n");
-	return 0;
-	}
-	
-fclose(f);
-
-return 1;
-}
-
-//#####################################################################################################
-
-int getFileList(char* dir) { // returns ReflFileList
-DIR* dirPtr;
-struct dirent* entryPtr; //char* d_name
-
-dirPtr = opendir(dir); // pointer to dir; creates stream;
-if (!dirPtr) {
-	printf("getFileList: issue with dirPtr; couldn't open %s\n", dir);
-	return 0;
-	}
-	
-while (entryPtr = readdir(dirPtr)) {
-
-	//printf("entryPtr->d_name %s \n" , entryPtr->d_name);
-	if (strstr(entryPtr->d_name, ".hdr")) continue; //if returns a pointer, continue
-	if (!strstr(entryPtr->d_name, ".dat")) continue; //if not return pointer, continue
-	//if (!strstr(entryPtr->d_name, "sdcm_")) continue;
-	//if (!strstr(entryPtr->d_name, "rms_")) continue;
-	if (ReflFileList == 0) {
-		//printf("ReflFileNum is zero, we pass \n");
-	    ReflFileList = (char **) malloc(sizeof(char *));
-	    if (!ReflFileList) {
-            printf("getFileList: couldn't malloc ReflFileList \n");
-            return 0;
-	    }
-	}
-	else {
-		//printf("nfilesII= %d \n" , ReflFileNum); E
-
-	    if (ReflFileNum > max_nfiles) {
-            ReflFileList = (char **) realloc(ReflFileList, (ReflFileNum + 1) * sizeof(char *));
-            if (!ReflFileList) {
-                printf("getFileList: couldn't realloc ReflFileList\n");
-                return 0;
-            }
-	    }
-	}
-
-    ReflFileList[ReflFileNum] = (char *) malloc(strlen(entryPtr->d_name) + 1); // alloc mem-
-
-	if (!ReflFileList[ReflFileNum]) {
-	    printf("getFileList: couldn't malloc ReflFileList[ReflFileNum]\n");
-	    return 0;
-	}
-
-	strcpy(ReflFileList[ReflFileNum], entryPtr->d_name); // fill file list=ReflFileList with files in dir == An/Cf/Ca at a time
-
-	//printf("ReflFileList= %s\n", ReflFileList[ReflFileNum]); E
-	ReflFileNum ++;
-	}
-	
-closedir(dirPtr);
-return 1;
+			
+		closedir(dirPtr);
+		return 1;
 }
 
 //#####################################################################################################
 
 char *strsub(char *s, char *a, char *b)
 {
-    char *p, t[256];
-    p = strstr(s, a);
-    if(p==NULL) return NULL;  /*a not found */
-    t[0] = 0; /*now t contains empty string */
-    strncat(t, s, p-s); /*copy part of s preceding a */
-    strcat(t, b); /*add the substitute word */
-    strcat(t, p+strlen(a)); /*add on the rest of s */
-    strcpy(s, t);
-    return p+strlen(b); /*p+s points after substitution */
+	char *p, t[256];
+	p = strstr(s, a);
+	if(p==NULL) return NULL;  /*a not found */
+	t[0] = 0; /*now t contains empty string */
+	strncat(t, s, p-s); /*copy part of s preceding a */
+	strcat(t, b); /*add the substitute word */
+	strcat(t, p+strlen(a)); /*add on the rest of s */
+	strcpy(s, t);
+	return p+strlen(b); /*p+s points after substitution */
 }
 
 
-// ################################  main  #############################
+// ################################  main()  #############################
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) 
+{
 
-    // input dir
-    char reflectance_dir[256] = "/home/mare/Ehsan_lab/misr_proceesing_dir/toa_radiance/toa_refl_july_14_2016/"; // toa_refl data; should be in 3 different directories	//"/home3/mare/Nolin/2016/Surface3/Jul/";
-    char lsmask_files[256] = "/home3/mare/Nolin/SeaIce/LWData/MISR_LandSeaMask/lsmask_pP_bB.dat";  	// Ehsan: mask file, output of <ArcticTileToGrid.c>
-    
-    // output dir 
-    char masked_refl_dir[256] = "/home/mare/Ehsan_lab/misr_proceesing_dir/masked_refl/";	// output dir; dat and png files; 	//"/home3/mare/Nolin/2016/Surface3_LandMasked/Jul/"; 
-    
-    // other variables
-    char inputDir[256], lsMaskedFile[256];
-    char outputDir[256];
-    char fname[256];
-    char outFile[256], ofile1[256];
-    char spath[10], sblock[10];
-    int i, j, k;
-    int i_init = 0; //E- added to constrain to 2=Cf
-    char masked_outfile[256];
-    char s[256];
+	// input dir
+	char input_toa_home[256] = ""; //  empty string
+	char lsmask_files_fullpath[256] = ""; // empty string
+	
+	// output dir 
+	char output_dir_fullpath[256] = ""; 
+	
+	// copy from python cmdline to empty string
+	strcpy(input_toa_home, argv[1]);
+	strcpy(lsmask_files_fullpath, argv[2]);
+	strcpy(output_dir_fullpath, argv[3]);
 
-    strcpy(masked_outfile, "masked_");
+	// printf("c: argv[1]: %s \n" , argv[1]);
+	// printf("c: argv[2]: %s \n" , argv[2]);
+	// printf("c: argv[3]: %s \n" , argv[3]);
 
-    for (i=i_init; i < 3; i++ ) {   //starts from camera= 0 to 2
+	printf("c: input_toa_home: %s \n" , input_toa_home);
+	printf("c: lsmask_files_fullpath: %s \n" , lsmask_files_fullpath);
+	printf("c: output_dir_fullpath: %s \n" , output_dir_fullpath);
+	
+	// other variables
+	char input_home_dir[256], lsMaskedFile[256];
+	char outputDir[256];
+	char misr_file_fullpath[256];
+	char final_output_fullpath[256], ofile1[256];
+	char spath[10], sblock[10];
+	int camera_mode, j, k;
+	int i_init = 0; //E- added to constrain to 2=Cf
+	char output_masked_fileLabel[256];
+	char s[256];
 
-        strcpy(inputDir, reflectance_dir); // copies the pointer
-        if (i == 0) strcat(inputDir, "An/"); // adds this dir to the end of surf file dir
-        if (i == 1) strcat(inputDir, "Ca/");
-        if (i == 2) strcat(inputDir, "Cf/");
+	strcpy(output_masked_fileLabel, "masked_");  // 1st fill it here before for-loop
 
-        strcpy(outputDir, masked_refl_dir);
-        if (i == 0) strcat(outputDir, "An/");
-        if (i == 1) strcat(outputDir, "Ca/");
-        if (i == 2) strcat(outputDir, "Cf/");
+	char cam_name[5] = "";
+	// printf("cam name: %s \n" , cam_name);
 
-        printf("inputDir: %s \n" , inputDir);
-//        printf("ReflFileNum 1= %d \n" , ReflFileNum);
-//        printf("max ReflFileNum 1= %d \n" , max_nfiles);
+	for (camera_mode = i_init; camera_mode < 3; camera_mode++ ) {   //starts from camera= 0 to 2
 
-        if (ReflFileNum > max_nfiles) max_nfiles = ReflFileNum; //E- why? to remember how many iterations/files we did in past step?
-        
-        ReflFileNum = 0; // defined as initial value
-        if (!getFileList(inputDir)) return 1; // returns ReflFileList
+		printf("\n****************************************************************\n");
 
-        printf("total number of refl_files found: %d \n" , ReflFileNum); // E
-//        ReflFileNum = 40; //E-i added to test it
-        for (j=0; j < ReflFileNum; j++) { // loop over all ReflFileNum == num of surf refl in AN dir
+		strcpy(input_home_dir, input_toa_home);  // copies the pointer
+		
+		if (camera_mode == 0) // adds this dir to the end of surf file dir
+		{
+			strcpy(cam_name, "/An/");
+			printf("processing camera dir: %s \n" , cam_name);
+			strcat(input_home_dir, "/An/");
+		} 
+		if (camera_mode == 1) 
+		{
+			strcpy(cam_name, "/Ca/");
+			printf("processing camera dir: %s \n" , cam_name);
+			strcat(input_home_dir, "/Ca/");
+		}
+		if (camera_mode == 2) 
+		{
+			strcpy(cam_name, "/Cf/");
+			printf("processing camera dir: %s \n" , cam_name);
+			strcat(input_home_dir, "/Cf/");
+		}
 
-            sprintf(fname, "%s%s", inputDir, ReflFileList[j]); // copies surf_file name into fname
-            printf("pro SurfFile: %s \n",fname); // E
-            if (!read_data(fname, &data, nlines, nsamples)) return 1; // reads surf_refl and returns mem-add od data
+		strcpy(outputDir, output_dir_fullpath);  // copies the pointer
 
-            if (strstr(fname, "_P")) { // finds path#
-                strncpy(spath, strstr(fname, "_P") + 2, 3);
-                spath[3] = 0;
-                printf("spath: %s\n" , spath);
-            }
-            else {
-                fprintf(stderr, "No path info in file name\n");
-                return 1;
-            }
+		if (camera_mode == 0) strcat(outputDir, "/An/");
+		if (camera_mode == 1) strcat(outputDir, "/Ca/");
+		if (camera_mode == 2) strcat(outputDir, "/Cf/");
 
-            if (strstr(fname, "_B")) { // finds block#
-                strncpy(sblock, strstr(fname, "_B") + 2, 3); // note: change 2 to 3 if blocks go larger than 99 (100)
-                sblock[3] = 0; // should get blocks with 3 digits
-                printf("sblock= %s \n" , sblock);
-            }
-            else {
-                fprintf(stderr, "No block info in file name\n");
-                return 1;
-            }
-            strcpy(lsMaskedFile, lsmask_files);
-            strsub(lsMaskedFile, "P", spath);
-            strsub(lsMaskedFile, "B", sblock);
-            printf(">>> lsMaskedFile for read_byte func: %s\n", lsMaskedFile); // E
+		printf("input_home_dir: %s \n" , input_home_dir);
+//        printf("misr_total_files_found 1= %d \n" , misr_total_files_found);
+//        printf("max misr_total_files_found 1= %d \n" , max_nfiles);
 
-            if (!read_byte_data(lsMaskedFile, &mask, nlines, nsamples)) return 1;
-            if (!maskData()) return 1;
+		if (misr_total_files_found > max_nfiles) max_nfiles = misr_total_files_found; //E- why? to remember how many iterations/files we did in past step?
+		
+		misr_total_files_found = 0; // defined as initial value
+		
+		if (!getFileList(input_home_dir)) {
 
-            strcat(masked_outfile, ReflFileList[j]);
-            //strcpy(ofile1, ReflFileList[j]); //E
+			printf("ERROR: from getFileList. \n");
+			return 1;
+		} // returns misr_file_list
 
-            //ofile1 = ("masked_%s", ofile1);
-            //strsub(ofile1, "surf", "surf_lsm");
-            //strcat("masked_", ofile1);
-            strcpy(outFile, outputDir);
-            //printf("ofile1: %s \n", outFile);
+		printf("total number of files found: %d \n" , misr_total_files_found); // E
+		printf("%s \n" , "****************************************************************");
 
-            //strcat(outFile, ofile1); //E
-            strcat(outFile, masked_outfile); //E
+		//misr_total_files_found = 40; //E-i added to test it
+		for (j=0; j < misr_total_files_found; j++) { // loop over all misr_total_files_found == num of TOA refl in AN dir
 
-            //printf("writing output: %s \n", outFile);
+			sprintf(misr_file_fullpath, "%s%s", input_home_dir, misr_file_list[j]); // copies surf_file name into misr_file_fullpath
+			printf("\nprocessing file (%d/%d/%s) \n" , j+1, misr_total_files_found, cam_name); // E
+			printf("%s \n" , misr_file_fullpath);
 
-            if (!write_data(outFile, data, nlines, nsamples)) return 1;
+			if (!read_data(misr_file_fullpath, &data, nlines, nsamples)) {
+				printf("ERROR: from read_data\n");
+				return 1;
+			} // reads surf_refl and returns mem-add od data
 
-            strsub(outFile, ".dat", ".png");
-            if (!write_png(outFile, data2image(data, nlines, nsamples), nlines, nsamples)) return 1;
+			if (strstr(misr_file_fullpath, "_P")) { // finds path#
+				strncpy(spath, strstr(misr_file_fullpath, "_P") + 2, 3);
+				spath[3] = 0;
+				// printf("spath: %s\n" , spath);
+			}
+			else {
+				fprintf(stderr, "No path info in file name\n");
+				return 1;
+			}
 
-            for (k=0; k < nlines*nsamples; k++) {
-            data[k] = 0;
-            mask[k] = "\0";
-            }
+			if (strstr(misr_file_fullpath, "_B")) 
+			{ // finds block#
+				strncpy(sblock, strstr(misr_file_fullpath, "_B") + 2, 3); // note: change 2 to 3 if blocks go larger than 99 (100)
+				sblock[3] = 0; // should get blocks with 3 digits
+				// printf("sblock= %s \n" , sblock);
+			}
+			else 
+			{
+				fprintf(stderr, "No block info in file name\n");
+				return 1;
+			}
 
-            free(data);
-            free((unsigned char *) mask);
+			/* now define land mask file here*/
+			strcpy(lsMaskedFile, lsmask_files_fullpath);
+			strsub(lsMaskedFile, "P", spath);
+			strsub(lsMaskedFile, "B", sblock);
+			// printf("lsMaskedFile to read_byte func: %s\n", lsMaskedFile);
 
-            //memset(outFile, '\0', sizeof outFile);
-            strcpy(masked_outfile, "masked_"); //E
 
-        }	//end of j for loop
-    }   //end of i for loop
+			if (!read_byte_data(lsMaskedFile, &mask, nlines, nsamples)) 
+			{
 
-    printf("***** SUCCESSFULLY FINISHED! *****");
-    return 0;
+				printf("ERROR: from read_byte_data. Exiting.\n");
+				return 1;
+			}
+			
+			if (!maskData()) 
+			{
+
+				printf("ERROR: from maskData(). Exiting. \n");
+				return 1;
+			}
+
+			strcat(output_masked_fileLabel, misr_file_list[j]);
+			printf("output file label= %s \n" , output_masked_fileLabel);
+
+			// strcpy(ofile1, misr_file_list[j]); //E
+
+			//ofile1 = ("output_masked_fileLabel%s", ofile1);
+			//strsub(ofile1, "surf", "surf_lsm");
+			//strcat("output_masked_fileLabel", ofile1);
+			strcpy(final_output_fullpath, outputDir);
+			//printf("ofile1: %s \n", final_output_fullpath);
+
+			//strcat(final_output_fullpath, ofile1); //E
+			strcat(final_output_fullpath, output_masked_fileLabel);
+
+			// test_data_before_write_byEhsan();
+
+			// check if output file exists
+			if (access(final_output_fullpath, F_OK) == 0)   // if file exists, success returns == 0
+			{
+				printf("**** file EXIST *** we continue to next file. \n");
+
+				free(data);
+				free((unsigned char *) mask);
+				memset(final_output_fullpath, '\0', sizeof(final_output_fullpath));
+				memset(output_masked_fileLabel, '\0', sizeof(output_masked_fileLabel));
+				strcpy(output_masked_fileLabel, "masked_"); //E= write again to it to use it inside for-loop
+				continue;
+			}
+			else
+			{
+				printf("file NOT exist, writing output to= %s \n", final_output_fullpath);
+
+			}
+
+			if (!write_data(final_output_fullpath, data, nlines, nsamples)) 
+			{  // int write_data(char* outputFileStream, double* data, int nlines, int nsamples) // pass-by-value == copying data
+
+				printf("ERROR: from write_data. Exiting.\n");
+				return 1;
+			}
+
+			// strsub(final_output_fullpath, ".dat", ".png");
+			// if (!write_png(final_output_fullpath, data2image(data, nlines, nsamples), nlines, nsamples)) return 1;
+
+			// for (k=0; k < nlines*nsamples; k++) { // issue here? who added this?
+			   //  data[k] = 0;
+			   //  mask[k] = '\0';
+			// }
+
+			free(data);
+			free((unsigned char *) mask);
+			memset(final_output_fullpath, '\0', sizeof(final_output_fullpath));
+			memset(output_masked_fileLabel, '\0', sizeof(output_masked_fileLabel));
+			strcpy(output_masked_fileLabel, "masked_"); //E= write again to it to use it inside loop
+
+		}   //end of j for loop
+	}   //end of i for loop
+
+	printf("\n***** SUCCESSFULLY FINISHED! *****\n");
+	return 0;
 } // end of main
