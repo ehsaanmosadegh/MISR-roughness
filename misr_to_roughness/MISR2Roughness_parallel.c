@@ -99,10 +99,14 @@ int main() {
 	
 	// inputs
 	// char masked_toa_an_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul/An/test_ehsan"; // output of LandMask.c - use masked_surf files instead
-	char masked_toa_an_dir[256] = "/Volumes/Ehsanm_DRI/research/MISR/masked_toa_files/masked_toa_refl_ellipsoid_apr2013_day1to16_p1to233_b1to40/An" ; // path to An dir files, we use An camera to define file labels for Ca Cf cameras
+	//char masked_toa_an_dir[256] = "/Volumes/Ehsanm_DRI/research/MISR/masked_toa_files/masked_toa_refl_ellipsoid_apr2013_day1to16_p1to233_b1to40/An" ; // path to An dir files, we use An camera to define file labels for Ca Cf cameras
+        char masked_toa_an_dir[256] = "/data/gpfs/assoc/misr_roughness/masked_toa_files/An";
+
+
 
    // char atmmodel_csvfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel_csvfile2_r025.csv"; // ATM csv file; source from where/
-	char atmmodel_csvfile[256] = "/Volumes/Ehsanm_DRI/research/MISR/atmmodel_dir/atmmodel_2013/atmmodel_2013_aug1_16_b1_40_newASCM.csv" ; // ATM csv file; source from where/
+	//char atmmodel_csvfile[256] = "/Volumes/Ehsanm_DRI/research/MISR/atmmodel_dir/atmmodel_2013/atmmodel_2013_aug1_16_b1_40_newASCM.csv" ; // ATM csv file; source from where/
+        char atmmodel_csvfile[256] = "/data/gpfs/assoc/misr_roughness/atmmodels/atmmodel_2013_aug1_16_b1_40_newASCM.csv" ;
 
 
 	// we don't use this file anymore, we decided to use all blocks, meaning no correction/reversing Cf and Ca cameras.
