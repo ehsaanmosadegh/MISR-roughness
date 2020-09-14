@@ -25,7 +25,7 @@ by: Ehsan Mosadegh, 29 August 2020
 #define VERBOSE 0
 
 // E- number of threads to use
-#define total_threads 6 		// q- how many threads for my mac? how many logical processors?  how many for HPC? number of cpu cores on HPC?
+#define total_threads 6         // q- how many threads for my mac? how many logical processors?  how many for HPC? number of cpu cores on HPC?
 
 // global variables
 
@@ -46,7 +46,7 @@ typedef struct {  // q- do elements change w/ thread? if not get rid of "thread_
 toaFile_DS* toaFile_struct_ptr[total_threads]; // array of ptrs w/ [size]; q- why define size here? why array of ptrs? ptr should be defibed as global var?
 
 
-typedef struct {	// E- why not path??? --> 9 var/elements  
+typedef struct {    // E- why not path??? --> 9 var/elements  
 	int block;
 	int orbit;
 	double an;
@@ -99,18 +99,14 @@ int main() {
 	
 	// inputs
 	// char masked_toa_an_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul/An/test_ehsan"; // output of LandMask.c - use masked_surf files instead
-<<<<<<< HEAD
 	//char masked_toa_an_dir[256] = "/Volumes/Ehsanm_DRI/research/MISR/masked_toa_files/masked_toa_refl_ellipsoid_apr2013_day1to16_p1to233_b1to40/An" ; // path to An dir files, we use An camera to define file labels for Ca Cf cameras
-        char masked_toa_an_dir[256] = "/data/gpfs/assoc/misr_roughness/masked_toa_files/An";
+	// char masked_toa_an_dir[256] = "/Volumes/Ehsanm_DRI/research/MISR/masked_toa_files/masked_toa_refl_ellipsoid_apr2013_day1to16_p1to233_b1to40_testWith3Paths/An" ; // path to An dir files, we use An camera to define file labels for Ca Cf cameras
+	char masked_toa_an_dir[256] = "/data/gpfs/assoc/misr_roughness/masked_toa_refl_ellip_apr2013_d1to16_p1to233_b1to40/An" ;
 
-
-=======
-	char masked_toa_an_dir[256] = "/Volumes/Ehsanm_DRI/research/MISR/masked_toa_files/masked_toa_refl_ellipsoid_apr2013_day1to16_p1to233_b1to40_testWith3Paths/An" ; // path to An dir files, we use An camera to define file labels for Ca Cf cameras
->>>>>>> fbf51ca4250fa3a3edbd49897fe91a972d9f1cc5
 
    // char atmmodel_csvfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel_csvfile2_r025.csv"; // ATM csv file; source from where/
 	//char atmmodel_csvfile[256] = "/Volumes/Ehsanm_DRI/research/MISR/atmmodel_dir/atmmodel_2013/atmmodel_2013_aug1_16_b1_40_newASCM.csv" ; // ATM csv file; source from where/
-        char atmmodel_csvfile[256] = "/data/gpfs/assoc/misr_roughness/atmmodels/atmmodel_2013_aug1_16_b1_40_newASCM.csv" ;
+	char atmmodel_csvfile[256] = "/data/gpfs/assoc/misr_roughness/atmmodels/atmmodel_2013_aug1_16_b1_40_newASCM.csv" ;
 
 
 	// we don't use this file anymore, we decided to use all blocks, meaning no correction/reversing Cf and Ca cameras.
@@ -419,7 +415,7 @@ int main() {
 				return 1;
 			}
 			// else {
-			// 	printf("struct memory allocated successfully for thread_iter: %d \n" , thread_iter);
+			//  printf("struct memory allocated successfully for thread_iter: %d \n" , thread_iter);
 			// }
 		
 			/* ******************* we add variables/rows to toa-dataStruct  **************************** */
@@ -513,7 +509,7 @@ void* multithread_task(void* arg_ptr) { // function definitions, q- what part of
 	double xcf, xca, xan, tweight, xdata_distance, xvector_min_len, xrough_nearest, xroughness, lat, lon;;
 	// float xroughness, lat, lon;
 
-    printf("\n*********************** processing input (%d/%d): %s ***********************\n\n" , inputStruct_ptr->toa_file_count+1, inputStruct_ptr->total_toa_files, inputStruct_ptr->an);
+	printf("\n*********************** processing input (%d/%d): %s ***********************\n\n" , inputStruct_ptr->toa_file_count+1, inputStruct_ptr->total_toa_files, inputStruct_ptr->an);
 
 	// printf("c: reading each MISR image/block from 3 camera files into memory...\n");
    
@@ -635,7 +631,7 @@ void* multithread_task(void* arg_ptr) { // function definitions, q- what part of
 					// printf("xca= %f \n" , xca);
 					// printf("xcf= %f \n" , xcf);
 				}
-				else { 	// maybe turn this section off?
+				else {  // maybe turn this section off?
 					// is this the correction swection?
 					printf("check: we do NOT run this section for inverting cameras. \n");
 					xan = (an_masked_toa[r*nsamples + c] - ATMModel_struct_ptr[n].an);
@@ -807,8 +803,8 @@ int misrPixel2LatLon(int path, int block, int line, int sample, double* xlat, do
 	int status;
 	char *errs[] = MTK_ERR_DESC;
 	double lat, lon;
-	/* parameters for grid stereographic : 				*/
-	/* MOD44W.A2000055.h14v01.005.2009212173527_MOD44W_250m_GRID.dat	*/ 
+	/* parameters for grid stereographic :              */
+	/* MOD44W.A2000055.h14v01.005.2009212173527_MOD44W_250m_GRID.dat    */ 
 	//printf("lat before: %d \n", lat);
 	status = MtkBlsToLatLon(path, 275, block, line * 1.0, sample * 1.0, &lat, &lon); // returns lat/lon of a pixel
 	//printf("lat after: %d \n", lat);
