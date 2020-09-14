@@ -97,7 +97,7 @@ int main() {
 	FILE* fp;
 	struct dirent* DirEntryObj; // directory entries
 	
-	// inputs
+	// E: input directories, I kept the history of paths here
 	// char masked_toa_an_dir[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul/An/test_ehsan"; // output of LandMask.c - use masked_surf files instead
 	//char masked_toa_an_dir[256] = "/Volumes/Ehsanm_DRI/research/MISR/masked_toa_files/masked_toa_refl_ellipsoid_apr2013_day1to16_p1to233_b1to40/An" ; // path to An dir files, we use An camera to define file labels for Ca Cf cameras
 	// char masked_toa_an_dir[256] = "/Volumes/Ehsanm_DRI/research/MISR/masked_toa_files/masked_toa_refl_ellipsoid_apr2013_day1to16_p1to233_b1to40_testWith3Paths/An" ; // path to An dir files, we use An camera to define file labels for Ca Cf cameras
