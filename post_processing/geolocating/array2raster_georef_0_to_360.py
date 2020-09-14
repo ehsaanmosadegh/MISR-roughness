@@ -18,12 +18,11 @@ import datetime as dt
 # dir path setup by user
 ########################################################################################################################
 #~ setup dir w/ roughness files
-roughness_dir_path = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/multithreaded_atmmode_newASCM'  # main dir where all subdirs with roughness imgs are
-# roughness_dir_name = "multithreaded_atmmode_newASCM"  # subdir that includes roughness imgs
-roughness_dir_name = "test_with_blocks_crossing_primeMeridian"  # subdir that includes roughness imgs
+roughness_dir_path = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/'  # main dir where all subdirs with roughness imgs are
+roughness_dir_name = "multithreaded_atmmodel_newASCM"  # subdir that includes roughness imgs
 
 # tiff dir; where arr2tiff goes to, for now se build it inside rouhness dir
-arr2tiff_dir_name = 'test_1'
+georefTif_dir_name = 'test_outputDataType_reprojectionToPolar_0_180'
 ########################################################################################################################
 #~ global IDfiers
 ########################################################################################################################
@@ -42,7 +41,7 @@ def main():
     rough_files_fullpath_list, tot_found_rough_files, rough_dir_fullpath = make_roughness_list_from_dir(roughness_dir_path, roughness_dir_name, path_num)
     # ## build a dir where images from arr2img will go to
 
-    image_dir = img_dir_setup(rough_dir_fullpath, arr2tiff_dir_name)
+    image_dir = img_dir_setup(rough_dir_fullpath, georefTif_dir_name)
 
     #~ reading roughness files in loop & process each at a time
     for file_count, rough_fname in enumerate(rough_files_fullpath_list):
@@ -112,8 +111,8 @@ def arr2img_plot_n_save(in_arr_2d, img_label, img_dir):
             return 'onlyShowImg'
 ########################################################################################################################
 '''this f() builds image dir inside roughness dir'''
-def img_dir_setup(arr2tiff_dir_path, arr2tiff_dir_name):
-    img_dir = os.path.join(arr2tiff_dir_path, arr2tiff_dir_name) 
+def img_dir_setup(arr2tiff_dir_path, georefTif_dir_name):
+    img_dir = os.path.join(arr2tiff_dir_path, georefTif_dir_name) 
     if (os.path.isdir(img_dir)):
         print('-> img dir exists!')
         print(img_dir)
