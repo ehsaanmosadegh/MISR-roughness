@@ -311,7 +311,7 @@ int main() {
 	/* //////////////////////////////////////// Ehsan: process toa files ///////////////////////////////////////////// */
 	
 	printf("c: total toa AN files: %d \n" , tot_toa_an_files);
-	printf("c: In main: creating threads \n");
+	printf("\nc: In main: creating threads \n");
 	printf("c: total threads: %d \n" , total_threads);
 	printf("c: total batches of files: %d \n" , total_batches);
 
