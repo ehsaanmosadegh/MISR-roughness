@@ -2,7 +2,7 @@
 # coding: utf-8
 '''
 this f() builds tif files from roughness arrays in the same dir that roughness files are. 
-input: roughness array 
+input: roughness array- we should have them by now, this code changes them to raster
 output: georeferenced tif file 
 
 to-do:
