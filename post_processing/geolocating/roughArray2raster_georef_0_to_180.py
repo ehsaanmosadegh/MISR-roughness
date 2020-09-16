@@ -138,9 +138,10 @@ def reproject_to_polar(warpedFile_fullPath_noExt):
 	print('-> re-projecting to EPSG: %s' % target_epsg)
 	file_extension = '.tif'
 	input_raster = warpedFile_fullPath_noExt+file_extension
-	output_raster = 'reprojTo_'+'EPSG_'+str(target_epsg)+'_'+warpedFile_fullPath_noExt+file_extension
-	gdal.Warp(output_raster, input_raster, dstSRS='EPSG:3995')
-	print('-> final re-projected file: %s \n' % output_raster)
+	output_raster_fullpath = warpedFile_fullPath_noExt+'_reprojToEPSG_'+str(target_epsg)+file_extension
+	print(output_raster_fullpath)
+	gdal.Warp(output_raster_fullpath, input_raster, dstSRS='EPSG:3995')
+	print('-> final re-projected file: %s \n' % output_raster_fullpath)
 	return 0
 			
 ########################################################################################################################
