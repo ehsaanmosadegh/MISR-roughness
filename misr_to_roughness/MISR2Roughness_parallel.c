@@ -178,7 +178,7 @@ int main() {
 		return 1;
 	}
 
-	printf("\nc: atmmodel_csvfile: %s \n\n", atmmodel_csvfile);
+	printf("\nc: atmmodel_csvfile: %s \n", atmmodel_csvfile);
 
 	  /* Get the first line of the file. */
 	// line_size = getline(&sline, &slen, fp);
@@ -256,7 +256,7 @@ int main() {
 
 
 	/* //////////////////////////// Get list of MISR Masked files /////////////////////////////////////////////// */ //ok
-	printf("c: toa dir: %s \n" , masked_toa_an_dir);
+	printf("\nc: toa dir: %s \n" , masked_toa_an_dir);
 	printf("c: make a list from masked TOA An files ...\n"); // == toa_an_files_list_ptr
 	
 	dirp = opendir(masked_toa_an_dir); // define dir stream == dirp == ptr to that directory
@@ -323,7 +323,7 @@ int main() {
 
 		// define batches of input file from toa list
 		printf("*******************************************\n");
-		printf("c: batch: (%d+1/%d) \n\n" , batch_iter, total_batches);
+		printf("c: batch: (%d/%d) \n\n" , batch_iter+1, total_batches);
 
 		// we create x threads for a batch of input files
 		for (int thread_iter = 0 ; thread_iter < total_threads; thread_iter++) { 
