@@ -26,14 +26,14 @@
 ##SBATCH --ntasks-per-socket=4
 
 ##SBATCH --mem=1gb                                # Job memory request
-#SBATCH --mem-per-cpu=4000M        		 # Allocate 3.5GB of memory per CPU
+#SBATCH --mem-per-cpu=4000M        		 	# Allocate 3.5GB of memory per CPU
 
-#SBATCH --time=14-00:00				 # sets the max. run time; format: D-HH:MM
+#SBATCH --time=14-00:00				 		# sets the max. run time; format: D-HH:MM
 #SBATCH --partition=cpu             		 # Submit job to the cpu partition
 #SBATCH --mail-type=ALL             		 # Send mail on all state changes
 
 #SBATCH --output=logs/log.cmaq.test   		 # The output file name
-#SBATCH --error=logs/log.error.test		 # The error file nam
+#SBATCH --error=logs/log.error.test		 	# The error file nam
 #SBATCH --mail-user=ehsanm@dri.edu
 
 ##---------------------------------------------------------
