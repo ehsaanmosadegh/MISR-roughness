@@ -178,7 +178,7 @@ int main() {
 		return 1;
 	}
 
-	printf("\nc: processing atmmodel_csvfile: %s \n\n", atmmodel_csvfile);
+	printf("\nc: atmmodel_csvfile: %s \n\n", atmmodel_csvfile);
 
 	  /* Get the first line of the file. */
 	// line_size = getline(&sline, &slen, fp);
