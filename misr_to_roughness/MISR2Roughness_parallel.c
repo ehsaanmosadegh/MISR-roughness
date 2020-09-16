@@ -256,7 +256,7 @@ int main() {
 
 
 	/* //////////////////////////// Get list of MISR Masked files /////////////////////////////////////////////// */ //ok
-
+	printf("c: toa dir: %s \n" , masked_toa_an_dir);
 	printf("c: make a list from masked TOA An files ...\n"); // == toa_an_files_list_ptr
 	
 	dirp = opendir(masked_toa_an_dir); // define dir stream == dirp == ptr to that directory
