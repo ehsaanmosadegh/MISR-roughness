@@ -194,7 +194,7 @@ def create_gcp_list(path_num, block_num, misr_res_meter):
     #~ check all elements of long. to have same sign, either +/-
     # all(iterable); iterable==list or anything that we can iterate on; Return True if all elements of the iterable are true
     if (any( [LatLon_tuple[1] < 0  for  LatLon_tuple in geographic_latlon_list] )):   # if any Lon in geographic_latlon_list is neg. we change that to pos.
-        ''' we do this part if any or all block pixels are on West hemisphere (have neg. long.) in img block, and we change them to pos. and the range will be [0, +360] '''
+        ''' we do this part if any OR all block pixels are on West hemisphere (have neg. long.) in img block, and we change them to pos. and the range will be [0, +360] '''
 
         print("-> West Hem.: found neg. lon. in geographic_latlon_list! will update neg. to pos. long.")
 
