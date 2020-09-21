@@ -471,6 +471,9 @@ int main() {
 				printf("ERROR: pthread_join() failed \n");
 				return 1;
 			}
+			else{
+				printf("c: Waiting for thread %d finished ********* \n" , thread_iter);
+			}
 			// printf("tid %d return status: %d \n" , thread_iter, msg); // obtail return status for future debuging
 		}
 
@@ -707,7 +710,7 @@ void* multithread_task(void* arg_ptr) { // function definitions, q- what part of
 	free(cf_masked_toa);
 	free(roughness_mem_block_ptr);
 
-	printf("c: f() we free allocated mem- to toa-file: (%d) & exit pthread.  \n" , inputStruct_ptr->toa_file_count+1); // " %ld! \n" , (long) inStructPtr+1);
+	printf("c: f(.) we free allocated mem- to toa-file (%d) & exit its pthread.  \n" , inputStruct_ptr->toa_file_count+1); // " %ld! \n" , (long) inStructPtr+1);
 	
 	// close all open files
 	pthread_exit((void*)0); // terminate when tid completes its work
