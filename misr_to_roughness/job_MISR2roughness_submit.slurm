@@ -23,8 +23,8 @@
 ##SBATCH --partition=cpu             		 # Submit job to the cpu partition
 #SBATCH --mail-type=ALL             		 # Send mail on all state changes
 
-#SBATCH --output=logs/log_misr2roughness_test1   		 # The output file name
-#SBATCH --error=logs/log_error_misr2roughness_test1		 	# The error file nam
+#SBATCH --output=logs/log_misr2roughness_test1.txt   		 # The output file name
+#SBATCH --error=logs/log_error_misr2roughness_test1.txt		 	# The error file nam
 #SBATCH --mail-user=ehsanmos@icloud.com
 ##---------------------------------------------------------
 
