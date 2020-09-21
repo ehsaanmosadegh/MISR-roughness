@@ -41,10 +41,10 @@
 hostname
 date
 
-module load intel/compiler/64/2018/18.0.1
+## module load intel/compiler/64/2018/18.0.1
 module list 
 
-@ cores_per_task = $SLURM_CPUS_PER_TASK / 2
+##@ cores_per_task = $SLURM_CPUS_PER_TASK / 2
 
 echo "===================================================="
 echo "***** Some runtime informartiuon *****"
@@ -65,9 +65,9 @@ echo "===================================================="
 
 echo “===> job script starts here...”
 
-##setenv I_MPI_PMI_LIBRARY "/cm/shared/apps/slurm/17.02.2/lib64/libpmi.so"
+##/data/gpfs/home/emosadegh/MISR-roughness/exe_dir/MISR2Roughness_parallel
 
-source run_cctm_CA.csh 
+MISR2Roughness_parallel
 
 echo “===> job script ends here...”
 
