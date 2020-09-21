@@ -31,12 +31,12 @@ date
 module list 
 
 
-echo “===> job script starts here...”
+echo “===> MISR job starts here...”
 
 ./data/gpfs/home/emosadegh/MISR-roughness/exe_dir/MISR2Roughness_parallel
 
 ## MISR2Roughness_parallel
 
-echo “===> job script ends here...”
+echo “===> MISR job ends here...”
 
 date
