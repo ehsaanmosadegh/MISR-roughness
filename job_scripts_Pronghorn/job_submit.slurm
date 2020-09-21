@@ -1,21 +1,9 @@
-#!/bin/bash
-
-#SBATCH --job-name=MISR2Roughness
-
-
-			       
+#!/bin/sh
 
 ## --- hybrid 
 ##SBATCH --nodes=2
 ##SBATCH --ntasks=2
 ##SBATCH --cpus-per-task=8
-##SBATCH --hint=compute_bound
-
-## --- multi-processor/threaded
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
-#SBATCH --threads-per-core=2
 ##SBATCH --hint=compute_bound
 
 # --- MPI
@@ -25,6 +13,18 @@
 ##SBATCH --ntasks-per-node=8
 ##SBATCH --ntasks-per-socket=4
 
+###########################################################
+
+#SBATCH --job-name=MISR2Roughness
+
+## --- multi-processor/threaded
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=20
+#SBATCH --threads-per-core=2
+##SBATCH --hint=compute_bound
+
+
 ##SBATCH --mem=1gb                                # Job memory request
 #SBATCH --mem-per-cpu=4000M        		 	# Allocate 3.5GB of memory per CPU
 
@@ -32,9 +32,9 @@
 #SBATCH --partition=cpu             		 # Submit job to the cpu partition
 #SBATCH --mail-type=ALL             		 # Send mail on all state changes
 
-#SBATCH --output=logs/log.cmaq.test   		 # The output file name
-#SBATCH --error=logs/log.error.test		 	# The error file nam
-#SBATCH --mail-user=ehsanm@dri.edu
+#SBATCH --output=logs/log_misr2roughness_test1   		 # The output file name
+#SBATCH --error=logs/log_error_misr2roughness_test1		 	# The error file nam
+#SBATCH --mail-user=ehsanmos@icloud.com
 
 ##---------------------------------------------------------
 
