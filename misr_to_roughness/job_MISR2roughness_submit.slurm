@@ -1,7 +1,12 @@
 #!/bin/bash
-
+##---------------------------------------------------------
 #SBATCH --job-name=MISR2Roughness
+##---------------------------------------------------------
+## --- run on test account for QA
 
+#SBATCH --account=cpu-s6-test-0 
+#SBATCH --partition=cpu-s6-test-0
+##---------------------------------------------------------
 ## --- multi-processor/threaded
 
 ##SBATCH --nodes=1
@@ -21,7 +26,6 @@
 #SBATCH --output=logs/log_misr2roughness_test1   		 # The output file name
 #SBATCH --error=logs/log_error_misr2roughness_test1		 	# The error file nam
 #SBATCH --mail-user=ehsanmos@icloud.com
-
 ##---------------------------------------------------------
 
 ##hostname
