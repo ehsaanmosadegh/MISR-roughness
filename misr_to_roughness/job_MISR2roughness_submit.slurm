@@ -20,7 +20,7 @@
 ## --- multi-processor/threaded
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=20
+#SBATCH --cpus-per-task=2
 #SBATCH --threads-per-core=2
 ##SBATCH --hint=compute_bound
 
