@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## --- hybrid 
 ##SBATCH --nodes=2
@@ -18,6 +18,7 @@
 #SBATCH --job-name=MISR2Roughness
 
 ## --- multi-processor/threaded
+
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
@@ -65,9 +66,9 @@ echo "===================================================="
 
 echo “===> job script starts here...”
 
-##/data/gpfs/home/emosadegh/MISR-roughness/exe_dir/MISR2Roughness_parallel
+/data/gpfs/home/emosadegh/MISR-roughness/exe_dir/MISR2Roughness_parallel
 
-MISR2Roughness_parallel
+# MISR2Roughness_parallel
 
 echo “===> job script ends here...”
 
