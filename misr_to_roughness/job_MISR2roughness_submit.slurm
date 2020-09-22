@@ -16,11 +16,15 @@
 ##---------------------------------------------------------
 ## --- multi-core/threaded
 
-##SBATCH -n 80 
+##SBATCH --ntasks=80 
 
-#SBATCH --cores-per-socket=30 
+##SBATCH --cores-per-socket=30  --> error
 
-##SBATCH --ntasks=20
+#SBATCH --ntasks=20
+#SBATCH --ntasks-per-core=1
+
+
+
 ##SBATCH --cpus-per-task=30
 ##SBATCH --threads-per-core=2
 
