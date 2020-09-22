@@ -25,7 +25,7 @@ by: Ehsan Mosadegh, 29 August 2020
 #define VERBOSE 0
 
 // E- number of threads to use
-#define total_threads 40         // q- how many threads for my mac? how many logical processors?  how many for HPC? number of cpu cores on HPC?
+#define total_threads 60         // q- how many threads for my mac? how many logical processors?  how many for HPC? number of cpu cores on HPC?
 
 // global variables
 
