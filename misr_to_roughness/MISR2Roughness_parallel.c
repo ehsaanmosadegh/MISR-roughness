@@ -331,7 +331,7 @@ int main() {
 
 		// define batches of input file from toa list
 		printf("*******************************************\n");
-		printf("c: batch: (%d/%d) \n\n" , batch_iter+1, total_batches);
+		printf("c: start of batch: (%d/%d) \n\n" , batch_iter+1, total_batches);
 
 		// we create x threads for a batch of input files
 		for (int thread_iter = 0 ; thread_iter < total_threads; thread_iter++) { 
@@ -472,7 +472,7 @@ int main() {
 				return 1;
 			}
 			else{
-				printf("c: Waiting for thread %d finished ********* \n" , thread_iter);
+				printf("c: Waiting for thread %d to finish ********* \n" , thread_iter);
 			}
 			// printf("tid %d return status: %d \n" , thread_iter, msg); // obtail return status for future debuging
 		}

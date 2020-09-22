@@ -2,13 +2,13 @@
 ##---------------------------------------------------------
 #SBATCH --job-name=MISRtest
 ##---------------------------------------------------------
-## --- run on test account for QA
+## --- run on test partition for QualityAssurance
 
 ##SBATCH --account=cpu-s6-test-0 
 ##SBATCH --partition=cpu-s6-test-0
 
 ##---------------------------------------------------------
-## --- run on MISR_roughness account/partition
+## --- run on MISR_roughness partition
 
 #SBATCH --account=cpu-s5-misr_roughness-0
 #SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
