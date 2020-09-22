@@ -4,38 +4,30 @@
 ##---------------------------------------------------------
 ## --- run on test account for QA
 
-#SBATCH --account=cpu-s6-test-0 
-#SBATCH --partition=cpu-s6-test-0
+##SBATCH --account=cpu-s6-test-0 
+##SBATCH --partition=cpu-s6-test-0
 
 ##---------------------------------------------------------
 ## --- run on MISR_roughness account/partition
 
-##SBATCH --account=cpu-s5-misr_roughness-0
-##SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
+#SBATCH --account=cpu-s5-misr_roughness-0
+#SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
 
 ##---------------------------------------------------------
 ## --- multi-core/threaded
 
-##SBATCH --ntasks=80 
-
-##SBATCH --cores-per-socket=30  --> error
-
-#SBATCH --ntasks=60
+#SBATCH --ntasks=64
 #SBATCH --ntasks-per-core=1
-
-
-
-##SBATCH --cpus-per-task=30
-##SBATCH --threads-per-core=2
 
 
 #SBATCH --mail-type=ALL             		 # Send mail on all state changes
 #SBATCH --mail-user=ehsanmos@icloud.com
 
-#SBATCH --output=logs/log_misr2roughness_testPartition_2.txt   		 # The output file name
-#SBATCH --error=logs/log_error_misr2roughness_testPartition_2.txt		 	# The error file nam
+#SBATCH --output=logs/log_misr2roughness.txt   		 # The output file name
+#SBATCH --error=logs/log_error_misr2roughness.txt		 	# The error file nam
 
 
+##SBATCH --cores-per-socket=30  --> error
 ##SBATCH --hint=compute_bound
 ##SBATCH --nodes=1
 ##SBATCH --mem=1gb                                # Job memory request
