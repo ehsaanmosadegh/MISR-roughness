@@ -16,11 +16,12 @@
 ##---------------------------------------------------------
 ## --- multi-core/threaded
 
-#SBATCH -n 40 
+##SBATCH -n 40 
 
 
 
-##SBATCH --cores-per-socket=20
+#SBATCH --cores-per-socket=40
+
 ##SBATCH --ntasks=20
 ##SBATCH --cpus-per-task=30
 ##SBATCH --threads-per-core=2
