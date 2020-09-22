@@ -52,7 +52,7 @@ echo “===> MISR job starts here...”
 
 ## ./data/gpfs/home/emosadegh/MISR-roughness/exe_dir/MISR2Roughness_parallel
 
--u MISR2Roughness_parallel
+MISR2Roughness_parallel
 
 echo “===> MISR job ends here...”
 
