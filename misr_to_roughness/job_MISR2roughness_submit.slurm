@@ -20,7 +20,7 @@
 
 ##SBATCH --cores-per-socket=30  --> error
 
-#SBATCH --ntasks=20
+#SBATCH --ntasks=60
 #SBATCH --ntasks-per-core=1
 
 
