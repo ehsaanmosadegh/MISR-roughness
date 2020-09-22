@@ -29,8 +29,8 @@
 #SBATCH --mail-type=ALL             		 # Send mail on all state changes
 #SBATCH --mail-user=ehsanmos@icloud.com
 
-#SBATCH --output=logs/log_misr2roughness_testPartition_1.txt   		 # The output file name
-#SBATCH --error=logs/log_error_misr2roughness_testPartition_1.txt		 	# The error file nam
+#SBATCH --output=logs/log_misr2roughness_testPartition_2.txt   		 # The output file name
+#SBATCH --error=logs/log_error_misr2roughness_testPartition_2.txt		 	# The error file nam
 
 
 ##SBATCH --hint=compute_bound
