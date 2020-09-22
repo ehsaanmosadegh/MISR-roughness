@@ -20,7 +20,6 @@
 
 
 
-
 ##SBATCH --cores-per-socket=20
 ##SBATCH --ntasks=20
 ##SBATCH --cpus-per-task=30
