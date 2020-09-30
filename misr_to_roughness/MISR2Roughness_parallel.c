@@ -330,8 +330,9 @@ int main() {
 	for (int batch_iter = 0; batch_iter < total_batches; batch_iter++) { 
 
 		// define batches of input file from toa list
-		printf("*******************************************\n");
-		printf("c: start of batch: (%d/%d) \n\n" , batch_iter+1, total_batches);
+		printf("******************************************************************************\n");
+		printf("c: start of batch: (%d/%d) \n" , batch_iter+1, total_batches);
+		printf("******************************************************************************\n\n");
 
 		// we create x threads for a batch of input files
 		for (int thread_iter = 0 ; thread_iter < total_threads; thread_iter++) { 
@@ -480,10 +481,10 @@ int main() {
 		/* ******************* we free allocated memory to created threads **************************************** */
 
 		/* free memory of struct[thread] */
-		printf("c: in main(): we did free aloocated memory to all struct[thread] \n");
 		for (int thread_iter = 0; thread_iter < total_threads; thread_iter++) {
 			free(toaFile_struct_ptr[thread_iter]);
 		}
+		printf("c: in main(): out of pThread(), batch iteration ended, and we did free allocated memory to all struct[thread] \n");
 
 		// exit threads?
 		// pthread_exit(NULL); // to terminate threads, where/how use it???
