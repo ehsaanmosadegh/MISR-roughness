@@ -26,7 +26,7 @@ from matplotlib import pyplot as plt  #  pyplot uses the actual RGB values as th
 # dir path setup by user
 ########################################################################################################################
 #~ setup dir w/ roughness files
-rough_dir_fullpath = '/data/gpfs/assoc/misr_roughness/roughness_2013_apr1to16_p1to233_b1to40'
+rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40'
 
 # tiff dir; where arr2tiff goes to, for now se build it inside rouhness dir
 georefRaster_dir_name = 'rasters'
@@ -59,6 +59,7 @@ def main():
 		print("--------------------------------------------------------------------------------------------------------")
 		print('-> processing new roughness array: (%d/ %d)' % (file_count+1, tot_found_rough_files))
 		print(rough_fname)
+		print('\n')
 		
 		block_num, path_num, rough_arr_2d = read_rough_file(rough_fname)
 		
@@ -121,9 +122,15 @@ def arr2img_plot_n_save(in_arr_2d, path_label, block_label, img_dir):
 		# print(out_img_label)
 
 		out_img_fullpath = os.path.join(img_dir, out_img_label)
-		print("-> saving output img as: %s \n" %out_img_fullpath)
 
-		plt.imsave(out_img_fullpath, in_arr_2d, cmap='gray', vmin=0, vmax=in_arr_2d.max())  # note: vmin=in_arr_2d.min() is wrong in this case, cuz roughness array
+		if (os.path.isfile(out_img_fullpath)):
+			print('-> img EXISTS, we will skip this path!')
+			return 'skipThisImg' 
+
+		else:
+			print('-> img is NOT on disc, so we will go on with this path!')
+			print("-> saving output img as: %s \n" %out_img_fullpath)
+			plt.imsave(out_img_fullpath, in_arr_2d, cmap='gray', vmin=0, vmax=in_arr_2d.max())  # note: vmin=in_arr_2d.min() is wrong in this case, cuz roughness array
 																							# 		has many fill values with ranges in -99999, so vmin=0 to plot images in range [0,max)
 
 		return out_img_fullpath

@@ -17,7 +17,7 @@ def main():
 
 	print('-> start main(): ')
 
-	raster_dir_fullpath = '/data/gpfs/assoc/misr_roughness/roughness_2013_apr1to16_p1to233_b1to40/rasters'
+	raster_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/rasters/test_subset'
 
 
 	output_VRT_dataset_name = 'virtual_dataset_subset_byte.vrt'
@@ -52,7 +52,7 @@ def main():
 	my_vrt_ptr = gdal.BuildVRT(
 								VRT_fullpath, 
 								files_to_mosaic
-							) #, options=vrt_options)
+							) 					#, options=vrt_options)
 	
 	print('-> closing VRT dataset!')
 	my_vrt_ptr = None 
