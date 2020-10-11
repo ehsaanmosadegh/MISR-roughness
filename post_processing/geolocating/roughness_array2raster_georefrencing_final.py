@@ -636,9 +636,10 @@ if __name__ == '__main__':
 	
 	start_time = dt.datetime.now()
 	print('-> start time: %s' %start_time)
-	print(" ")
+	print('\n\n')
 	main()
 	end_time = dt.datetime.now()
+	print('\n\n')
 	print('-> end time= %s' %end_time)
 	print('-> runtime duration= %s' %(end_time-start_time))
 	print(" ")

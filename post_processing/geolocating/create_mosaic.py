@@ -17,13 +17,14 @@ def main():
 
 	print('-> start main(): ')
 
-	raster_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/rasters/test_subset'
+	raster_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/rasters'
 
+	#~ naming labels
+	day_label = 'allDays' # use a day label to assign to output VRT and mosaic files
+	output_VRT_dataset_name = 'virtualDataset_byte_'+day_label+'.vrt'
+	output_mosaic_name = 'mosaic_fromVRT_byte_'+day_label+'.tif'
 
-	output_VRT_dataset_name = 'virtual_dataset_subset_byte.vrt'
-	output_mosaic_name = 'mosaic_from_vrt_subset_byte.tif'
-
-
+	########################################################################################################################
 	VRT_fullpath = os.path.join(raster_dir_fullpath, output_VRT_dataset_name)
 
 	#~ we find this file pattern
@@ -33,9 +34,7 @@ def main():
 	#~ build a list from input raster files
 	files_to_mosaic = glob.glob(os.path.join(raster_dir_fullpath, raster_file_pattern))
 	print('-> files found: %d' % len(files_to_mosaic))
-
-
-
+	
 	########################################################################################################################
 	#~ method 1- gdal_merge.py cmdLine
 	#~ problems: slow cuz of beiing cmdLine + a long string of inoput files into memory
