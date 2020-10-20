@@ -46,7 +46,7 @@ module list
 echo “=== MISR job started here...”
 
 
-/data/gpfs/assoc/misr_roughness/misr_hdf_storage/april_2016/new_download_MISR_files.py
+new_download_MISR_files.py
 
 echo “=== MISR job ended here...”
 
