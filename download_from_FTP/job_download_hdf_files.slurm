@@ -1,6 +1,6 @@
 #!/bin/bash
 ##---------------------------------------------------------
-#SBATCH --job-name=HDFdownload
+#SBATCH --job-name=HDFdownloadd
 ##---------------------------------------------------------
 ## --- run on test partition for QualityAssurance
 
