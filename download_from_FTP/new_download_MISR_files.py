@@ -42,11 +42,11 @@ for https_path in order_to_download_list:
 	command = "wget "+https_path
 	print('===============================================================================')
 	print('-> connecting to the server & downloading order...')
-	print('-> command == "%s"' %command)
+	print('-> command == %s' %command)
 
 	ret = call(command, shell=True) 	#~ note: shell=true to execute the line as full command including arguments
-	if ret == 0:
-		print('-> successfully finished downloading tar.gz file!')
+	if (ret == 0):
+		print('-> command finished with success!')
 	else:
-		print('-> ERROR: error code not zero!')
+		print('-> ERROR: Command failed with return code!')
 		raise SystemExit()
