@@ -3,7 +3,8 @@
 import glob, os
 from subprocess import call
 
-email_dir_fullpath = '/Users/ehsanmos/Documents/MISR/MISR-roughness/email_orders/april_2016'
+# email_dir_fullpath = '/Users/ehsanmos/Documents/MISR/MISR-roughness/email_orders/april_2016'
+email_dir_fullpath = '/data/gpfs/home/emosadegh/MISR-roughness/email_orders/april_2016'
 
 file_pattern = 'hdf_*.txt'
 file_pattern_fullpath = os.path.join(email_dir_fullpath, file_pattern)
