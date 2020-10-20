@@ -17,7 +17,7 @@ def main():
 
 	print('-> start main(): ')
 
-	raster_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/rasters'
+	raster_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_4/rasters'
 
 	#~ naming labels
 	day_label = 'allDays' # use a day label to assign to output VRT and mosaic files
@@ -26,6 +26,10 @@ def main():
 
 	########################################################################################################################
 	VRT_fullpath = os.path.join(raster_dir_fullpath, output_VRT_dataset_name)
+
+	print('-> raster dir: %s' %raster_dir_fullpath)
+	print('-> VRT: %s' %VRT_fullpath)
+
 
 	#~ we find this file pattern
 	raster_file_pattern = 'raster_path_*'+'*_reprojToEPSG_3995.tif'

@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 # coding: utf-8
 '''
-this f() builds tif files from roughness arrays. 
+this f() builds georeferenced tif files from roughness arrays. 
 input: roughness array 
 output: georeferenced tif file 
 
@@ -26,7 +26,7 @@ from matplotlib import pyplot as plt  #  pyplot uses the actual RGB values as th
 # dir path setup by user
 ########################################################################################################################
 #~ setup dir w/ roughness files
-rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40'
+rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_4'
 
 # tiff dir; where arr2tiff goes to, for now se build it inside rouhness dir
 georefRaster_dir_name = 'rasters'
