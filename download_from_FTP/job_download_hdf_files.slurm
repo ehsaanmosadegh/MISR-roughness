@@ -3,20 +3,16 @@
 #SBATCH --job-name=HDFdownloadd
 ##---------------------------------------------------------
 ##---------------------------------------------------------
-
 ## --- run on test partition for QA
 
-##SBATCH --account=cpu-s6-test-0 
-##SBATCH --partition=cpu-s6-test-0
-
+#SBATCH --account=cpu-s6-test-0 
+#SBATCH --partition=cpu-s6-test-0
 ##---------------------------------------------------------
 ##---------------------------------------------------------
-
 ## --- run on MISR_roughness partition
 
-#SBATCH --account=cpu-s5-misr_roughness-0
-#SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
-
+##SBATCH --account=cpu-s5-misr_roughness-0
+##SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
 ##---------------------------------------------------------
 ##---------------------------------------------------------
 
