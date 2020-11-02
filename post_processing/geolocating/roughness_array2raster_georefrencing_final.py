@@ -2,8 +2,8 @@
 # coding: utf-8
 '''
 this f() builds georeferenced tif files from roughness arrays. 
-input: roughness array 
-output: georeferenced tif file 
+	input: roughness array 
+	output: georeferenced <.tif> file 
 
 note:
 	this code does not have reprojection f()
@@ -26,10 +26,10 @@ from matplotlib import pyplot as plt  #  pyplot uses the actual RGB values as th
 # dir path setup by user
 ########################################################################################################################
 #~ setup dir w/ roughness files
-rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_4'
+rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/test_p91_p180'
 
 # tiff dir; where arr2tiff goes to, for now se build it inside rouhness dir
-georefRaster_dir_name = 'rasters'
+georefRaster_dir_name = 'rasters_2'
 ########################################################################################################################
 #~ global IDfiers
 ########################################################################################################################
@@ -75,7 +75,12 @@ def main():
 		else:
 			out_img_fullpath = ret
 		
-		#~ open saved image from previous step
+		print('-> block: %s' %block_num)
+		if (block_num < 20): 	# we exclude blocks less than 20 to exclude blocks in ascending path
+			print('-> block num < 20, so we skip it!')
+			continue
+
+		#~ we open the saved image from previous step
 		in_ds = gdal.Open(out_img_fullpath)
 		# print(type(in_ds)) # returns a Dataset obj
 		
