@@ -549,6 +549,8 @@ projected_block_36_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
 merged_blocks_10_36_0_to_180_polarProj_byteDT.tif
 
 
+projected_path_175_block_21_28GCPs_noGdalRes.tif
+
 
 
 gdalwarp \
@@ -556,90 +558,877 @@ gdalwarp \
 -of "GTiff" \
 -srcnodata 0 \
 -dstnodata 0 \
-projected_path_173_block_9_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_10_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_11_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_12_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_13_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_14_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_15_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_16_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_17_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_18_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_19_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_20_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_21_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_22_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_23_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_24_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_25_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_26_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_27_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_28_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_29_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_30_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_31_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_32_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_33_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_34_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_35_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_173_block_36_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_14_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_15_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_16_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_17_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_18_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_19_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_20_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_21_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_22_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_23_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_24_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_25_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_26_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_27_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_28_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_29_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_30_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_31_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_32_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_33_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_34_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_35_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_174_block_36_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_11_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_13_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_14_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_15_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_16_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_17_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_18_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_19_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_20_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_21_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_22_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_23_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_24_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_25_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_26_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_27_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_28_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_29_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_30_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_31_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_32_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_33_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_34_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_35_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_36_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-projected_path_175_block_37_28GCPs_noGdalRes_reprojTo_EPSG_3995.tif \
-merged_paths_173_4_5_polarProj_byteDT.tif
+projected_path_173_block_9_28GCPs_noGdalRes.tif \
+projected_path_173_block_10_28GCPs_noGdalRes.tif \
+projected_path_173_block_11_28GCPs_noGdalRes.tif \
+projected_path_173_block_12_28GCPs_noGdalRes.tif \
+projected_path_173_block_13_28GCPs_noGdalRes.tif \
+projected_path_173_block_14_28GCPs_noGdalRes.tif \
+projected_path_173_block_15_28GCPs_noGdalRes.tif \
+projected_path_173_block_16_28GCPs_noGdalRes.tif \
+projected_path_173_block_17_28GCPs_noGdalRes.tif \
+projected_path_173_block_18_28GCPs_noGdalRes.tif \
+projected_path_173_block_19_28GCPs_noGdalRes.tif \
+projected_path_173_block_20_28GCPs_noGdalRes.tif \
+projected_path_173_block_21_28GCPs_noGdalRes.tif \
+projected_path_173_block_22_28GCPs_noGdalRes.tif \
+projected_path_173_block_23_28GCPs_noGdalRes.tif \
+projected_path_173_block_24_28GCPs_noGdalRes.tif \
+projected_path_173_block_25_28GCPs_noGdalRes.tif \
+projected_path_173_block_26_28GCPs_noGdalRes.tif \
+projected_path_173_block_27_28GCPs_noGdalRes.tif \
+projected_path_173_block_28_28GCPs_noGdalRes.tif \
+projected_path_173_block_29_28GCPs_noGdalRes.tif \
+projected_path_173_block_30_28GCPs_noGdalRes.tif \
+projected_path_173_block_31_28GCPs_noGdalRes.tif \
+projected_path_173_block_32_28GCPs_noGdalRes.tif \
+projected_path_173_block_33_28GCPs_noGdalRes.tif \
+projected_path_173_block_34_28GCPs_noGdalRes.tif \
+projected_path_173_block_35_28GCPs_noGdalRes.tif \
+projected_path_173_block_36_28GCPs_noGdalRes.tif \
+projected_path_174_block_14_28GCPs_noGdalRes.tif \
+projected_path_174_block_15_28GCPs_noGdalRes.tif \
+projected_path_174_block_16_28GCPs_noGdalRes.tif \
+projected_path_174_block_17_28GCPs_noGdalRes.tif \
+projected_path_174_block_18_28GCPs_noGdalRes.tif \
+projected_path_174_block_19_28GCPs_noGdalRes.tif \
+projected_path_174_block_20_28GCPs_noGdalRes.tif \
+projected_path_174_block_21_28GCPs_noGdalRes.tif \
+projected_path_174_block_22_28GCPs_noGdalRes.tif \
+projected_path_174_block_23_28GCPs_noGdalRes.tif \
+projected_path_174_block_24_28GCPs_noGdalRes.tif \
+projected_path_174_block_25_28GCPs_noGdalRes.tif \
+projected_path_174_block_26_28GCPs_noGdalRes.tif \
+projected_path_174_block_27_28GCPs_noGdalRes.tif \
+projected_path_174_block_28_28GCPs_noGdalRes.tif \
+projected_path_174_block_29_28GCPs_noGdalRes.tif \
+projected_path_174_block_30_28GCPs_noGdalRes.tif \
+projected_path_174_block_31_28GCPs_noGdalRes.tif \
+projected_path_174_block_32_28GCPs_noGdalRes.tif \
+projected_path_174_block_33_28GCPs_noGdalRes.tif \
+projected_path_174_block_34_28GCPs_noGdalRes.tif \
+projected_path_174_block_35_28GCPs_noGdalRes.tif \
+projected_path_174_block_36_28GCPs_noGdalRes.tif \
+projected_path_175_block_11_28GCPs_noGdalRes.tif \
+projected_path_175_block_13_28GCPs_noGdalRes.tif \
+projected_path_175_block_14_28GCPs_noGdalRes.tif \
+projected_path_175_block_15_28GCPs_noGdalRes.tif \
+projected_path_175_block_16_28GCPs_noGdalRes.tif \
+projected_path_175_block_17_28GCPs_noGdalRes.tif \
+projected_path_175_block_18_28GCPs_noGdalRes.tif \
+projected_path_175_block_19_28GCPs_noGdalRes.tif \
+projected_path_175_block_20_28GCPs_noGdalRes.tif \
+projected_path_175_block_21_28GCPs_noGdalRes.tif \
+projected_path_175_block_22_28GCPs_noGdalRes.tif \
+projected_path_175_block_23_28GCPs_noGdalRes.tif \
+projected_path_175_block_24_28GCPs_noGdalRes.tif \
+projected_path_175_block_25_28GCPs_noGdalRes.tif \
+projected_path_175_block_26_28GCPs_noGdalRes.tif \
+projected_path_175_block_27_28GCPs_noGdalRes.tif \
+projected_path_175_block_28_28GCPs_noGdalRes.tif \
+projected_path_175_block_29_28GCPs_noGdalRes.tif \
+projected_path_175_block_30_28GCPs_noGdalRes.tif \
+projected_path_175_block_31_28GCPs_noGdalRes.tif \
+projected_path_175_block_32_28GCPs_noGdalRes.tif \
+projected_path_175_block_33_28GCPs_noGdalRes.tif \
+projected_path_175_block_34_28GCPs_noGdalRes.tif \
+projected_path_175_block_35_28GCPs_noGdalRes.tif \
+projected_path_175_block_36_28GCPs_noGdalRes.tif \
+projected_path_175_block_37_28GCPs_noGdalRes.tif \
+projected_path_40_block_8_28GCPs_noGdalRes.tif \
+projected_path_40_block_9_28GCPs_noGdalRes.tif \
+projected_path_40_block_10_28GCPs_noGdalRes.tif \
+projected_path_40_block_11_28GCPs_noGdalRes.tif \
+projected_path_40_block_12_28GCPs_noGdalRes.tif \
+projected_path_40_block_13_28GCPs_noGdalRes.tif \
+projected_path_40_block_14_28GCPs_noGdalRes.tif \
+projected_path_40_block_15_28GCPs_noGdalRes.tif \
+projected_path_40_block_16_28GCPs_noGdalRes.tif \
+projected_path_40_block_17_28GCPs_noGdalRes.tif \
+projected_path_40_block_18_28GCPs_noGdalRes.tif \
+projected_path_40_block_19_28GCPs_noGdalRes.tif \
+projected_path_40_block_20_28GCPs_noGdalRes.tif \
+projected_path_40_block_21_28GCPs_noGdalRes.tif \
+projected_path_40_block_22_28GCPs_noGdalRes.tif \
+projected_path_40_block_23_28GCPs_noGdalRes.tif \
+projected_path_40_block_24_28GCPs_noGdalRes.tif \
+projected_path_40_block_25_28GCPs_noGdalRes.tif \
+projected_path_40_block_26_28GCPs_noGdalRes.tif \
+projected_path_40_block_27_28GCPs_noGdalRes.tif \
+projected_path_40_block_28_28GCPs_noGdalRes.tif \
+projected_path_40_block_29_28GCPs_noGdalRes.tif \
+projected_path_40_block_30_28GCPs_noGdalRes.tif \
+projected_path_40_block_31_28GCPs_noGdalRes.tif \
+projected_path_40_block_32_28GCPs_noGdalRes.tif \
+projected_path_40_block_33_28GCPs_noGdalRes.tif \
+projected_path_40_block_34_28GCPs_noGdalRes.tif \
+projected_path_40_block_35_28GCPs_noGdalRes.tif \
+projected_path_40_block_36_28GCPs_noGdalRes.tif \
+projected_path_40_block_37_28GCPs_noGdalRes.tif \
+projected_path_40_block_38_28GCPs_noGdalRes.tif \
+projected_path_40_block_39_28GCPs_noGdalRes.tif \
+projected_path_40_block_40_28GCPs_noGdalRes.tif \
+merged_paths_40_173_174_175_LatLonProj_byteDT.tif
+
+
+
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_173_block_9_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_10_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_11_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_12_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_13_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_14_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_15_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_16_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_17_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_18_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_19_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_20_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_21_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_22_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_23_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_24_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_25_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_26_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_27_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_28_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_29_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_30_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_31_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_32_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_33_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_34_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_35_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_36_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+merged_paths_173_allBlocks_polarProj_byteDT.tif
+
+
+#~ skip meridian
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_173_block_14_28GCPs_noGdalRes.tif \
+projected_path_173_block_15_28GCPs_noGdalRes.tif \
+projected_path_173_block_16_28GCPs_noGdalRes.tif \
+projected_path_173_block_17_28GCPs_noGdalRes.tif \
+projected_path_173_block_18_28GCPs_noGdalRes.tif \
+projected_path_173_block_19_28GCPs_noGdalRes.tif \
+projected_path_173_block_20_28GCPs_noGdalRes.tif \
+projected_path_173_block_21_28GCPs_noGdalRes.tif \
+projected_path_173_block_22_28GCPs_noGdalRes.tif \
+projected_path_173_block_23_28GCPs_noGdalRes.tif \
+projected_path_173_block_24_28GCPs_noGdalRes.tif \
+projected_path_173_block_25_28GCPs_noGdalRes.tif \
+projected_path_173_block_26_28GCPs_noGdalRes.tif \
+projected_path_173_block_27_28GCPs_noGdalRes.tif \
+projected_path_173_block_28_28GCPs_noGdalRes.tif \
+projected_path_173_block_29_28GCPs_noGdalRes.tif \
+projected_path_173_block_30_28GCPs_noGdalRes.tif \
+projected_path_173_block_31_28GCPs_noGdalRes.tif \
+projected_path_173_block_32_28GCPs_noGdalRes.tif \
+projected_path_173_block_33_28GCPs_noGdalRes.tif \
+projected_path_173_block_34_28GCPs_noGdalRes.tif \
+projected_path_173_block_35_28GCPs_noGdalRes.tif \
+projected_path_173_block_36_28GCPs_noGdalRes.tif \
+projected_path_174_block_14_28GCPs_noGdalRes.tif \
+projected_path_174_block_15_28GCPs_noGdalRes.tif \
+projected_path_174_block_16_28GCPs_noGdalRes.tif \
+projected_path_174_block_17_28GCPs_noGdalRes.tif \
+projected_path_174_block_18_28GCPs_noGdalRes.tif \
+projected_path_174_block_19_28GCPs_noGdalRes.tif \
+projected_path_174_block_20_28GCPs_noGdalRes.tif \
+projected_path_174_block_21_28GCPs_noGdalRes.tif \
+projected_path_174_block_22_28GCPs_noGdalRes.tif \
+projected_path_174_block_23_28GCPs_noGdalRes.tif \
+projected_path_174_block_24_28GCPs_noGdalRes.tif \
+projected_path_174_block_25_28GCPs_noGdalRes.tif \
+projected_path_174_block_26_28GCPs_noGdalRes.tif \
+projected_path_174_block_27_28GCPs_noGdalRes.tif \
+projected_path_174_block_28_28GCPs_noGdalRes.tif \
+projected_path_174_block_29_28GCPs_noGdalRes.tif \
+projected_path_174_block_30_28GCPs_noGdalRes.tif \
+projected_path_174_block_31_28GCPs_noGdalRes.tif \
+projected_path_174_block_32_28GCPs_noGdalRes.tif \
+projected_path_174_block_33_28GCPs_noGdalRes.tif \
+projected_path_174_block_34_28GCPs_noGdalRes.tif \
+projected_path_174_block_35_28GCPs_noGdalRes.tif \
+projected_path_174_block_36_28GCPs_noGdalRes.tif \
+projected_path_175_block_13_28GCPs_noGdalRes.tif \
+projected_path_175_block_14_28GCPs_noGdalRes.tif \
+projected_path_175_block_15_28GCPs_noGdalRes.tif \
+projected_path_175_block_16_28GCPs_noGdalRes.tif \
+projected_path_175_block_17_28GCPs_noGdalRes.tif \
+projected_path_175_block_18_28GCPs_noGdalRes.tif \
+projected_path_175_block_19_28GCPs_noGdalRes.tif \
+projected_path_175_block_20_28GCPs_noGdalRes.tif \
+projected_path_175_block_21_28GCPs_noGdalRes.tif \
+projected_path_175_block_22_28GCPs_noGdalRes.tif \
+projected_path_175_block_23_28GCPs_noGdalRes.tif \
+projected_path_175_block_24_28GCPs_noGdalRes.tif \
+projected_path_175_block_25_28GCPs_noGdalRes.tif \
+projected_path_175_block_26_28GCPs_noGdalRes.tif \
+projected_path_175_block_27_28GCPs_noGdalRes.tif \
+projected_path_175_block_28_28GCPs_noGdalRes.tif \
+projected_path_175_block_29_28GCPs_noGdalRes.tif \
+projected_path_175_block_30_28GCPs_noGdalRes.tif \
+projected_path_175_block_31_28GCPs_noGdalRes.tif \
+projected_path_175_block_32_28GCPs_noGdalRes.tif \
+projected_path_175_block_33_28GCPs_noGdalRes.tif \
+projected_path_175_block_34_28GCPs_noGdalRes.tif \
+projected_path_175_block_35_28GCPs_noGdalRes.tif \
+projected_path_175_block_36_28GCPs_noGdalRes.tif \
+projected_path_175_block_37_28GCPs_noGdalRes.tif \
+projected_path_40_block_8_28GCPs_noGdalRes.tif \
+projected_path_40_block_9_28GCPs_noGdalRes.tif \
+projected_path_40_block_10_28GCPs_noGdalRes.tif \
+projected_path_40_block_11_28GCPs_noGdalRes.tif \
+projected_path_40_block_12_28GCPs_noGdalRes.tif \
+projected_path_40_block_13_28GCPs_noGdalRes.tif \
+projected_path_40_block_18_28GCPs_noGdalRes.tif \
+projected_path_40_block_19_28GCPs_noGdalRes.tif \
+projected_path_40_block_20_28GCPs_noGdalRes.tif \
+projected_path_40_block_21_28GCPs_noGdalRes.tif \
+projected_path_40_block_22_28GCPs_noGdalRes.tif \
+projected_path_40_block_23_28GCPs_noGdalRes.tif \
+projected_path_40_block_24_28GCPs_noGdalRes.tif \
+projected_path_40_block_25_28GCPs_noGdalRes.tif \
+projected_path_40_block_26_28GCPs_noGdalRes.tif \
+projected_path_40_block_27_28GCPs_noGdalRes.tif \
+projected_path_40_block_28_28GCPs_noGdalRes.tif \
+projected_path_40_block_29_28GCPs_noGdalRes.tif \
+projected_path_40_block_30_28GCPs_noGdalRes.tif \
+projected_path_40_block_31_28GCPs_noGdalRes.tif \
+projected_path_40_block_32_28GCPs_noGdalRes.tif \
+projected_path_40_block_33_28GCPs_noGdalRes.tif \
+projected_path_40_block_34_28GCPs_noGdalRes.tif \
+projected_path_40_block_35_28GCPs_noGdalRes.tif \
+projected_path_40_block_36_28GCPs_noGdalRes.tif \
+projected_path_40_block_37_28GCPs_noGdalRes.tif \
+projected_path_40_block_38_28GCPs_noGdalRes.tif \
+projected_path_40_block_39_28GCPs_noGdalRes.tif \
+projected_path_40_block_40_28GCPs_noGdalRes.tif \
+merged_paths_40_173_174_175_LatLonProj_byteDT_skipMeridian.tif
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~ skip meridian & only 2 paths
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_173_block_14_28GCPs_noGdalRes.tif \
+projected_path_173_block_15_28GCPs_noGdalRes.tif \
+projected_path_173_block_16_28GCPs_noGdalRes.tif \
+projected_path_173_block_17_28GCPs_noGdalRes.tif \
+projected_path_173_block_18_28GCPs_noGdalRes.tif \
+projected_path_173_block_19_28GCPs_noGdalRes.tif \
+projected_path_173_block_20_28GCPs_noGdalRes.tif \
+projected_path_173_block_21_28GCPs_noGdalRes.tif \
+projected_path_173_block_22_28GCPs_noGdalRes.tif \
+projected_path_173_block_23_28GCPs_noGdalRes.tif \
+projected_path_173_block_24_28GCPs_noGdalRes.tif \
+projected_path_173_block_25_28GCPs_noGdalRes.tif \
+projected_path_173_block_26_28GCPs_noGdalRes.tif \
+projected_path_173_block_27_28GCPs_noGdalRes.tif \
+projected_path_173_block_28_28GCPs_noGdalRes.tif \
+projected_path_173_block_29_28GCPs_noGdalRes.tif \
+projected_path_173_block_30_28GCPs_noGdalRes.tif \
+projected_path_173_block_31_28GCPs_noGdalRes.tif \
+projected_path_173_block_32_28GCPs_noGdalRes.tif \
+projected_path_173_block_33_28GCPs_noGdalRes.tif \
+projected_path_173_block_34_28GCPs_noGdalRes.tif \
+projected_path_173_block_35_28GCPs_noGdalRes.tif \
+projected_path_173_block_36_28GCPs_noGdalRes.tif \
+projected_path_40_block_8_28GCPs_noGdalRes.tif \
+projected_path_40_block_9_28GCPs_noGdalRes.tif \
+projected_path_40_block_10_28GCPs_noGdalRes.tif \
+projected_path_40_block_11_28GCPs_noGdalRes.tif \
+projected_path_40_block_12_28GCPs_noGdalRes.tif \
+projected_path_40_block_13_28GCPs_noGdalRes.tif \
+projected_path_40_block_18_28GCPs_noGdalRes.tif \
+projected_path_40_block_19_28GCPs_noGdalRes.tif \
+projected_path_40_block_20_28GCPs_noGdalRes.tif \
+projected_path_40_block_21_28GCPs_noGdalRes.tif \
+projected_path_40_block_22_28GCPs_noGdalRes.tif \
+projected_path_40_block_23_28GCPs_noGdalRes.tif \
+projected_path_40_block_24_28GCPs_noGdalRes.tif \
+projected_path_40_block_25_28GCPs_noGdalRes.tif \
+projected_path_40_block_26_28GCPs_noGdalRes.tif \
+projected_path_40_block_27_28GCPs_noGdalRes.tif \
+projected_path_40_block_28_28GCPs_noGdalRes.tif \
+projected_path_40_block_29_28GCPs_noGdalRes.tif \
+projected_path_40_block_30_28GCPs_noGdalRes.tif \
+projected_path_40_block_31_28GCPs_noGdalRes.tif \
+projected_path_40_block_32_28GCPs_noGdalRes.tif \
+projected_path_40_block_33_28GCPs_noGdalRes.tif \
+projected_path_40_block_34_28GCPs_noGdalRes.tif \
+projected_path_40_block_35_28GCPs_noGdalRes.tif \
+projected_path_40_block_36_28GCPs_noGdalRes.tif \
+projected_path_40_block_37_28GCPs_noGdalRes.tif \
+projected_path_40_block_38_28GCPs_noGdalRes.tif \
+projected_path_40_block_39_28GCPs_noGdalRes.tif \
+projected_path_40_block_40_28GCPs_noGdalRes.tif \
+merged_paths_40_173_LatLonProj_byteDT_skipMeridian.tif
+
+
+#~ path 40 & no Meridian crossing
+
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_8_28GCPs_noGdalRes.tif \
+projected_path_40_block_9_28GCPs_noGdalRes.tif \
+projected_path_40_block_10_28GCPs_noGdalRes.tif \
+projected_path_40_block_11_28GCPs_noGdalRes.tif \
+projected_path_40_block_12_28GCPs_noGdalRes.tif \
+projected_path_40_block_13_28GCPs_noGdalRes.tif \
+projected_path_40_block_18_28GCPs_noGdalRes.tif \
+projected_path_40_block_19_28GCPs_noGdalRes.tif \
+projected_path_40_block_20_28GCPs_noGdalRes.tif \
+projected_path_40_block_21_28GCPs_noGdalRes.tif \
+projected_path_40_block_22_28GCPs_noGdalRes.tif \
+projected_path_40_block_23_28GCPs_noGdalRes.tif \
+projected_path_40_block_24_28GCPs_noGdalRes.tif \
+projected_path_40_block_25_28GCPs_noGdalRes.tif \
+projected_path_40_block_26_28GCPs_noGdalRes.tif \
+projected_path_40_block_27_28GCPs_noGdalRes.tif \
+projected_path_40_block_28_28GCPs_noGdalRes.tif \
+projected_path_40_block_29_28GCPs_noGdalRes.tif \
+projected_path_40_block_30_28GCPs_noGdalRes.tif \
+projected_path_40_block_31_28GCPs_noGdalRes.tif \
+projected_path_40_block_32_28GCPs_noGdalRes.tif \
+projected_path_40_block_33_28GCPs_noGdalRes.tif \
+projected_path_40_block_34_28GCPs_noGdalRes.tif \
+projected_path_40_block_35_28GCPs_noGdalRes.tif \
+projected_path_40_block_36_28GCPs_noGdalRes.tif \
+projected_path_40_block_37_28GCPs_noGdalRes.tif \
+projected_path_40_block_38_28GCPs_noGdalRes.tif \
+projected_path_40_block_39_28GCPs_noGdalRes.tif \
+projected_path_40_block_40_28GCPs_noGdalRes.tif \
+merged_paths_40_LatLon_byteDT_noMeridian.tif
+
+
+#~ path 40 with Meridian crossing
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_8_28GCPs_noGdalRes.tif \
+projected_path_40_block_9_28GCPs_noGdalRes.tif \
+projected_path_40_block_10_28GCPs_noGdalRes.tif \
+projected_path_40_block_11_28GCPs_noGdalRes.tif \
+projected_path_40_block_12_28GCPs_noGdalRes.tif \
+projected_path_40_block_13_28GCPs_noGdalRes.tif \
+projected_path_40_block_14_28GCPs_noGdalRes.tif \
+projected_path_40_block_15_28GCPs_noGdalRes.tif \
+projected_path_40_block_16_28GCPs_noGdalRes.tif \
+projected_path_40_block_17_28GCPs_noGdalRes.tif \
+projected_path_40_block_18_28GCPs_noGdalRes.tif \
+projected_path_40_block_19_28GCPs_noGdalRes.tif \
+projected_path_40_block_20_28GCPs_noGdalRes.tif \
+projected_path_40_block_21_28GCPs_noGdalRes.tif \
+projected_path_40_block_22_28GCPs_noGdalRes.tif \
+projected_path_40_block_23_28GCPs_noGdalRes.tif \
+projected_path_40_block_24_28GCPs_noGdalRes.tif \
+projected_path_40_block_25_28GCPs_noGdalRes.tif \
+projected_path_40_block_26_28GCPs_noGdalRes.tif \
+projected_path_40_block_27_28GCPs_noGdalRes.tif \
+projected_path_40_block_28_28GCPs_noGdalRes.tif \
+projected_path_40_block_29_28GCPs_noGdalRes.tif \
+projected_path_40_block_30_28GCPs_noGdalRes.tif \
+projected_path_40_block_31_28GCPs_noGdalRes.tif \
+projected_path_40_block_32_28GCPs_noGdalRes.tif \
+projected_path_40_block_33_28GCPs_noGdalRes.tif \
+projected_path_40_block_34_28GCPs_noGdalRes.tif \
+projected_path_40_block_35_28GCPs_noGdalRes.tif \
+projected_path_40_block_36_28GCPs_noGdalRes.tif \
+projected_path_40_block_37_28GCPs_noGdalRes.tif \
+projected_path_40_block_38_28GCPs_noGdalRes.tif \
+projected_path_40_block_39_28GCPs_noGdalRes.tif \
+projected_path_40_block_40_28GCPs_noGdalRes.tif \
+merged_paths_40_LatLon_byteDT_withMeridian.tif
+
+
+
+#~ paths 40 + 173 reproj to Polar
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_173_block_9_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_10_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_11_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_12_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_13_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_14_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_15_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_16_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_17_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_18_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_19_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_20_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_21_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_22_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_23_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_24_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_25_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_26_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_27_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_28_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_29_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_30_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_31_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_32_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_33_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_34_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_35_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_173_block_36_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_8_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_9_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_10_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_11_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_12_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_13_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_14_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_15_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_16_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_17_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_18_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_19_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_20_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_21_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_22_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_23_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_24_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_25_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_26_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_27_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_28_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_29_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_30_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_31_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_32_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_33_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_34_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_35_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_36_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_37_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_38_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_39_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_40_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+merged_paths_40_173_LatLon_byteDT_withMeridian_reprojPolar.tif
+
+
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_10_28GCPs_noGdalRes.tif \
+projected_path_40_block_11_28GCPs_noGdalRes.tif \
+projected_path_40_block_12_28GCPs_noGdalRes.tif \
+projected_path_40_block_13_28GCPs_noGdalRes.tif \
+projected_path_40_block_14_28GCPs_noGdalRes.tif \
+projected_path_40_block_15_28GCPs_noGdalRes.tif \
+projected_path_40_block_16_28GCPs_noGdalRes.tif \
+projected_path_40_block_17_28GCPs_noGdalRes.tif \
+projected_path_40_block_18_28GCPs_noGdalRes.tif \
+projected_path_40_block_19_28GCPs_noGdalRes.tif \
+merged_paths_40_LatLon_byteDT_PrimeMerCrossing.tif
+
+
+
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_173_block_10_28GCPs_noGdalRes.tif \
+projected_path_173_block_11_28GCPs_noGdalRes.tif \
+projected_path_173_block_12_28GCPs_noGdalRes.tif \
+projected_path_173_block_13_28GCPs_noGdalRes.tif \
+projected_path_173_block_14_28GCPs_noGdalRes.tif \
+projected_path_173_block_15_28GCPs_noGdalRes.tif \
+projected_path_173_block_16_28GCPs_noGdalRes.tif \
+projected_path_173_block_17_28GCPs_noGdalRes.tif \
+projected_path_173_block_18_28GCPs_noGdalRes.tif \
+projected_path_173_block_19_28GCPs_noGdalRes.tif \
+merged_paths_173_LatLon_byteDT_AntiMerCrossing.tif
 
 
 
 
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_10_28GCPs_noGdalRes.tif \
+projected_path_40_block_11_28GCPs_noGdalRes.tif \
+projected_path_40_block_12_28GCPs_noGdalRes.tif \
+projected_path_40_block_13_28GCPs_noGdalRes.tif \
+projected_path_40_block_14_28GCPs_noGdalRes.tif \
+projected_path_40_block_15_28GCPs_noGdalRes.tif \
+projected_path_40_block_16_28GCPs_noGdalRes.tif \
+projected_path_40_block_17_28GCPs_noGdalRes.tif \
+projected_path_40_block_18_28GCPs_noGdalRes.tif \
+projected_path_40_block_19_28GCPs_noGdalRes.tif \
+merged_paths_40_reprojPolar_byteDT_PrimeMerCrossing.tif
 
 
 
 
+###########################################################################
+#~ test w/smaller size
+
+gdalwarp \
+-ot 'Float64' \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_173_block_10_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_11_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_12_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_13_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_14_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_15_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_16_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_17_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_18_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_19_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+merged_paths_173_reprojPolar_AntiMerCrossing_Float64.tif
+
+
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_174_block_14_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_174_block_15_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_174_block_16_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_174_block_17_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_174_block_18_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_174_block_19_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+merged_paths_174_reprojPolar_byteDT_AntiMerCrossing.tif
+
+
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_175_block_11_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_175_block_13_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_175_block_14_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_175_block_15_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_175_block_16_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_175_block_17_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_175_block_18_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_175_block_19_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+merged_paths_175_reprojPolar_byteDT_AntiMerCrossing.tif
+
+
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_10_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_11_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_12_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_13_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_14_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_15_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_16_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_17_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_18_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+projected_path_40_block_19_28GCPs_noGdalRes_reprojToEPSG_3995.tif \
+merged_paths_40_reprojPolar_byteDT_PrimeMerCrossing.tif
+
+
+gdalwarp \
+-ot Byte \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+merged_paths_173_reprojPolar_byteDT_AntiMerCrossing.tif \
+merged_paths_174_reprojPolar_byteDT_AntiMerCrossing.tif \
+merged_paths_175_reprojPolar_byteDT_AntiMerCrossing.tif \
+merged_paths_40_reprojPolar_byteDT_PrimeMerCrossing.tif \
+merged_path_40_173_174_175_polar.tif
+
+
+####################################################################
+
+gdalwarp \
+-ot 'Float64' \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_173_block_10_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_11_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_12_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_13_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_14_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_15_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_16_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_17_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_18_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_173_block_19_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_174_block_14_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_174_block_15_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_174_block_16_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_174_block_17_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_174_block_18_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_174_block_19_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_175_block_11_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_175_block_13_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_175_block_14_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_175_block_15_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_175_block_16_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_175_block_17_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_175_block_18_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_175_block_19_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_40_block_10_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_40_block_11_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_40_block_12_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_40_block_13_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_40_block_14_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_40_block_15_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_40_block_16_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_40_block_17_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_40_block_18_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+projected_path_40_block_19_28GCPs_noGdalRes_dTypeFloat64_reprojToEPSG_3995.tif \
+merged_paths_173_174_175_40_reprojPolar_MeridianCrossing_Float64.tif
+
+
+gdalwarp \
+-ot 'Float64' \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_10_2678GCPs_noGdalRes_dTypeFloat64_20gcpSteps_2678gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_11_2678GCPs_noGdalRes_dTypeFloat64_20gcpSteps_2678gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_12_2678GCPs_noGdalRes_dTypeFloat64_20gcpSteps_2678gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_13_2678GCPs_noGdalRes_dTypeFloat64_20gcpSteps_2678gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_14_2678GCPs_noGdalRes_dTypeFloat64_20gcpSteps_2678gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_15_2678GCPs_noGdalRes_dTypeFloat64_20gcpSteps_2678gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_16_2678GCPs_noGdalRes_dTypeFloat64_20gcpSteps_2678gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_17_2678GCPs_noGdalRes_dTypeFloat64_20gcpSteps_2678gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_18_2678GCPs_noGdalRes_dTypeFloat64_20gcpSteps_2678gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_19_2678GCPs_noGdalRes_dTypeFloat64_20gcpSteps_2678gcps_reprojToEPSG_3995.tif \
+merged_p40_float64_reprojPolar_allGCPs.tif
+
+
+
+gdalwarp \
+-ot 'Float64' \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_173_block_9_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_10_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_11_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_12_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_13_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_14_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_15_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_16_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_17_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_18_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_19_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_20_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_21_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_22_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_23_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_24_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_25_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_26_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_27_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_28_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_29_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_30_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_31_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_32_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_33_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_34_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_35_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_36_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_10_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_11_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_12_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_13_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_14_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_15_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_16_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_17_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_18_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_19_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_20_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_21_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_22_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_23_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_24_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_25_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_26_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_27_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_28_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_29_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_30_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_31_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_32_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_33_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_34_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_35_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_36_126GCPs_noGdalRes_dTypeFloat64_100gcpSteps_126gcps_reprojToEPSG_3995.tif \
+merged_p40_p173_float64_polar_allGCPs_cmapCorrected.tif
+# took a long time to merge, so I canceld it
+
+
+gdalwarp \
+-ot 'Float64' \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_173_block_9_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_10_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_10_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+merged_3blocks.tif
+
+projected_path_173_block_11_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_12_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_13_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_14_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_15_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_16_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_17_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_18_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_19_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_20_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_21_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_22_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_23_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_24_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_25_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_26_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_27_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_28_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_29_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_30_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_31_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_32_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_33_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_34_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_35_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+projected_path_173_block_36_28GCPs_noGdalRes_dTypeFloat64_300gcpSteps_28gcps_reprojToEPSG_3995.tif \
+merged_p173_float64_polar_allGCPs_cmapCorrected_28GCPs.tif
+
+
+
+gdalwarp \
+-ot 'Float64' \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_10_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_11_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_12_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_13_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_14_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_15_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_16_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_17_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_18_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_19_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_20_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_21_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_22_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_23_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_24_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_25_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_26_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_27_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_28_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_29_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_30_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_31_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_32_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_33_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_34_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_35_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_36_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+merged_p40.tif
+
+
+gdalwarp \
+-ot 'Float64' \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_10_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_11_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_12_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_13_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_14_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_15_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+merged_p40_10_15.tif
+
+
+gdalwarp \
+-ot 'Float64' \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_16_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_17_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_18_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_19_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_20_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+merged_p40_16_20.tif
+
+
+gdalwarp \
+-ot 'Float64' \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_21_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_22_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_23_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_24_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_25_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+merged_p40_21_25.tif
+
+
+gdalwarp \
+-ot 'Float64' \
+-of "GTiff" \
+-srcnodata 0 \
+-dstnodata 0 \
+projected_path_40_block_25_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_26_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_27_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_28_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_29_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_30_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_31_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_32_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_33_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_34_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_35_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+projected_path_40_block_36_85GCPs_noGdalRes_dTypeFloat64_128gcpSteps_85gcps_reprojToEPSG_3995.tif \
+merged_p40_26_36.tif
 

@@ -17,7 +17,7 @@ def main():
 
 	print('-> start main(): ')
 
-	raster_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/test_p91_p180/rasters_2'
+	raster_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/rasters'
 
 	#~ naming labels
 	day_label = 'allDays' # use a day label to assign to output VRT and mosaic files

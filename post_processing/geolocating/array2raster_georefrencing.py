@@ -26,10 +26,10 @@ from matplotlib import pyplot as plt  #  pyplot uses the actual RGB values as th
 # dir path setup by user
 ########################################################################################################################
 #~ setup dir w/ roughness files
-rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/test_p91_p180'
+rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_4'
 
 # tiff dir; where arr2tiff goes to, for now se build it inside rouhness dir
-georefRaster_dir_name = 'rasters_2'
+georefRaster_dir_name = 'rasters'
 ########################################################################################################################
 #~ global IDfiers
 ########################################################################################################################
@@ -109,7 +109,7 @@ def arr2img_plot_n_save(in_arr_2d, path_label, block_label, img_dir):
 	
 	else:
 
-		img_format = ".jpg"
+		img_format = ".png"
 		print('\n')
 		print('-> img array min= %d' % in_arr_2d.min())
 		print('-> img array max= %d' % in_arr_2d.max())
@@ -136,7 +136,7 @@ def arr2img_plot_n_save(in_arr_2d, path_label, block_label, img_dir):
 			print('-> img is NOT on disc, so we will go on with this path!')
 			print("-> saving output img as: %s \n" %out_img_fullpath)
 			plt.imsave(out_img_fullpath, in_arr_2d, cmap='gray', vmin=0, vmax=in_arr_2d.max())  # note: vmin=in_arr_2d.min() is wrong in this case, cuz roughness array
-																							# 		has many fill values with ranges in -99999, so vmin=0 to plot images in range [0,max)
+																								# has many fill values with ranges in -99999, so vmin=0 to plot images in range [0,max)
 
 		return out_img_fullpath
 
@@ -591,9 +591,9 @@ def warp_img(path_label, block_label, total_gcps, image_dir, translated_img_full
 							srcSRS = "EPSG:4326",
 							dstSRS = "EPSG:4326",
 							outputType = gdal.GDT_Float64,
-							resampleAlg = 'bilinear',
-							srcNodata = 0,
-							dstNodata = 0
+							resampleAlg = 'bilinear'
+							# srcNodata = 0, # ?
+							# dstNodata = 0	# ?
 						)
 
 	warp_ds = None
