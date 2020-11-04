@@ -26,7 +26,7 @@ from matplotlib import pyplot as plt  #  pyplot uses the actual RGB values as th
 # dir path setup by user
 ########################################################################################################################
 #~ setup dir w/ roughness files
-rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_4'
+rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/test_roughness_p75_180'
 
 # tiff dir; where arr2tiff goes to, for now se build it inside rouhness dir
 georefRaster_dir_name = 'rasters'

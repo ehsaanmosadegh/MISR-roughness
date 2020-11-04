@@ -17,8 +17,7 @@ def main():
 
 	print('-> start main(): ')
 
-	raster_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/rasters'
-
+	raster_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/test_roughness_p75_180/rasters'
 	#~ naming labels
 	day_label = 'allDays' # use a day label to assign to output VRT and mosaic files
 	output_VRT_dataset_name = 'virtualDataset_byte_'+day_label+'.vrt'
@@ -70,8 +69,8 @@ def main():
 
 	#~ define Translate Options --> we don't need to create a TranslateOptions object, we only need do define anything as an keyword_argument for the .Translate()
 	#~ writes translated output to a .tif file and returns a gdal.Dataset object; after writing it, mosaic_ds will be empty --> how do it VRT???
-	print('-> building mosaic!')
-	mosaic_ds = gdal.Translate( # verbose?
+	print('-> building mosaic from VRT dataset!')
+	mosaic_ds = gdal.Translate( 								# verbose?
 									out_mosaic_fullpath,
 									VRT_fullpath,
 									format = 'GTiff',
@@ -99,7 +98,7 @@ if __name__ == '__main__':
 	main()
 	
 	end_time = dt.datetime.now()
-	print('-> end time= %s' %end_time)
+	print('\n-> end time= %s' %end_time)
 	print('-> runtime duration= %s' %(end_time-start_time))
 	print(" ")
 	print('######################## MOSAIC COMPLETED SUCCESSFULLY ########################')
