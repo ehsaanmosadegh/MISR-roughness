@@ -26,7 +26,7 @@ from matplotlib import pyplot as plt  #  pyplot uses the actual RGB values as th
 # dir path setup by user
 ########################################################################################################################
 #~ setup dir w/ roughness files
-rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/test_roughness_p75_180'
+rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/test_roughness_p75_180_noDataZero_jpg'
 
 # tiff dir; where arr2tiff goes to, for now se build it inside rouhness dir
 georefRaster_dir_name = 'rasters'
@@ -82,7 +82,7 @@ def main():
 
 		#~ we open the saved image from previous step
 		in_ds = gdal.Open(out_img_fullpath)
-		# print(type(in_ds)) # returns a Dataset obj
+		print(type(in_ds)) # returns a Dataset obj
 		
 		# gcp_list, total_gcps, antimaridina_crossing, gcp_numbers = create_gcp_list_for_imgBlockPixels_mostGCPs(path_num, block_num, misr_res_meter)
 		gcp_list, total_gcps, antimaridina_crossing, gcp_numbers = create_gcp_list_for_imgBlockPixels_fixedGCPs_skipAMcrossing(path_num, block_num, misr_res_meter)
@@ -94,6 +94,7 @@ def main():
 
 		translated_img_fullpath = apply_gcp(path_label, block_label, image_dir, in_ds, gcp_list)
 		warpedFile_fullPath_noExt = warp_img(path_label, block_label, total_gcps, image_dir, translated_img_fullpath, gcp_numbers)
+		
 		if (reprojection == 'on'):
 			reproject_to_polar(warpedFile_fullPath_noExt)
 
@@ -109,7 +110,9 @@ def arr2img_plot_n_save(in_arr_2d, path_label, block_label, img_dir):
 	
 	else:
 
-		img_format = ".png"
+		img_format = ".jpg"
+		# img_format = ".png"
+
 		print('\n')
 		print('-> img array min= %d' % in_arr_2d.min())
 		print('-> img array max= %d' % in_arr_2d.max())
@@ -135,10 +138,8 @@ def arr2img_plot_n_save(in_arr_2d, path_label, block_label, img_dir):
 		else:
 			print('-> img is NOT on disc, so we will go on with this path!')
 			print("-> saving output img as: %s \n" %out_img_fullpath)
-			plt.imsave(out_img_fullpath, in_arr_2d, cmap='gray', vmin=0, vmax=in_arr_2d.max())  # note: vmin=in_arr_2d.min() is wrong in this case, cuz roughness array
-																								# has many fill values with ranges in -99999, so vmin=0 to plot images in range [0,max)
-
-		return out_img_fullpath
+			plt.imsave(out_img_fullpath, in_arr_2d, cmap='gray', vmin=0, vmax=in_arr_2d.max())  # note: vmin=in_arr_2d.min() is wrong in this case, cuz roughness array																				# has many fill values with ranges in -99999, so vmin=0 to plot images in range [0,max)
+			return out_img_fullpath
 
 ########################################################################################################################
 '''this f() builds image dir inside roughness dir'''
@@ -577,7 +578,7 @@ def warp_img(path_label, block_label, total_gcps, image_dir, translated_img_full
 
 	warped_img = warped_img_tag+warped_img_extension
 	output_file_warped = os.path.join(image_dir, warped_img)
-
+	print('-> output_file_warped:')
 	print(output_file_warped)
 	# print(os.path.isfile(translated_img_fullpath))
 	# print(os.path.isfile(output_file_warped))
@@ -591,9 +592,9 @@ def warp_img(path_label, block_label, total_gcps, image_dir, translated_img_full
 							srcSRS = "EPSG:4326",
 							dstSRS = "EPSG:4326",
 							outputType = gdal.GDT_Float64,
-							resampleAlg = 'bilinear'
-							# srcNodata = 0, # ?
-							# dstNodata = 0	# ?
+							resampleAlg = 'bilinear' 		 # resampling methid; has relation w/ img type (jpg or png)? looks like works better w/jpg
+							# srcNodata = 0,  # ?
+							# dstNodata = 0  	# ?
 						)
 
 	warp_ds = None
