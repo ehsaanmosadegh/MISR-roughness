@@ -10,15 +10,23 @@ from MisrToolkit import * #
 # from matplotlib import pyplot as plt 
 import shutil
 
+'''
+this code makes directoriesd for a single day of MISR files and moves files belonging to each dat to its folder
+1st, set the number of days that you have data available for.
+we use python2.7 + MTK library to do this task. MTK lib will find associated day/time from orbit data on file labels
+
+'''
+
 #~ setup roughness dir, files in this dir are dowbloaded from PH parallel dir
-main_roughness_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40'
+main_roughness_dir_fullpath = '/Volumes/Ehsan7757420250/roughness_2013_apr1to16_p1to233_b1to40'
 
 #~ setup year and month of roughness files
 year = 2013
 month = 4
+num_of_days = 16
 
 #~ loop through all 16 days and move files for each day to its roughness subdir
-for iday in range(17):
+for iday in range(num_of_days):
 
 	day = iday+1
 	print('\n-> processing day= %d \n' %day)
@@ -29,7 +37,7 @@ for iday in range(17):
 
 	orbit_list = Mtk.time_range_to_orbit_list(start_time, end_time)
 	print(orbit_list)
-	print('-> found %d orbits!' %len(orbit_list))
+	print('\n-> found %d orbits!' %len(orbit_list))
 
 	rough_subdir_name = 'roughness_subdir_'+str(year)+'_'+str(month)+'_'+str(day)
 	print(rough_subdir_name)
@@ -56,10 +64,11 @@ for iday in range(17):
 		print('-> looking for pattern= %s' %roughness_file_pattern)
 		#~ search for file pattern and make a list
 		roughness_files_found_list = glob.glob(os.path.join(main_roughness_dir_fullpath, roughness_file_pattern))
-		print(len(roughness_files_found_list))
+		print('-> roughness files found: %s' % len(roughness_files_found_list))
 	#     print(roughness_files_found_list)
 
 		for rough_file_day in roughness_files_found_list:
+			print('-> moving data to subdir for: %s ' %rough_file_day)
 			new_path = shutil.move(rough_file_day, rough_subdir_fullpath)
 
 

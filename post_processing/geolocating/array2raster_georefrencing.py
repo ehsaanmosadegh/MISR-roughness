@@ -3,7 +3,7 @@
 '''
 this f() builds georeferenced tif files from roughness arrays. 
 	input: roughness array 
-	output: georeferenced <.tif> file 
+	output: georeferenced raster <.tif> file 
 
 note:
 	this code does not have reprojection f()
@@ -21,15 +21,19 @@ from MisrToolkit import * #
 from subprocess import call
 import datetime as dt
 from matplotlib import pyplot as plt  #  pyplot uses the actual RGB values as they are, more accurate than PIL
+import PIL # (why???)
+from PIL import Image
+import tifffile # to write images with dtype=float64 on disc as bigTiff
 
 ########################################################################################################################
 # dir path setup by user
 ########################################################################################################################
 #~ setup dir w/ roughness files
-rough_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/test_roughness_p75_180_noDataZero_jpg'
+rough_dir_fullpath =  '/Volumes/Ehsan7757420250/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_2'
 
-# tiff dir; where arr2tiff goes to, for now se build it inside rouhness dir
-georefRaster_dir_name = 'rasters'
+
+#~ tiff dir where arr2tiff goes to; for now se build it inside rouhness dir
+georefRaster_dir_name = 'rasters_noDataNeg99_TiffFileFloat64_max'
 ########################################################################################################################
 #~ global IDfiers
 ########################################################################################################################
@@ -37,7 +41,7 @@ misr_img_res = (512, 2048)
 # img_nrows = misr_img_dims[0]
 # img_ncols = misr_img_dims[1]
 misr_res_meter = 275
-gcp_mode = "corners_n_inside"                       # 'inside' OR "corners_n_inside"
+gcp_mode = "corners_n_inside"                       									# 'inside' OR "corners_n_inside"
 reprojection = 'on'
 skip_antimeridian = 'on'
 ########################################################################################################################
@@ -61,13 +65,13 @@ def main():
 		print(rough_fname)
 		print('\n')
 		
-		block_num, path_num, rough_arr_2d = read_rough_file(rough_fname)
+		rough_arr_2d, block_num, path_num = read_rough_file(rough_fname)
 		
-		## write img to disc w/using arr2img_plot_n_save() function
+		## write img to disc w/using arr2img_writeToDisc() function
 		path_label = 'path_'+str(path_num)
 		block_label = 'block_'+str(block_num)
 
-		ret = arr2img_plot_n_save(rough_arr_2d, path_label, block_label, image_dir)
+		ret = arr2img_writeToDisc(rough_arr_2d, path_label, block_label, image_dir)
 		
 		if (ret=='skipThisImg'):
 			print('-> continue to next img.')
@@ -80,9 +84,9 @@ def main():
 			print('-> block num < 20, so we skip it!')
 			continue
 
-		#~ we open the saved image from previous step
+		#~ we open the saved-on-disc images from previous step; gdal.Open(can read any img format=tif, jpg, png, but png has issues w/resamplinh alg later, so jpg + tif(but larger files) is better)
 		in_ds = gdal.Open(out_img_fullpath)
-		print(type(in_ds)) # returns a Dataset obj
+		# print('-> inDS type: %s' % type(in_ds)) # returns a Dataset obj
 		
 		# gcp_list, total_gcps, antimaridina_crossing, gcp_numbers = create_gcp_list_for_imgBlockPixels_mostGCPs(path_num, block_num, misr_res_meter)
 		gcp_list, total_gcps, antimaridina_crossing, gcp_numbers = create_gcp_list_for_imgBlockPixels_fixedGCPs_skipAMcrossing(path_num, block_num, misr_res_meter)
@@ -98,31 +102,36 @@ def main():
 		if (reprojection == 'on'):
 			reproject_to_polar(warpedFile_fullPath_noExt)
 
+		#~ we print the raster directory at the end to be easier to use for next step: create-mosaic
+		print('\n')
+		print('-> raster direcotyr:')
+		print(image_dir)
+
 	return 0
 
 ########################################################################################################################
 '''this func'''
-def arr2img_plot_n_save(in_arr_2d, path_label, block_label, img_dir):
+def arr2img_writeToDisc(in_arr_2d, path_label, block_label, img_dir):
 		
 	if (in_arr_2d.max() < 1):
-		print('-> PlotImgFunc(.): img is dark! We skip it.')
+		print('-> PlotImgFunc(.): image is dark! We skip it.')
 		return 'skipThisImg'
 	
 	else:
 
-		img_format = ".jpg"
+		# img_format = ".jpg"  # does this format support saving neg- values?
 		# img_format = ".png"
+		img_format = ".tif"  # this image format supports saving neg- values in image
+
 
 		print('\n')
-		print('-> img array min= %d' % in_arr_2d.min())
-		print('-> img array max= %d' % in_arr_2d.max())
+		print('-> image array min= %d' % np.nanmin(in_arr_2d))
+		print('-> image array max= %d' % np.nanmax(in_arr_2d))
 
-		#~ now replace negative pixelValues w/ zero
-		in_arr_2d[in_arr_2d<0] = 0 # masks any element of np.array that has value less than zero
-
-		print('-> img array min= %d' % in_arr_2d.min())
-		print('-> img array max= %d' % in_arr_2d.max())
-
+		#~ now replace negative pixelValues w/ zero ---> (why???)
+		# in_arr_2d[in_arr_2d<0] = 0 # masks any element of np.array that has value < zero
+		# print('-> img array min= %d' % in_arr_2d.min())
+		# print('-> img array max= %d' % in_arr_2d.max())
 
 
 		out_img_label = path_label+'_'+block_label+img_format
@@ -132,13 +141,37 @@ def arr2img_plot_n_save(in_arr_2d, path_label, block_label, img_dir):
 		out_img_fullpath = os.path.join(img_dir, out_img_label)
 
 		if (os.path.isfile(out_img_fullpath)):
-			print('-> img EXISTS, we will skip this path!')
+			print('-> image EXISTS, we will skip this path!')
 			return 'skipThisImg' 
 
 		else:
-			print('-> img is NOT on disc, so we will go on with this path!')
-			print("-> saving output img as: %s \n" %out_img_fullpath)
-			plt.imsave(out_img_fullpath, in_arr_2d, cmap='gray', vmin=0, vmax=in_arr_2d.max())  # note: vmin=in_arr_2d.min() is wrong in this case, cuz roughness array																				# has many fill values with ranges in -99999, so vmin=0 to plot images in range [0,max)
+			print('\n-> image is NOT on disc, so we will go on with this path!')
+			print("-> saving output image as:")
+			print(out_img_fullpath)
+
+			# NOTE: plt.imsave() can not save neg. pixel values in an image!
+			# plt.imsave(out_img_fullpath, in_arr_2d, cmap='gray', vmin=0, vmax=in_arr_2d.max())  # note: vmin=in_arr_2d.min() is wrong in this case (why???), cuz roughness array has many fill values with ranges in -99999, so vmin=0 to plot images in range [0,max)
+			# plt.imsave(out_img_fullpath, in_arr_2d, cmap='gray', vmin=in_arr_2d.min(), vmax=in_arr_2d.max())  # note: vmin=in_arr_2d.min() might be right, cuz roughness array has many fill values with ranges in -99999, and we need these fillValues to plot background == [min,max]
+
+
+
+			# #~ create PIL image from roughness array 2D w/ negative values
+			# rough_img = Image.fromarray(in_arr_2d)
+			# print('-> image mode: %s' % rough_img.mode)
+			# #~ save roughness PIL image on disc; 
+			# rough_img.save(out_img_fullpath)  # note: PIL is able to save neg. pixel values in .tif file
+			# # rgb_rough_img.save(out_img_fullpath)
+
+
+			#~ new way to write tif image w/negative values; 
+			tifffile.imwrite(
+							out_img_fullpath, 
+							in_arr_2d,
+							dtype='float64', 
+							bigtiff=True,  # why bigTiff? we use bigTiff to be able to store large roughness values as float64 dtype in our rasters
+							# compress='jpeg'
+							)
+
 			return out_img_fullpath
 
 ########################################################################################################################
@@ -146,23 +179,23 @@ def arr2img_plot_n_save(in_arr_2d, path_label, block_label, img_dir):
 def img_dir_setup(arr2tiff_dir_path, georefRaster_dir_name):
 	img_dir = os.path.join(arr2tiff_dir_path, georefRaster_dir_name) 
 	if (os.path.isdir(img_dir)):
-		print('-> img dir exists!')
+		print('-> image dir exists!')
 		print(img_dir)
 	else:
-		print('-> img dir NOT exist. We will make it.')
+		print('-> image dir NOT exist. We will make it.')
 		os.mkdir(img_dir)
 		print(img_dir)
 	return img_dir
 ########################################################################################################################
 def reproject_to_polar(warpedFile_fullPath_noExt):
 	target_epsg = 3995
-	print('-> re-projecting to EPSG: %s' % target_epsg)
+	print('\n-> re-projecting to EPSG: %s' % target_epsg)
 	file_extension = '.tif'
 	input_raster = warpedFile_fullPath_noExt+file_extension
 	output_raster_fullpath = warpedFile_fullPath_noExt+'_reprojToEPSG_'+str(target_epsg)+file_extension
 	print(output_raster_fullpath)
 	gdal.Warp(output_raster_fullpath, input_raster, dstSRS='EPSG:3995')
-	print('-> final re-projected raster:')
+	print('\n-> final re-projected raster:')
 	print(output_raster_fullpath)
 	return 0
 ########################################################################################################################
@@ -184,20 +217,24 @@ def make_roughness_list_from_dir(rough_dir_fullpath):
 ########################################################################################################################
 
 def read_rough_file(rough_fname):
-	rough_1d_arr = np.fromfile(rough_fname, dtype=np.double) # 'double==float64'     # is this roughness in cm?
+	#~ get only the roughness values from file, roughness file has roughness-lat-lon in it as a list & create 2D roughness array from list
+	rough_2d_arr = np.fromfile(rough_fname, dtype=np.double)[0:1048576].reshape((512,2048))			# 'double==float64'     # is this roughness in cm?
+
+	#~ define NaN values
+	rough_2d_arr[(rough_2d_arr < 0.0) & (rough_2d_arr != -999994.0)] = -99.0 # NaN any negative pixels and keep positive pixels and land mask only
+
+
+
 
 	#~ get some info about each array
 #     print("-> input file elements: %d" % rough_latlon_arr.size)
 #     print("-> input file dim: %d" % rough_latlon_arr.ndim)
 #     print("-> input file shape: %s" % rough_latlon_arr.shape)
 
-	#~ get only the roughness values from file, roughness file has roughness-lat-lon in it as a list
-	rough_arr_1d = rough_1d_arr[0:1048576]
 
-	#~ create 2D roughness array from list
-	rough_arr_2d = rough_arr_1d.reshape((512,2048))
-	print("-> roughnessArray new shape: (%d, %d)" % rough_arr_2d.shape)
+	print("-> roughnessArray new shape: (%d, %d)" % rough_2d_arr.shape)
 	
+
 	#~ find and extract path number
 	path_num = rough_fname.split("/")[-1].split("_")[3][1:] # extract path chuncka and then etract just the number
 	path_num = int(path_num)
@@ -208,7 +245,7 @@ def read_rough_file(rough_fname):
 	block_num = int(block_num[-2:])
 	print("-> roughness-Block: %s" % (block_num))
 
-	return block_num, path_num, rough_arr_2d
+	return rough_2d_arr, block_num, path_num
 ########################################################################################################################
 
 def create_gcp_list_for_imgBlockPixels_fixedGCPs_skipAMcrossing(path_num, block_num, misr_res_meter):
@@ -555,7 +592,9 @@ def apply_gcp(path_label, block_label, image_dir, in_ds, gcp_list):
 									in_ds,  
 									format = 'GTiff',
 									outputType = gdal.GDT_Float64, 	# note: inout dtype is float_64==double, maybe here change dtype to make it smaller img????
-									GCPs = gcp_list
+									GCPs = gcp_list,
+									noData = -99.9
+
 								) 
 
 	# print(type(ds_obj))
@@ -592,9 +631,9 @@ def warp_img(path_label, block_label, total_gcps, image_dir, translated_img_full
 							srcSRS = "EPSG:4326",
 							dstSRS = "EPSG:4326",
 							outputType = gdal.GDT_Float64,
-							resampleAlg = 'bilinear' 		 # resampling methid; has relation w/ img type (jpg or png)? looks like works better w/jpg
-							# srcNodata = 0,  # ?
-							# dstNodata = 0  	# ?
+							resampleAlg = 'max', 		            # resampling method; should correlate w/ img type (tif, jpg, or png)? looks like works better w/jpg (how about .tif?)
+							srcNodata = -99.0,  # define noData values=-99 in input files; igniores x in src dataset			# for .tif: bilinear= bad; cubicspline= bad; nearest= bad; cubic= bad; average= bad; max= is better
+							dstNodata = -99.0  	# in the case of NaN?
 						)
 
 	warp_ds = None

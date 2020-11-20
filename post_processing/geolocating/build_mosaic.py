@@ -17,18 +17,20 @@ def main():
 
 	print('-> start main(): ')
 
-	raster_dir_fullpath = '/Volumes/Ehsanm_DRI/research/MISR/roughness_files/from_PH/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1/test_roughness_p75_180_noDataZero_jpg/rasters'
+	raster_dir_fullpath = '/Volumes/Ehsan7757420250/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_2/rasters_noDataNeg99_TiffFileFloat64_max'
+	
 	#~ naming labels
-	day_label = 'allDays' # use a day label to assign to output VRT and mosaic files
-	output_VRT_dataset_name = 'virtualDataset_byte_'+day_label+'.vrt'
-	output_mosaic_name = 'mosaic_fromVRT_byte_'+day_label+'.tif'
+	resamplingAlg = 'nearest'
+	day_label = 'test1day' # use a day label to assign to output VRT and mosaic files  ---> ????
+	output_VRT_dataset_name = 'virtualDataset_float64_'+day_label+'_'+resamplingAlg+'.vrt'
+	output_mosaic_name = 'mosaic_fromVRT_float64_'+day_label+'_'+resamplingAlg+'.tif'
 
 	########################################################################################################################
 	VRT_fullpath = os.path.join(raster_dir_fullpath, output_VRT_dataset_name)
 
 	print('-> raster dir: %s' %raster_dir_fullpath)
 	print('-> VRT: %s' %VRT_fullpath)
-
+	print('-> resampling Algorithm: %s' % resamplingAlg)
 
 	#~ we find this file pattern
 	raster_file_pattern = 'raster_path_*'+'*_reprojToEPSG_3995.tif'
@@ -53,7 +55,9 @@ def main():
 	# vrt_options = gdal.BuildVRTOptions(resampleAlg='linear') #, addAlpha=True)
 	my_vrt_ptr = gdal.BuildVRT(
 								VRT_fullpath, 
-								files_to_mosaic
+								files_to_mosaic,
+								srcNodata = -99.0,
+								VRTNodata = -99.0
 							) 					#, options=vrt_options)
 	
 	print('-> closing VRT dataset!')
@@ -74,14 +78,17 @@ def main():
 									out_mosaic_fullpath,
 									VRT_fullpath,
 									format = 'GTiff',
-									outputType = gdal.GDT_Byte 	# note: inout dtype is float_64==double, maybe here change dtype to make it smaller img????
+									noData = -99.0,
+									resampleAlg = resamplingAlg,
+									outputType = gdal.GDT_Float64 # note: input dtype is float_64==double, maybe here change dtype to make it smaller img???? # outputType = gdal.GDT_Byte 	
 								) 
 
 	print('-> output mosaic: ')
 	print(out_mosaic_fullpath)
 
 	#~ Properly close the datasets to flush to disk
-	print('-> closing mosaic dataset!')
+	print('\n-> closing mosaic dataset!')
+
 	mosaic_ds = None
 	VRT_fullpath = None  # close opened input file
 
