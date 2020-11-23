@@ -6,7 +6,7 @@
 import os, glob, shutil
 
 src_dir_fullpath='/Volumes/Ehsan7757420250/april_2016/sample_ellipsoid_files'
-target_dir_fullpath='/Volumes/Ehsan7757420250/april_2016/sample_ellipsoid_files'
+target_dir_fullpath=src_dir_fullpath
 
 print('source dir: %s' % src_dir_fullpath)
 print('target dir: %s' % target_dir_fullpath)
