@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 #~ written by: Ehsan 19 Nov 2020
 #~ goal: move MISR ELLIPOSID files from subdirectories to target directory
