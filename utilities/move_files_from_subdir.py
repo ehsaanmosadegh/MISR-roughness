@@ -8,7 +8,7 @@
 import os, glob, shutil
 
 src_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016'
-target_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/all_ellipsoid_july'
+target_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/all_ellipsoid_july'
 
 
 #~ define file pattern
@@ -27,8 +27,11 @@ for idir in dir_content_list:
 		print('src dir: %s' % src_dir)
 		src_files_fullpath = glob.glob(os.path.join(src_dir, file_pattern))
 		for src_file_fp in src_files_fullpath:
-			print('file found: %s' % src_file_fp)
+			print('src found: %s' % src_file_fp)
 			# print(os.path.isfile(src_file_fp))
+			#~ check if src file has moved before and exists in distination dir
+			if (os.path.isfile(os.path.join(target_dir_fullpath, src_file_fp.split('/')[-1]))==True):
+				continue
 			#~ move files from src dir to target dir
 			shutil.move(src_file_fp, target_dir_fullpath)
 			#~ check if file was moved successfully
