@@ -21,6 +21,7 @@ print('target dir: %s' % target_dir_fullpath)
 print('file pattern: %s' % file_pattern)
 
 dir_content_list = os.listdir(src_dir_fullpath)  # make list of all contents in a dir
+print('subdirs found in src dir: %s' % len(dir_content_list))
 for idir in dir_content_list:
 	src_dir = os.path.join(src_dir_fullpath, idir)
 	if (os.path.isdir(src_dir)):  
