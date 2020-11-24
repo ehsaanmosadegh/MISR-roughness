@@ -25,19 +25,23 @@ for idir in dir_content_list:
 	src_dir = os.path.join(src_dir_fullpath, idir)
 	if (os.path.isdir(src_dir)):  
 		print('src dir: %s' % src_dir)
-		src_files_fullpath = glob.glob(os.path.join(src_dir, file_pattern))
-		for src_file_fp in src_files_fullpath:
-			print('src found: %s' % src_file_fp)
-			# print(os.path.isfile(src_file_fp))
-			#~ check if src file has moved before and exists in distination dir
-			if (os.path.isfile(os.path.join(target_dir_fullpath, src_file_fp.split('/')[-1]))==True):
-				continue
-			#~ move files from src dir to target dir
-			shutil.move(src_file_fp, target_dir_fullpath)
-			#~ check if file was moved successfully
-			if (os.path.isfile(os.path.join(target_dir_fullpath, src_file_fp.split('/')[-1]))):
-				print('file moved successfully!')
-			else:
-				print('warning on moving file')
+		src_files_fullpath_list = glob.glob(os.path.join(src_dir, file_pattern))
+		if (len(src_files_fullpath_list)==0):
+			print('src dir empty!')
+			continue
+		else:
+			for src_file_fp in src_files_fullpath_list:
+				print('src found: %s' % src_file_fp)
+				# print(os.path.isfile(src_file_fp))
+				#~ check if src file has moved before and exists in distination dir
+				if (os.path.isfile(os.path.join(target_dir_fullpath, src_file_fp.split('/')[-1]))==True):
+					continue
+				#~ move files from src dir to target dir
+				shutil.move(src_file_fp, target_dir_fullpath)
+				#~ check if file was moved successfully
+				if (os.path.isfile(os.path.join(target_dir_fullpath, src_file_fp.split('/')[-1]))):
+					print('file moved successfully!')
+				else:
+					print('warning on moving file')
 
 
