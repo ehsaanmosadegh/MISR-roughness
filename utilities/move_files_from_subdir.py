@@ -7,13 +7,14 @@
 
 import os, glob, shutil
 
-src_dir_fullpath = '/Volumes/Ehsan7757420250/2016/april_2016/ATM_IceBridge_ILATM2_V002'
-target_dir_fullpath = src_dir_fullpath
+src_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016'
+target_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/all_ellipsoid_july'
 
 
 #~ define file pattern
-# file_pattern = 'MISR_AM1_GRP_ELLIPSOID_GM_P*'+'.hdf'
-file_pattern = 'ILATM2*.csv'
+file_pattern = 'MISR_AM1_GRP_ELLIPSOID_GM_P*'+'.hdf'
+# file_pattern = 'ILATM2*.csv'
+
 
 print('source dir: %s' % src_dir_fullpath)
 print('target dir: %s' % target_dir_fullpath)
@@ -27,7 +28,7 @@ for idir in dir_content_list:
 		dir_files = glob.glob(os.path.join(found_dir, file_pattern))
 		for ifile in dir_files:
 			print('file found: %s' % ifile)
-			print(os.path.isfile(ifile))
+			# print(os.path.isfile(ifile))
 			shutil.move(ifile, target_dir_fullpath)
 			if (os.path.isfile(os.path.join(target_dir_fullpath, ifile.split('/')[-1]))):
 				print('file moved successfully!')
