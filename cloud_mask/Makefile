@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-src_name = ReadASCMFile_ehsan.c
-exe_path = /Users/ehsanmos/Documents/RnD/MISR_lab/cloud_mask/
+src_name = ReadASCMFile.c
+exe_path = /Users/ehsanmos/Documents/MISR/MISR-roughness/exe_dir
 exe_name = ReadASCMCloudMask
 
 all:

@@ -1,10 +1,13 @@
-/* Ehsan Jan 15, 2020
+/* 
+Ehsan Jan 15, 2020
 originally from dir: /home/mare/Nolin/SeaIce/Code/C
 name: atm_to_misr_pixels.c
-usage: associates ATM roughness values to surf refl MISR pixels
+usage: labels MISR pixels w/ATM roughness data
 
 1- makes a list of all available ATM.csv files
 2- 
+3- outputs atmmodel
+
 */
 
 #include <stdio.h>
@@ -177,21 +180,22 @@ int main(int argc, char *argv[]) {
 
     // inputes
     // char atm_dir[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/july_atm_Ehsan/ehsan_test_for_atm20160714" ; // start from ATM files == ILATM2 csv files
-    char atm_dir[256] = "/Users/ehsanmos/Documents/RnD/MISR_lab/misr_processing_dir/April2013_ATM_MIST.nosync/ATM_IceBridge_ILATM2.002/ATM_Apr_2013" ; // start from ATM files == ILATM2 csv files
-
+    // char atm_dir[256] = "/Users/ehsanmos/Documents/RnD/MISR_lab/misr_processing_dir/April2013_ATM_MIST.nosync/ATM_IceBridge_ILATM2.002/ATM_Apr_2013" ; // start from ATM files == ILATM2 csv files
+    char atm_dir[256] = "/Volumes/Ehsan7757420250/2016/april_2016/ATM_IceBridge_ILATM2_V002" ;
 
     // char masked_toa_refl_home[256] = "/home/mare/Nolin/data_2000_2016/2016/Surface3_LandMasked/Jul"; // surf dat files
-    char masked_toa_refl_home[256] = "/Volumes/Ehsanm_DRI/research/MISR/masked_toa_files/masked_toa_refl_ellipsoid_apr2013_day1to16_p1to233_b1to40" ; // from LandMask.c; produce surf_masked files for specific day
+    char masked_toa_refl_home[256] = "/Volumes/Ehsan7757420250/2016/april_2016/sample_ellipsoid_april2016/toa_refl_april2016_day1to16_p1to233_b1to46/masked_toa_refl_april2016_day1to16_p1to233_b1to46" ; // from LandMask.c; produce surf_masked files for specific day
     
     // char cloud_masked_dir[256] = "/home3/mare/Nolin/2016/MaskedSurf/Jul_sdcmClearHC_LandMasked" ; // original cloud mask data == lsdcm dat files
     // char cloud_masked_dir[256] = "/Volumes/easystore/from_home/Nolin_except_dataFolder/remainder_forExternalHD_3.1TB/2011/MaskedSurf/Apr_sdcmClearHC/" ;  // cloud mask data == lsdcm dat files, to do a testrun i renames files to sdcm_p* @ line:345
-    char cloud_masked_dir[256] = "/Volumes/Ehsanm_DRI/research/MISR/cloud_mask/cloudmask_apr2013_day1to16_p1to233/TC_CLASSIFIERS_F07/cloudmask_F07_HC4_only" ;
+    char cloud_masked_dir[256] = "/Volumes/Ehsan7757420250/2016/TC_CLASSIFIERS_F07/cloudmask_TC_CLASSIFIERS_F07_HC4_only" ;
 
-    //char atmfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/combined_atm.csv";
+
+
 
     // output
     // char atmmodel_csvfile[256] = "/Users/ehsanmos/Documents/RnD/MISR_lab/misr_processing_dir/atmmodel_csvfile_July_2011/Ehsan_July_2011_atmmodel.csv" ; // ERROR: how check if a file or directory exists in Clang? check ptr?
-    char atmmodel_csvfile[256] = "/Volumes/Ehsanm_DRI/research/MISR/atmmodel_dir/atmmodel_2013/atmmodel_2013_aug1_16_b1_40_newASCM.csv" ; // writes output=atmmodel_csvfile to current dir
+    char atmmodel_csvfile[256] = "/Volumes/Ehsan7757420250/2016/april_2016/atmmodel/atmmodel_april_2016.csv" ; // writes output=atmmodel_csvfile to current dir
 
     // char atmmodel_csvfile[256] = "/home/mare/Projects/MISR/Julienne/IceBridge2016/SeaIce_Jul2016_atmmodel_csvfile_cloud_var.csv"; // old
     //char lsmask_dir[256] = "/home/mare/Nolin/SeaIce/LWData/MISR_LandSeaMask";
