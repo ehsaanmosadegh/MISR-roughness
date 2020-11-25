@@ -26,10 +26,11 @@ for edgeCntr in range(len(edgeCntr_list)-1):
 				continue
 		else:
 			#~ move files from src dir to target dir
+			print('moving files to dir: %s' % dest_subdir_fp)
 			shutil.move(src_files_fp_list[fileCntr], dest_subdir_fp)
 			#~ check if file was moved successfully
 			if (os.path.isfile(os.path.join(dest_subdir_fp, src_files_fp_list[fileCntr].split('/')[-1]))):
-				print('file %s moved successfully to %s!' % (fileCntr, dest_subdir_fp))
+				print('file %s moved successfully!' % (fileCntr))
 			else:
 				print('warning on moving file')
 
