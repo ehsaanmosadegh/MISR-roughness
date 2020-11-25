@@ -52,12 +52,12 @@ date
 module list 
 
 
-echo “MISR job started here...”
+echo “MISR job started ...”
 
 # MISR2Roughness_parallel
 python /data/gpfs/home/emosadegh/MISR-roughness/toa_rad_to_refl_to_blocks/run_TOARad2Refl4AllBlocks_part1.py
 
 
-echo “MISR job ended here...”
+echo “MISR job ended ...”
 
 date
