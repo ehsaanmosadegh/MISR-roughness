@@ -22,7 +22,7 @@ import sys, os, os.path
 # in_dir = "/Volumes/Ehsanm_DRI/research/MISR/cloud_mask/cloudmask_apr2013_day1to16_p1to233/"
 
 # set the input path
-in_dir = '/data/gpfs/assoc/misr_roughness/2016/july_2016/cloudmasks'
+in_dir = '/data/gpfs/assoc/misr_roughness/2016/april_2016/cloudmasks'
 exe_dir = '/data/gpfs/home/emosadegh/MISR-roughness/exe_dir'
 
 ################################## DO NOT CHANGE ##################################
