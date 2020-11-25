@@ -85,7 +85,7 @@ for file_count, file in enumerate(files_list):
 			sys.exit(1)
 		n += 1
 
-	print('finished successfully!')
+	print('cloudMask finished successfully!')
 
 	f.close() # close each hdf file
 	#break;

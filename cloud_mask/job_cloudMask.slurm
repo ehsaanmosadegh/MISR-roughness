@@ -27,8 +27,8 @@
 #SBATCH --mail-type=ALL             		 # Send mail on all state changes
 #SBATCH --mail-user=ehsanmos@icloud.com
 
-#SBATCH --output=log1_cm.txt   		 # The output file name
-#SBATCH --error=log1_cm.txt		 	# The error file nam
+#SBATCH --output=log2_cm.txt   				 # The output file name
+#SBATCH --error=log2_cm.txt				 	# The error file nam
 
 
 
