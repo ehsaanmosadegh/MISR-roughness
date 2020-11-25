@@ -23,11 +23,13 @@ import sys, os, os.path
 
 # set the input path
 in_dir = '/data/gpfs/assoc/misr_roughness/2013/april/TC_CLASSIFIERS_F07/TC_classifier_F07_DLfiles'
-
+exe_dir = '/data/gpfs/home/emosadegh/MISR-roughness/exe_dir'
 
 ################################## DO NOT CHANGE ##################################
 #~ other settings
 exe_name = "ReadASCMCloudMask"
+exe_dir_fullpath = os.path.join(exe_dir, exe_name)
+
 end_block_not_included = 47  # reads up to this number
 # set a label for output dir
 out_dir_label = 'cloudmask_TC_CLASSIFIERS_F07_HC4_only' # we build this dir inside our input dir
@@ -76,7 +78,7 @@ for file_count, file in enumerate(files_list):
 	for block in range(1, end_block_not_included, 1):  # define range for blocks
 
 		ofile = out_dir_fullpath + '/' + 'cloudmask_' + path + '_' + orbit + '_B%03d.msk' % block		
-		cmd = "./%s \"%s\" %d \"%s\"" % (exe_name, ifile, block, ofile)
+		cmd = "./%s \"%s\" %d \"%s\"" % (exe_dir_fullpath, ifile, block, ofile)
 		sys.stderr.write('%5d: %s\n' % (n + 1, cmd)) # why n+1 ?
 		if (os.system(cmd) != 0):
 			sys.exit(1)
