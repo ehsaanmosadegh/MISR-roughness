@@ -7,8 +7,8 @@
 
 import os, glob, shutil
 
-src_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016'
-target_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/all_ellipsoid_july'
+src_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/april_2016/remainder_xml_files'
+target_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/april_2016/remainder_xml_files'
 
 
 #~ define file pattern
