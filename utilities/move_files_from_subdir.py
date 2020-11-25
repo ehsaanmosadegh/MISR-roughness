@@ -12,8 +12,9 @@ target_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/april_2016/remainder
 
 
 #~ define file pattern
-file_pattern = 'MISR_AM1_GRP_ELLIPSOID_GM_P*'+'.hdf'
+# file_pattern = 'MISR_AM1_GRP_ELLIPSOID_GM_P*'+'.hdf'
 # file_pattern = 'ILATM2*.csv'
+file_pattern = '*TC_CLASSIFIERS_F07*.hdf'
 
 
 print('source dir: %s' % src_dir_fullpath)
