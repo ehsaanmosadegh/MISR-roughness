@@ -7,7 +7,7 @@
 
 import os, glob, shutil
 
-src_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ATM_july_13_21/
+src_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ATM_july_13_21/'
 target_dir_fullpath = src_dir_fullpath
 
 
