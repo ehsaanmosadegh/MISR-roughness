@@ -66,7 +66,7 @@ num_of_blocks = 'b1to46'
 
 #~ other settings - you might not need to change it
 
-exe_name = 'TOARad2blocks'
+exe_name = 'TOARad2Refl4AllBlocks'
 band_list = ['Red']
 band_num = 2
 minnaert = 0	# correction, turns off minnert parameter, f=0 it will not run inside C-code

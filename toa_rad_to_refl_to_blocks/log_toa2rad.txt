@@ -1,0 +1,468 @@
+Tue Nov 24 17:33:09 PST 2020
+Currently Loaded Modulefiles:
+ 1) shared          4) unr-rc              7) default-environment         
+ 2) dot             5) singularity/3.6.1   8) gcc/8.2.0                   
+ 3) slurm/18.08.4   6) utilities           9) fftw3/openmpi/gcc/64/3.3.8  
+“MISR job started here...”
+C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  001  ca    512   2048     1048576       -1.000000        2.794205        0.212197        0.730867       85.754738 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  002  ca    512   2048     1048576       -1.000000        1.454847        0.142244        0.704673       84.585965 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  003  ca    512   2048     1048576       -1.000000        1.976279        0.243737        0.735823       83.371246 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  004  ca    512   2048     1048576       -1.000000        1.807808        0.267242        0.748893       82.198256 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  005  ca    512   2048     1048576       -1.000000        1.727444        0.208500        0.720324       80.985904 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  006  ca    512   2048     1048576       -1.000000        1.592057        0.254888        0.744599       79.812396 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  007  ca    512   2048     1048576       -1.000000        1.904654        0.267727        0.747545       78.640429 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  008  ca    512   2048     1048576       -1.000000        1.869507        0.215510        0.721490       77.467583 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  009  ca    512   2048     1048576       -1.000000        1.796427        0.252615        0.744273       76.251184 
+===========================================================================================================-> start time: 2020-11-24 17:33:09.314804
+-> python version: 2.7.18
+ 
+-> input dir : /data/gpfs/assoc/misr_roughness/2016/july_2016/part1
+-> output dir: /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46
+-> Ca dir exist!
+-> An dir exist!
+-> Cf dir exist!
+-> band= 2
+-> minnaert= 0
+-> number of "GRP_ELLIPSOID.hdf" files that will be processed= 1000 
+
+-> hdf day check: 21
+===========================================================================================================
+=========================> NOW PROCESSING ELLIPSOID RADIATION HDF FILE: (1/1000) <==========================
+===========================================================================================================
+
+-> hdf file: /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P149_O088247_BA_F03_0024.hdf 
+
+-> camera is= ba
+-> but camera is not one of 3, we continue to the next hdf file...
+-> hdf day check: 03
+===========================================================================================================
+=========================> NOW PROCESSING ELLIPSOID RADIATION HDF FILE: (2/1000) <==========================
+===========================================================================================================
+
+-> hdf file: /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P078_O087995_DF_F03_0024.hdf 
+
+-> camera is= df
+-> but camera is not one of 3, we continue to the next hdf file...
+-> hdf day check: 30
+-> days>25, we will skip this file
+-> hdf day check: 07
+===========================================================================================================
+=========================> NOW PROCESSING ELLIPSOID RADIATION HDF FILE: (4/1000) <==========================
+===========================================================================================================
+
+-> hdf file: /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf 
+
+-> camera is= ca
+
+-> processing (block/HDFFile/totalHDFFile/cam): (001/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B001_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 1 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B001_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (002/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B002_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 2 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B002_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (003/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B003_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 3 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B003_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (004/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B004_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 4 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B004_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (005/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B005_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 5 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B005_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (006/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B006_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 6 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B006_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (007/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B007_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 7 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B007_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (008/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B008_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 8 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B008_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (009/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B009_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 9 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B009_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalC: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  010  ca    512   2048     1048576       -1.000000        1.461680        0.332809        0.784964       75.078541 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  011  ca    512   2048     1048576       -1.000000        1.364662        0.361602        0.795521       73.906315 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  012  ca    512   2048     1048576       -1.000000        1.504908        0.373053        0.799532       72.732694 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  013  ca    512   2048     1048576       -1.000000        1.424147        0.384261        0.806011       71.560421 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  014  ca    512   2048     1048576       -1.000000        1.578250        0.407183        0.822564       70.341981 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  015  ca    512   2048     1048576       -1.000000        1.443196        0.358170        0.798604       69.168225 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  016  ca    512   2048     1048576       -1.000000        1.725799        0.251581        0.745372       67.996002 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  017  ca    512   2048     1048576       -1.000000        1.505069        0.185398        0.695228       66.823400 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  018  ca    512   2048     1048576       -1.000000        1.677576        0.186158        0.705964       65.651552 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  019  ca    512   2048     1048576       -1.000000        1.662122        0.154292        0.694469       64.480114 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  020  ca    512   2048     1048576       -1.000000        1.394037        0.118228        0.667813       63.308904 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  021  ca    512   2048     1048576       -1.000000        1.244056        0.186904        0.696547       62.138194 
+===========================================================================================================HDFFile/cam): (010/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B010_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 10 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B010_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (011/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B011_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 11 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B011_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (012/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B012_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 12 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B012_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (013/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B013_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 13 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B013_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (014/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B014_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 14 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B014_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (015/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B015_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 15 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B015_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (016/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B016_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 16 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B016_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (017/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B017_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 17 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B017_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (018/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B018_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 18 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B018_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (019/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B019_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 19 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B019_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (020/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B020_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 20 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B020_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (021/3/1000/ca) (w/rjust performed) 
+
+-> toa file will be= /data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B021_ca.dat
+-> EXIST-STAT: NOT exist on disc.
+ 
+-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file
+-> to cmd=  "TOARad2Refl4AllBlocks" "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/MISR_AM1_GRP_ELLIPSOID_GM_P074_O088053_CA_F03_0024.hdf" 21 2 0 "/data/gpfs/assoc/misr_roughness/2016/july_2016/part1/toa_refl_julyl2016_day1_25_p1to233_b1to46/Ca/toa_refl_P074_O088053_B021_ca.dat" 
+
+
+******************************************
+
+
+-> processing (block/HDFFile/totalHDFFile/cam): (022/3/1000/ca) (wC: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  022  ca    512   2048     1048576       -1.000000        0.839590        0.189077        0.693643       60.969120 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  023  ca    512   2048     1048576       -1.000000        1.566611        0.263504        0.737862       59.798930 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  024  ca    512   2048     1048576       -1.000000        1.621660        0.356875        0.791009       58.629366 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  025  ca    512   2048     1048576       -1.000000        1.409561        0.297562        0.754047       57.460737 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  026  ca    512   2048     1048576       -1.000000        0.975712        0.229075        0.715979       56.293006 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  027  ca    512   2048     1048576       -1.000000        0.786676        0.171256        0.683785       55.126051 
+===========================================================================================================C: received 6 arguments. 
+C: status= 0, MTK_SUCCESS= 0 
+
+C: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion
+
+C: 074  088053  028  ca    512   2048     1048576       -1.000000        0.712676        0.116893        0.649923       54.015328 
+===========================================================================================================slurmstepd: error: *** JOB 2559339 ON cpu-65 CANCELLED AT 2020-11-24T17:34:12 ***
