@@ -7,7 +7,7 @@ src_dir = '/data/gpfs/assoc/misr_roughness/2016/july_2016'
 dest_dir = src_dir
 
 file_pattern = 'MISR_AM1_GRP_ELLIPSOID_GM_P*';
-dest_subdir_list = ['part_1', 'part_2', 'part_3', 'part_4'];
+dest_subdir_list = ['part1', 'part2', 'part3', 'part4'];
 
 src_files_fp_list = glob.glob(os.path.join(src_dir, file_pattern));
 print('num. of files found: %s' % len(src_files_fp_list));
@@ -29,7 +29,7 @@ for edgeCntr in range(len(edgeCntr_list)-1):
 			shutil.move(src_files_fp_list[fileCntr], dest_subdir_fp)
 			#~ check if file was moved successfully
 			if (os.path.isfile(os.path.join(dest_subdir_fp, src_files_fp_list[fileCntr].split('/')[-1]))):
-				print('file moved successfully!')
+				print('file %s moved successfully to %s!' % (fileCntr, dest_subdir_fp))
 			else:
 				print('warning on moving file')
 
