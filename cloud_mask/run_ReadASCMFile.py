@@ -59,9 +59,10 @@ files_list = [file for file in os.listdir(in_dir) if (os.path.splitext(file)[1] 
 
 for file_count, file in enumerate(files_list):
 
-	print("\n-> file (%d/%d): %s \n" % (file_count+1, len(files_list), file))
+	print("\nMISR TC-CLASSIFIER.hdf (%d/%d): %s \n" % (file_count+1, len(files_list), file))
 	path = file.split('_')[4]
 	orbit = file.split('_')[5]
+
 	# cmdir = odir + '/cloudmask_' + orbit + '_' + path
 	# cmd = 'mkdir \"' + cmdir + '\"'
 	# if not os.path.exists(cmdir):
@@ -83,5 +84,8 @@ for file_count, file in enumerate(files_list):
 		if (os.system(cmd) != 0):
 			sys.exit(1)
 		n += 1
+
+	print('finished successfully!')
+
 	f.close() # close each hdf file
 	#break;
