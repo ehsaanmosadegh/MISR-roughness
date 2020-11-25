@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-src_name = ReadASCMFile.c
-exe_path = /Users/ehsanmos/Documents/MISR/MISR-roughness/exe_dir
-exe_name = ReadASCMCloudMask
+src_name=ReadASCMFile.c
+exe_path=/data/gpfs/home/emosadegh/MISR-roughness/exe_dir
+exe_name=ReadASCMCloudMask
 
 all:
 	gcc -I/Users/ehsanmos/Documents/MISR/mtk_root/Mtk-1.5.0/include 	\

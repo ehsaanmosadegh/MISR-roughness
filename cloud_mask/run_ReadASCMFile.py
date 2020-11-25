@@ -5,12 +5,13 @@ The MISR ASCM was upsampled from 128 x 512 to 512 x 2048.
 created 18 Aug 2020 by Ehsan Mosadegh
 original name: readASCMFile.py
 
-note: we need TC_CLASSIFIERS_F07 after we download files
+notes: 
+		we need TC_CLASSIFIERS_F07 after we download files
 		we run for 46 blocks in here
 		we extract TC_CLASSIFIERS_F07_HC4 field
+		output dir will be inside inout dir
 
 '''
-
 
 import sys, os, os.path 
 
@@ -21,7 +22,8 @@ import sys, os, os.path
 # in_dir = "/Volumes/Ehsanm_DRI/research/MISR/cloud_mask/cloudmask_apr2013_day1to16_p1to233/"
 
 # set the input path
-in_dir = '/Volumes/Ehsan7757420250/misr_2016/cloudmasks'
+in_dir = '/data/gpfs/assoc/misr_roughness/2013/april/TC_CLASSIFIERS_F07/TC_classifier_F07_DLfiles'
+
 
 ################################## DO NOT CHANGE ##################################
 #~ other settings
