@@ -78,7 +78,7 @@ for file_count, file in enumerate(files_list):
 	for block in range(1, end_block_not_included, 1):  # define range for blocks
 
 		ofile = out_dir_fullpath + '/' + 'cloudmask_' + path + '_' + orbit + '_B%03d.msk' % block		
-		cmd = "./%s \"%s\" %d \"%s\"" % (exe_dir_fullpath, ifile, block, ofile)
+		cmd = "%s \"%s\" %d \"%s\"" % (exe_dir_fullpath, ifile, block, ofile)
 		sys.stderr.write('%5d: %s\n' % (n + 1, cmd)) # why n+1 ?
 		if (os.system(cmd) != 0):
 			sys.exit(1)
