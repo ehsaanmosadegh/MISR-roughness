@@ -1,6 +1,6 @@
 #!/bin/bash
 ##---------------------------------------------------------
-#SBATCH --job-name=TOA4
+#SBATCH --job-name=TOA1
 ##---------------------------------------------------------
 ##           select partition
 ##---------------------------------------------------------
@@ -27,8 +27,10 @@
 #SBATCH --mail-type=ALL             		 # Send mail on all state changes
 #SBATCH --mail-user=ehsanmos@icloud.com
 
-#SBATCH --output=log4_toa2rad.txt   		 # The output file name
-#SBATCH --error=log4_toa2rad.txt		 	# The error file nam
+#SBATCH --output=log1_toa2rad.txt   		 # The output file name
+#SBATCH --error=log1_toa2rad.txt		 	# The error file nam
+
+
 
 
 
@@ -50,12 +52,12 @@ date
 module list 
 
 
-echo “MISR job started here...”
+echo “MISR job started ...”
 
 # MISR2Roughness_parallel
-python /data/gpfs/home/emosadegh/MISR-roughness/toa_rad_to_refl_to_blocks/run_TOARad2Refl4AllBlocks_part4.py
+python /data/gpfs/home/emosadegh/MISR-roughness/toa_rad_to_refl_to_blocks/run_TOARad2Refl4AllBlocks.py
 
 
-echo “MISR job ended here...”
+echo “MISR job ended ...”
 
 date
