@@ -24,6 +24,7 @@ for edgeCntr in range(len(edgeCntr_list)-1):
 		#~ check is file exists in destination
 		if (os.path.isfile(os.path.join(dest_subdir_fp, src_files_fp_list[fileCntr].split('/')[-1]))==True):
 				continue
+		else:
 			#~ move files from src dir to target dir
 			shutil.move(src_files_fp_list[fileCntr], dest_subdir_fp)
 			#~ check if file was moved successfully
