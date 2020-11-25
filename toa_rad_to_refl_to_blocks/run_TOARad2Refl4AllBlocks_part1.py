@@ -177,7 +177,7 @@ def run_from_cmd(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minna
 	#~ run the C-cmd program
 	#cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath, toa_image_file) # old version
 	print(" ")
-	print('-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file')
+	print('-> python= <program-name> <Ellipsoid-file> <block> <band> <minnaert>	<toa-file>')
 	cmd = (' "%s" "%s" %s %s %s \"%s\"' %(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath))  # TOA writes data into toa_file_fullpath
 	print('-> to cmd= %s \n' % (cmd))	# run the cmd command.
 
@@ -185,7 +185,7 @@ def run_from_cmd(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minna
 
 	# run the cmd command
 	return_value_of_cmd = subprocess.call(cmd, shell=True)
-	# print('-> return value= %s' %return_value_of_cmd)
+	print('-> return value= %s' %return_value_of_cmd)
 
 	print("\n******************************************\n") # this line represents a signal from python that shows we go to next iteration inside python without any cmd ERROR
 
