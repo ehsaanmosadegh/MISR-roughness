@@ -7,14 +7,14 @@
 
 import os, glob, shutil
 
-src_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/april_2016/remainder_xml_files'
+src_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ATM_july_13_21/
 target_dir_fullpath = src_dir_fullpath
 
 
 #~ define file pattern
 # file_pattern = 'MISR_AM1_GRP_ELLIPSOID_GM_P*'+'.hdf'
-# file_pattern = 'ILATM2*.csv'
-file_pattern = 'MISR_AM1_TC_CLASSIFIERS*.hdf'
+file_pattern = 'ILATM2*.csv'
+# file_pattern = 'MISR_AM1_TC_CLASSIFIERS*.hdf'
 
 
 print('source dir: %s' % src_dir_fullpath)
