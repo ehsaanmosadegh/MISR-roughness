@@ -185,7 +185,7 @@ def run_from_cmd(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minna
 
 	# run the cmd command
 	return_value_of_cmd = subprocess.call(cmd, shell=True)
-	print('-> return value= %s' %return_value_of_cmd)
+	# print('-> return value= %s' %return_value_of_cmd)
 
 	print("\n******************************************\n") # this line represents a signal from python that shows we go to next iteration inside python without any cmd ERROR
 

@@ -177,7 +177,7 @@ def run_from_cmd(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minna
 	#~ run the C-cmd program
 	#cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath, toa_image_file) # old version
 	print(" ")
-	print('-> python= program-name	Ellipsoid-file	block 	band 	minnaert	toa-file')
+	print('-> python= <program-name> <Ellipsoid-file> <block> <band> <minnaert>	<toa-file>')
 	cmd = (' "%s" "%s" %s %s %s \"%s\"' %(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath))  # TOA writes data into toa_file_fullpath
 	print('-> to cmd= %s \n' % (cmd))	# run the cmd command.
 
