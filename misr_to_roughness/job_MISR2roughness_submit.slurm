@@ -2,17 +2,18 @@
 ##---------------------------------------------------------
 #SBATCH --job-name=MISRtest
 ##---------------------------------------------------------
-## --- run on test partition for QualityAssurance
+## >>>>> test partition for QualityAssurance
 
-##SBATCH --account=cpu-s6-test-0 
-##SBATCH --partition=cpu-s6-test-0
+#SBATCH --account=cpu-s6-test-0 
+#SBATCH --partition=cpu-s6-test-0
 
 ##---------------------------------------------------------
-## --- run on MISR_roughness partition
+## >>>>> MISR_roughness partition 
 
 #SBATCH --account=cpu-s5-misr_roughness-0
 #SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
 
+##---------------------------------------------------------
 ##---------------------------------------------------------
 ## --- multi-core/threaded
 
@@ -27,6 +28,8 @@
 #SBATCH --error=logs/log_error_misr2roughness.txt		 	# The error file nam
 
 
+
+## old settings:
 ##SBATCH --cores-per-socket=30  --> error
 ##SBATCH --hint=compute_bound
 ##SBATCH --nodes=1
@@ -35,7 +38,7 @@
 ##SBATCH --time=14-00:00				 		# sets the max. run time; format: D-HH:MM
 
 ##---------------------------------------------------------
-
+##---------------------------------------------------------
 ##hostname
 date
 
@@ -43,12 +46,12 @@ date
 module list 
 
 
-echo “=== MISR job started here...”
+echo “MISR job started here...”
 
-## ./data/gpfs/home/emosadegh/MISR-roughness/exe_dir/MISR2Roughness_parallel
+# MISR2Roughness_parallel
+python /Users/ehsanmos/Documents/MISR/MISR-roughness/toa_rad_to_refl_to_blocks/run_TOARad2Refl4AllBlocks.py
 
-MISR2Roughness_parallel
 
-echo “=== MISR job ended here...”
+echo “MISR job ended here...”
 
 date
