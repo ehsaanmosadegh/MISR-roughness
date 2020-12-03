@@ -38,8 +38,8 @@ import MisrToolkit as MTK
 
 #===== input directory #=====
 #~ input_storage_path: is where we stored hdf data for each project in sub-directories under this directories. subdirectories can be data for each month. hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
-input_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ellipsoid_files'			# path to dir that hdf files are stored in
-exe_dir = '/data/gpfs/home/emosadegh/MISR-roughness/exe_dir'
+input_dir_fullpath = '/Volumes/Ehsan7757420250/2016/july_2016/ellipsoid_files'			# path to dir that hdf files are stored in
+exe_dir = '/Users/ehsanmos/Documents/MISR/MISR-roughness/exe_dir'
 
 exe_name = 'TOARad2Refl4AllBlocks'
 
@@ -85,7 +85,7 @@ def main():
 	'''
 	passes a pair of argumenst to cmd to run TOA.c program
 	'''
-	hdf_files_fullpath_list, total_hdf_files, output_dir_fullpath, band_num = in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, band_list, minnaert)	# order of arg params: root_dir, input_dir, output_dir_name, band_list
+	hdf_files_fullpath_list, total_hdf_files, output_dir_fullpath, band_num = in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, band_list, minnaert, exe_fullpath)	# order of arg params: root_dir, input_dir, output_dir_name, band_list
 	
 	for hdf_counter, hdf_file_fullpath in enumerate(hdf_files_fullpath_list):
 		# if day > day_range[1]
@@ -137,10 +137,10 @@ def check_day_from_orbit(hdf_file_fp):
 def check_file_availability(infile):
 
 	if (os.path.isfile(infile)):
-		print("-> EXIST-STAT: exists on disc.: %s" % infile)
+		print("-> EXIST-STAT: file exists on disc.: %s" % infile)
 		return True
 	else:
-		print("-> EXIST-STAT: NOT exist on disc.")
+		print("-> EXIST-STAT: file NOT exist on disc.")
 		return False
 
 ########################################################################################################################
@@ -191,18 +191,23 @@ def run_from_cmd(exe_fullpath, hdf_file_fullpath, block_num, band_num, minnaert,
 	print("\n******************************************\n") # this line represents a signal from python that shows we go to next iteration inside python without any cmd ERROR
 
 	if (return_value_of_cmd != 0):
-		print('-> ERROR: return from call() not zero, either %s program path NOT set in path, or issue from C-code. *** Exiting' %exe_fullpath)
+		print('-> ERROR: return from call() != zero; \
+			either path to program NOT set in path: %s, \
+			issue with input file, \
+			maybe storage is full, \
+			or some unknown issue from C-code. *** Exiting' %exe_fullpath)
 		raise SystemExit() 
 
 ########################################################################################################################
 
-def in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, band_list, minnaert):
+def in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, band_list, minnaert, exe_fullpath):
 	'''
 	reads dir paths and check if they exist, lists all hdf ellipsoid files and returns a list of files in fullpath mode
 	'''
 	output_dir_fullpath = os.path.join(output_path, output_dir)
 	print('-> input dir : %s' % (input_dir_fullpath))
 	print('-> output dir: %s' % (output_dir_fullpath))
+	print('-> exe fullPath: %s' %exe_fullpath)
 
 	# check if directories exist
 	if not (os.path.isdir(input_dir_fullpath)): # needs fullpath
