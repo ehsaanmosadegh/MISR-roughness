@@ -1,19 +1,19 @@
 #!/bin/bash
 ##---------------------------------------------------------
-#SBATCH --job-name=TOA1
+#SBATCH --job-name=TOA
 ##---------------------------------------------------------
 ##           select partition
 ##---------------------------------------------------------
 ## (test partition for QualityAssurance)
 
-##SBATCH --account=cpu-s6-test-0 
-##SBATCH --partition=cpu-s6-test-0
+#SBATCH --account=cpu-s6-test-0 
+#SBATCH --partition=cpu-s6-test-0
 
 ##---------------------------------------------------------
 ## (MISR_roughness partition)
 
-#SBATCH --account=cpu-s5-misr_roughness-0
-#SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
+##SBATCH --account=cpu-s5-misr_roughness-0
+##SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
 
 ##---------------------------------------------------------
 ##           set configuration
@@ -56,7 +56,6 @@ echo “MISR job started ...”
 
 # MISR2Roughness_parallel
 python /data/gpfs/home/emosadegh/MISR-roughness/toa_rad_to_refl_to_blocks/run_TOARad2Refl4AllBlocks.py
-
 
 echo “MISR job ended ...”
 
