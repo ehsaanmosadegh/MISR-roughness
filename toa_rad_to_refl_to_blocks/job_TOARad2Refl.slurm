@@ -7,7 +7,7 @@
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-core=1
 #SBATCH --mail-type=ALL             		 # Send mail on all state changes
-#SBATCH --mail-user=ehsanmos@icloud.com
+#SBATCH --mail-user=emosadegh@nevada.unr.edu
 #SBATCH --output=log1_toa2rad.txt   		 # The output file name
 #SBATCH --error=log1_toa2rad.txt		 	# The error file nam
 date
