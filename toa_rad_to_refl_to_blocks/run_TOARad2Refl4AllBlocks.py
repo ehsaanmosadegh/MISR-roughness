@@ -137,7 +137,7 @@ def check_day_from_orbit(hdf_file_fp):
 def check_file_availability(infile):
 
 	if (os.path.isfile(infile)):
-		print("-> EXIST-STAT: DOES exist on disc.: %s" % infile)
+		print("-> EXIST-STAT: exists on disc.: %s" % infile)
 		return True
 	else:
 		print("-> EXIST-STAT: NOT exist on disc.")
@@ -191,7 +191,7 @@ def run_from_cmd(exe_fullpath, hdf_file_fullpath, block_num, band_num, minnaert,
 	print("\n******************************************\n") # this line represents a signal from python that shows we go to next iteration inside python without any cmd ERROR
 
 	if (return_value_of_cmd != 0):
-		print('-> ERROR: EITHER %s program path NOT set in path, or issue from C-code. *** Exiting' %exe_fullpath)
+		print('-> ERROR: return from call() not zero, either %s program path NOT set in path, or issue from C-code. *** Exiting' %exe_fullpath)
 		raise SystemExit() 
 
 ########################################################################################################################
