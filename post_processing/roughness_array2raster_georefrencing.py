@@ -1,16 +1,12 @@
 #!/usr/bin/python2.7
 # coding: utf-8
 '''
-this f() builds georeferenced tif files from roughness arrays. 
+notes:
+	
+	this f() builds georeferenced tif files from roughness arrays. 
 	input: roughness array 
-	output: georeferenced raster <.tif> file 
+	output: georeferenced raster <.tif> file in both latlon and polar stereographic projections
 
-note:
-	this code does not have reprojection f()
-	code reads all roughness files inside roughness_dir and returns a list of roughness files, not a spicific single path!
-
-to-do:
-	replace fill/mask values (-9999..) w/ 0 or ther number
 '''
 
 import numpy as np
@@ -29,8 +25,7 @@ import tifffile # to write images with dtype=float64 on disc as bigTiff
 # dir path setup by user
 ########################################################################################################################
 #~ setup dir w/ roughness files
-rough_dir_fullpath =  '/Volumes/Ehsan7757420250/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_2'
-
+rough_dir_fullpath =  '/Volumes/Ehsan7757420250/2013/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1'
 
 #~ tiff dir where arr2tiff goes to; for now se build it inside rouhness dir
 georefRaster_dir_name = 'rasters_noDataNeg99_TiffFileFloat64_max'
@@ -43,7 +38,8 @@ misr_img_res = (512, 2048)
 misr_res_meter = 275
 gcp_mode = "corners_n_inside"                       									# 'inside' OR "corners_n_inside"
 reprojection = 'on'
-skip_antimeridian = 'on'
+skip_antimeridian = 'on' # if on == skip any image block that crosses A.M. line
+# copy_Anne_region = False  # copy raters that fall into a region to a seperate dir 
 ########################################################################################################################
 
 ########################################################################################################################
@@ -59,12 +55,10 @@ def main():
 
 	#~ reading roughness files in loop & process each at a time
 	for file_count, rough_fname in enumerate(rough_files_fullpath_list):
-		
 		print("--------------------------------------------------------------------------------------------------------")
 		print('-> processing new roughness array: (%d/ %d)' % (file_count+1, tot_found_rough_files))
 		print(rough_fname)
 		print('\n')
-		
 		rough_arr_2d, block_num, path_num = read_rough_file(rough_fname)
 		
 		## write img to disc w/using arr2img_writeToDisc() function
@@ -78,7 +72,6 @@ def main():
 			continue
 		else:
 			out_img_fullpath = ret
-		
 		print('-> block: %s' %block_num)
 		if (block_num < 20): 	# we exclude blocks less than 20 to exclude blocks in ascending path
 			print('-> block num < 20, so we skip it!')
@@ -89,11 +82,11 @@ def main():
 		# print('-> inDS type: %s' % type(in_ds)) # returns a Dataset obj
 		
 		# gcp_list, total_gcps, antimaridina_crossing, gcp_numbers = create_gcp_list_for_imgBlockPixels_mostGCPs(path_num, block_num, misr_res_meter)
-		gcp_list, total_gcps, antimaridina_crossing, gcp_numbers = create_gcp_list_for_imgBlockPixels_fixedGCPs_skipAMcrossing(path_num, block_num, misr_res_meter)
+		gcp_list, total_gcps, gcp_numbers, antimaridina_crossing = create_gcp_list_for_imgBlockPixels_fixedGCPs_skipAMcrossing(path_num, block_num, misr_res_meter)
 
 		if (skip_antimeridian=='on'):
 			if (antimaridina_crossing==True):
-				print('-> note: Anti-Maridian crossing image block! we will skip it')
+				print('-> note: image block crosses Anti-Maridian! we will skip it')
 				continue
 
 		translated_img_fullpath = apply_gcp(path_label, block_label, image_dir, in_ds, gcp_list)
@@ -219,21 +212,14 @@ def make_roughness_list_from_dir(rough_dir_fullpath):
 def read_rough_file(rough_fname):
 	#~ get only the roughness values from file, roughness file has roughness-lat-lon in it as a list & create 2D roughness array from list
 	rough_2d_arr = np.fromfile(rough_fname, dtype=np.double)[0:1048576].reshape((512,2048))			# 'double==float64'     # is this roughness in cm?
-
 	#~ define NaN values
 	rough_2d_arr[(rough_2d_arr < 0.0) & (rough_2d_arr != -999994.0)] = -99.0 # NaN any negative pixels and keep positive pixels and land mask only
-
-
-
 
 	#~ get some info about each array
 #     print("-> input file elements: %d" % rough_latlon_arr.size)
 #     print("-> input file dim: %d" % rough_latlon_arr.ndim)
 #     print("-> input file shape: %s" % rough_latlon_arr.shape)
-
-
 	print("-> roughnessArray new shape: (%d, %d)" % rough_2d_arr.shape)
-	
 
 	#~ find and extract path number
 	path_num = rough_fname.split("/")[-1].split("_")[3][1:] # extract path chuncka and then etract just the number
@@ -261,7 +247,7 @@ def create_gcp_list_for_imgBlockPixels_fixedGCPs_skipAMcrossing(path_num, block_
 	#~ based on suggestion from Anne, changed the range steps to every 128 pixels
 	# for jrow in [0, 200, 400, 511]: # [127*0, 127*1, 127*2, 127*3, 127*4, ..., 511]
 	# 	for icol in [0, 300, 600, 1000, 1300, 1700, 2047]: # [127*0, 127*1, 127*2, 127*3, 127*4, ..., 2047]
-	
+	distance_from_AM_line = 50; # degree
 	row_list = []
 	col_list = []
 	
@@ -287,295 +273,278 @@ def create_gcp_list_for_imgBlockPixels_fixedGCPs_skipAMcrossing(path_num, block_
 			# print("\n-> processing img coords: (%d, %d)" %(jrow, icol))
 	
 			#~ use MTK function to map from img frame to geographic frame
-			pixel_latlon_tuple = bls_to_latlon(path_num, misr_res_meter, block_num, jrow, icol) # struct=(lat, lon)?
+			pixel_latlon_tuple = bls_to_latlon(path_num, misr_res_meter, block_num, jrow, icol) # struct=(lat, lon)
 			# print(pixel_latlon_tuple)  # print every tuple of transfered latlon
 
 			img_pixelFrame_rowcol_list.append([jrow, icol])
 			img_worldFrame_latlon_list.append(pixel_latlon_tuple)
+			# print(pixel_latlon_tuple)
 
 
 	print("-> total GCPs from img frame: %d" %len(img_pixelFrame_rowcol_list)) 
 	gcp_numbers = len(img_pixelFrame_rowcol_list)
 
 	# print(img_pixelFrame_rowcol_list)
-	# print(img_worldFrame_latlon_list)  # print this to check all latlon list
+	# print(img_worldFrame_latlon_list)  # print this to check all latlon list; tupke of (lat, lon)
 
-	min_long_in_img = min([i[1] for i in img_worldFrame_latlon_list])
+	min_long_in_img = min([ituple[1] for ituple in img_worldFrame_latlon_list]) # get lon from latlon tuple
 	print('-> min long.: %s' % min_long_in_img)
 
 
 
-	#~ check all elements of long. to have same sign, either +/-
-	# all(iterable); iterable==list or anything that we can iterate on; Return True if all elements of the iterable are true
-	if (any( [pixel_LatLon_tuple[1] < 0  for  pixel_LatLon_tuple in img_worldFrame_latlon_list] )):   # if any Lon in img_worldFrame_latlon_list is neg. we change that to pos.
+	#~~ check all long. elements to have same sign, either +/-
+	#~~ if any Lon in img_worldFrame_latlon_list is neg. we change that to pos. 
+	if (any([pixel_LatLon_tuple[1] < 0  for  pixel_LatLon_tuple in img_worldFrame_latlon_list])):  ## all(iterable); iterable==list or anything that we can iterate on; Return True if all elements of the iterable are true
 		''' we do this part if any OR all block pixels are on West hemisphere (have neg. long.) in img block, and we change them to pos. and the range will be [0, +360] '''
-
 		print("-> found some neg. lon. in img_worldFrame_latlon_list!")
-
 		if (all([pixel_LatLon_tuple[1] < 0  for  pixel_LatLon_tuple in img_worldFrame_latlon_list])):
-
-			print('\n-> West Hem. all negative lon!\n')
+			print('\n-> all pixels have negative lon. (West Hem.)!\n')
 			#~ no conversion of lon. anymore
 			gcp_list = []  # a list of ground control points
-
 			for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
-
 				#~ for each point we add GCPs to a list
 				gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
-
 				#~ X,Y in img frame
-				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
+				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row == line
 				gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
-								
 				#~ we add lat and lon to list
 				gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
 				gcp_list[index].GCPX = img_worldFrame_latlon_list[index][1]
+			
+			#~# shows that block does NOT cross A.M.
+			antimaridina_crossing = False
 
-				antimaridina_crossing = False
-
-
-		elif ((180-abs(min_long_in_img))<50):
+		elif ((180-abs(min_long_in_img))<distance_from_AM_line):
 			#~ for any block that crosses AM line, we just label that block as AM crossing 
 			print('\n-> image crosses A.M. line! \n')
 			gcp_list = []  # a list of ground control points
 
 			for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
-
 				#~ for each point we add GCPs to a list
 				gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
-
 				#~ X,Y in img frame
-				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
-				gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
-								
+				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row == line
+				gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel	
 				#~ 1st we add lat to list
-				gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
-
-				#~ 2nd check for long. note; this section is as a result of any() meaning that we have 2 scenarios: some long. are neg./pos. or all are neg.
+				gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing
+				#~ 2nd check for long.; note= this section is as a result of any() meaning that we have 2 scenarios: some long. are neg./pos. or all are neg.
 				pixel_long = img_worldFrame_latlon_list[index][1]
 				# print("-> found neg. pixel long. in the crossing block: %f" % pixel_long)
 				#~ update neg. long. to pos. long.
 
 				if ( pixel_long < 0 ):  # if we find neg. long., we change it to pos. long. and will be in range [0, +360], especially case is all in neg. side of A.M.
 					# print("-> neg. pixel long. in block: %f" % pixel_long)
-
 					updated_pixel_lon = (360.0 + pixel_long )  # this long. is changed to pos. and will be in range [0, +360]
 					# print("=> updated to range 0-360 to: %f" %updated_pixel_lon)
-
 					#~ update neg. long. to pos. long.
 					gcp_list[index].GCPX = updated_pixel_lon
-
 				else:  # here we collect some pos. long. among neg. long. in the case block is crossing A.M. line
-					
-					# print("-> found pos. long. among neg. longs. in the crossing block: %f" %img_worldFrame_latlon_list[index][1])
-
+					# print("-> found pos. long. among neg. longs. in the crossing block: %f" %img_worldFrame_latlon_list[index][1]
 					#~ no need to update Lon. since it is pos. Lon.
 					gcp_list[index].GCPX = pixel_long
 
-					antimaridina_crossing = True
+			#~# shows that block is crossing A.M. & in the code we will skip this img block
+			antimaridina_crossing = True  
 
 		else:
-			print('\n-> image crosses P.M. line! \n')
+			print('\n--------> image crosses P.M. line! \n')
 			#~ for PM crossing we do NOT convert any lon. in the image, meaning we combine negative and positive lon. on both sides of PM line
 			gcp_list = []  # a list of ground control points
-
 			for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
-
 				#~ for each point we add GCPs to a list
 				gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
-
 				#~ X,Y in img frame
-				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
+				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row == lat
 				gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
-				
 				#~ we add lat and lon to list
 				gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
 				gcp_list[index].GCPX = img_worldFrame_latlon_list[index][1]
-				
-				antimaridina_crossing = False
-
+			
+			#~~ shows that block does NOT cross A.M.
+			antimaridina_crossing = False
+			#~~ make lit of latitudes
+			# if (min( [pixel_LatLon_tuple[0] for pixel_LatLon_tuple in img_worldFrame_latlon_list] ) >= 75.0): # list comprehension to find the min(lat) in block
+			# block_lat_list = [pixel_LatLon_tuple[0] for  pixel_LatLon_tuple in img_worldFrame_latlon_list]
+			# min_lat_in_block = min(block_lat_list)
+			# print('-> min-lat in block: %s' %min_lat_in_block)
 
 	else:
-		print("\n-> East Hem.: all positive lon.!\n")
-
+		print("\n-> all pixels have positive lon. (East Hem.)!\n")
 		gcp_list = []  # a list of ground control points
-
 		for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
-
 			#~ for each point we add GCPs to a list
 			gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
-
 			#~ X,Y in img frame
 			gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
 			gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
-
 			#~ add lat&lon
 			gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
 			gcp_list[index].GCPX = img_worldFrame_latlon_list[index][1]  # lon=easting
-			
-			antimaridina_crossing = False
+		#~~ shows that block does NOT cross A.M.
+		antimaridina_crossing = False
 
 
-	return gcp_list, len(img_pixelFrame_rowcol_list), antimaridina_crossing, gcp_numbers
+	return gcp_list, len(img_pixelFrame_rowcol_list), gcp_numbers, antimaridina_crossing
 
 ########################################################################################################################
 
-def create_gcp_list_for_imgBlockPixels_mostGCPs(path_num, block_num, misr_res_meter):
-	#~ create list of GCPs 
-	gcp_step = 100
-	print('\n-> GCP steps: %d \n' % gcp_step)
-	'''index is useful here, so first we create a list from img coordinates from all img pixels
-	then we use the index of each element in the pixel coord list as the index/count of each GCP'''
+# def create_gcp_list_for_imgBlockPixels_mostGCPs(path_num, block_num, misr_res_meter):
+# 	#~ create list of GCPs 
+# 	gcp_step = 100
+# 	print('\n-> GCP steps: %d \n' % gcp_step)
+# 	'''index is useful here, so first we create a list from img coordinates from all img pixels
+# 	then we use the index of each element in the pixel coord list as the index/count of each GCP'''
 
-	print("-> transfer img frame -to- latlon frame for path_num: %d, block_num: %s" %(path_num, block_num))
-	#~ make 2 lists for img and geographic frames, then analyze long. to see if all are neg. or all are pos.; if all are the same then pass, else: change <-> to <+>
-	img_pixelFrame_rowcol_list = []  # (row, column)
-	img_worldFrame_latlon_list = []
+# 	print("-> transfer img frame -to- latlon frame for path_num: %d, block_num: %s" %(path_num, block_num))
+# 	#~ make 2 lists for img and geographic frames, then analyze long. to see if all are neg. or all are pos.; if all are the same then pass, else: change <-> to <+>
+# 	img_pixelFrame_rowcol_list = []  # (row, column)
+# 	img_worldFrame_latlon_list = []
 
-	for jrow in range(0, 512, gcp_step):
-		for icol in range(0, 2048, gcp_step):
+# 	for jrow in range(0, 512, gcp_step):
+# 		for icol in range(0, 2048, gcp_step):
 
-			#~ process each col of each row
-			# print("\n-> processing img coords: (%d, %d)" %(jrow, icol))
+# 			#~ process each col of each row
+# 			# print("\n-> processing img coords: (%d, %d)" %(jrow, icol))
 	
-			#~ use MTK function to map from img frame to geographic frame
-			pixel_latlon_tuple = bls_to_latlon(path_num, misr_res_meter, block_num, jrow, icol) # struct=(lat, lon)?
-			# print(pixel_latlon_tuple)  # print every tuple of transfered latlon
+# 			#~ use MTK function to map from img frame to geographic frame
+# 			pixel_latlon_tuple = bls_to_latlon(path_num, misr_res_meter, block_num, jrow, icol) # struct=(lat, lon)?
+# 			# print(pixel_latlon_tuple)  # print every tuple of transfered latlon
 
-			img_pixelFrame_rowcol_list.append([jrow, icol])
-			img_worldFrame_latlon_list.append(pixel_latlon_tuple)
+# 			img_pixelFrame_rowcol_list.append([jrow, icol])
+# 			img_worldFrame_latlon_list.append(pixel_latlon_tuple)
 
-	print("-> total GCPs from img frame: %d" %len(img_pixelFrame_rowcol_list))    
-	# print(img_pixelFrame_rowcol_list)
-	# print(img_worldFrame_latlon_list)  # print this to check all latlon list
-	gcp_numbers = len(img_worldFrame_latlon_list)
+# 	print("-> total GCPs from img frame: %d" %len(img_pixelFrame_rowcol_list))    
+# 	# print(img_pixelFrame_rowcol_list)
+# 	# print(img_worldFrame_latlon_list)  # print this to check all latlon list
+# 	gcp_numbers = len(img_worldFrame_latlon_list)
 
-	min_long_in_img = min([i[1] for i in img_worldFrame_latlon_list])
-	print('-> min long.: %s' % min_long_in_img)
+# 	min_long_in_img = min([i[1] for i in img_worldFrame_latlon_list])
+# 	print('-> min long.: %s' % min_long_in_img)
 
-	#~ check all elements of long. to have same sign, either +/-
-	# all(iterable); iterable==list or anything that we can iterate on; Return True if all elements of the iterable are true
-	if (any( [pixel_LatLon_tuple[1] < 0  for  pixel_LatLon_tuple in img_worldFrame_latlon_list] )):   # if any Lon in img_worldFrame_latlon_list is neg. we change that to pos.
-		''' we do this part if any OR all block pixels are on West hemisphere (have neg. long.) in img block, and we change them to pos. and the range will be [0, +360] '''
+# 	#~ check all elements of long. to have same sign, either +/-
+# 	# all(iterable); iterable==list or anything that we can iterate on; Return True if all elements of the iterable are true
+# 	if (any( [pixel_LatLon_tuple[1] < 0  for  pixel_LatLon_tuple in img_worldFrame_latlon_list] )):   # if any Lon in img_worldFrame_latlon_list is neg. we change that to pos.
+# 		''' we do this part if any OR all block pixels are on West hemisphere (have neg. long.) in img block, and we change them to pos. and the range will be [0, +360] '''
 
-		print("-> found some neg. lon. in img_worldFrame_latlon_list!")
+# 		print("-> found some neg. lon. in img_worldFrame_latlon_list!")
 
-		if (all([pixel_LatLon_tuple[1] < 0  for  pixel_LatLon_tuple in img_worldFrame_latlon_list])):
+# 		if (all([pixel_LatLon_tuple[1] < 0  for  pixel_LatLon_tuple in img_worldFrame_latlon_list])):
 
-			print('-> West Hem. all negative lon! we change all to range: [0-360]')
-			#~ convert W-> E: all lon. on W.H. side, change to range [0, 360] 
-			gcp_list = []  # a list of ground control points
+# 			print('-> West Hem. all negative lon! we change all to range: [0-360]')
+# 			#~ convert W-> E: all lon. on W.H. side, change to range [0, 360] 
+# 			gcp_list = []  # a list of ground control points
 
-			for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
+# 			for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
 
-				#~ for each point we add GCPs to a list
-				gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
+# 				#~ for each point we add GCPs to a list
+# 				gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
 
-				#~ X,Y in img frame
-				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
-				gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
+# 				#~ X,Y in img frame
+# 				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
+# 				gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
 				
-				#~ do this section for blocks that pass AntiMeridian, and we change all neg. long. to pos. long. that will span [0, 360] range 
+# 				#~ do this section for blocks that pass AntiMeridian, and we change all neg. long. to pos. long. that will span [0, 360] range 
 				
-				#~ 1st we add lat to list
-				gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
+# 				#~ 1st we add lat to list
+# 				gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
 
-				#~ 2nd check for long. note; this section is as a result of any() meaning that we have 2 scenarios: some long. are neg./pos. or all are neg.
-				pixel_long = img_worldFrame_latlon_list[index][1]
+# 				#~ 2nd check for long. note; this section is as a result of any() meaning that we have 2 scenarios: some long. are neg./pos. or all are neg.
+# 				pixel_long = img_worldFrame_latlon_list[index][1]
 				
-				# print("-> found neg. pixel long. in the crossing block: %f" % pixel_long)
+# 				# print("-> found neg. pixel long. in the crossing block: %f" % pixel_long)
 
-				updated_pixel_lon = (360.0 + pixel_long )  # this long. is changed to pos. and will be in range [0, +360]
-				# print("=> update: neg.long. updated to: %f" %updated_pixel_lon)
+# 				updated_pixel_lon = (360.0 + pixel_long )  # this long. is changed to pos. and will be in range [0, +360]
+# 				# print("=> update: neg.long. updated to: %f" %updated_pixel_lon)
 
-				#~ update neg. long. to pos. long.
-				gcp_list[index].GCPX = updated_pixel_lon
-				antimaridina_crossing = False
+# 				#~ update neg. long. to pos. long.
+# 				gcp_list[index].GCPX = updated_pixel_lon
+# 				antimaridina_crossing = False
 
 
-		elif ((180-abs(min_long_in_img))<50):
-			#~ for any block that crosses AM line, we change negative lon. to positive lon. to map to range [0, 360] in that image
-			print('-> image crosses A.M. line!')
-			gcp_list = []  # a list of ground control points
+# 		elif ((180-abs(min_long_in_img))<50):
+# 			#~ for any block that crosses AM line, we change negative lon. to positive lon. to map to range [0, 360] in that image
+# 			print('-> image crosses A.M. line!')
+# 			gcp_list = []  # a list of ground control points
 
-			for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
+# 			for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
 
-				#~ for each point we add GCPs to a list
-				gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
+# 				#~ for each point we add GCPs to a list
+# 				gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
 
-				#~ X,Y in img frame
-				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
-				gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
+# 				#~ X,Y in img frame
+# 				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
+# 				gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
 								
-				#~ 1st we add lat to list
-				gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
+# 				#~ 1st we add lat to list
+# 				gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
 
-				#~ 2nd check for long. note; this section is as a result of any() meaning that we have 2 scenarios: some long. are neg./pos. or all are neg.
-				pixel_long = img_worldFrame_latlon_list[index][1]
-				# print("-> found neg. pixel long. in the crossing block: %f" % pixel_long)
-				#~ update neg. long. to pos. long.
+# 				#~ 2nd check for long. note; this section is as a result of any() meaning that we have 2 scenarios: some long. are neg./pos. or all are neg.
+# 				pixel_long = img_worldFrame_latlon_list[index][1]
+# 				# print("-> found neg. pixel long. in the crossing block: %f" % pixel_long)
+# 				#~ update neg. long. to pos. long.
 
-				if ( pixel_long < 0 ):  # if we find neg. long., we change it to pos. long. and will be in range [0, +360], especially case is all in neg. side of A.M.
-					print("-> neg. pixel long. in block: %f" % pixel_long)
+# 				if ( pixel_long < 0 ):  # if we find neg. long., we change it to pos. long. and will be in range [0, +360], especially case is all in neg. side of A.M.
+# 					print("-> neg. pixel long. in block: %f" % pixel_long)
 
-					updated_pixel_lon = (360.0 + pixel_long )  # this long. is changed to pos. and will be in range [0, +360]
-					print("=> updated to range 0-360 to: %f" %updated_pixel_lon)
+# 					updated_pixel_lon = (360.0 + pixel_long )  # this long. is changed to pos. and will be in range [0, +360]
+# 					print("=> updated to range 0-360 to: %f" %updated_pixel_lon)
 
-					#~ update neg. long. to pos. long.
-					gcp_list[index].GCPX = updated_pixel_lon
+# 					#~ update neg. long. to pos. long.
+# 					gcp_list[index].GCPX = updated_pixel_lon
 
-				else:  # here we collect some pos. long. among neg. long. in the case block is crossing A.M. line
+# 				else:  # here we collect some pos. long. among neg. long. in the case block is crossing A.M. line
 					
-					# print("-> found pos. long. among neg. longs. in the crossing block: %f" %img_worldFrame_latlon_list[index][1])
+# 					# print("-> found pos. long. among neg. longs. in the crossing block: %f" %img_worldFrame_latlon_list[index][1])
 
-					#~ no need to update Lon. since it is pos. Lon.
-					gcp_list[index].GCPX = pixel_long
-					antimaridina_crossing = True
+# 					#~ no need to update Lon. since it is pos. Lon.
+# 					gcp_list[index].GCPX = pixel_long
+# 					antimaridina_crossing = True
 
-		else:
-			print('-> image crosses P.M. line!')
-			#~ for PM crossing we do NOT convert any lon. in the image, meaning we combine negative and positive lon. on both sides of PM line
-			gcp_list = []  # a list of ground control points
+# 		else:
+# 			print('-> image crosses P.M. line!')
+# 			#~ for PM crossing we do NOT convert any lon. in the image, meaning we combine negative and positive lon. on both sides of PM line
+# 			gcp_list = []  # a list of ground control points
 
-			for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
+# 			for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
 
-				#~ for each point we add GCPs to a list
-				gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
+# 				#~ for each point we add GCPs to a list
+# 				gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
 
-				#~ X,Y in img frame
-				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
-				gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
+# 				#~ X,Y in img frame
+# 				gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
+# 				gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
 				
-				#~ we add lat and lon to list
-				gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
-				gcp_list[index].GCPX = img_worldFrame_latlon_list[index][1]
-				antimaridina_crossing = True
-				#~ what if we change negative lon. to range [0-360]?
+# 				#~ we add lat and lon to list
+# 				gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
+# 				gcp_list[index].GCPX = img_worldFrame_latlon_list[index][1]
+# 				antimaridina_crossing = True
+# 				#~ what if we change negative lon. to range [0-360]?
 
-	else:
-		print("-> East Hem.: all positive lon.!")
+# 	else:
+# 		print("-> East Hem.: all positive lon.!")
 
-		gcp_list = []  # a list of ground control points
+# 		gcp_list = []  # a list of ground control points
 
-		for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
+# 		for index, element in enumerate(img_pixelFrame_rowcol_list):    # index == each GCP ; element order == [row, col]
 
-			#~ for each point we add GCPs to a list
-			gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
-			# print('-> processing list element: %d' % index)
-			#~ X,Y in img frame
-			gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
-			gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
+# 			#~ for each point we add GCPs to a list
+# 			gcp_list.append(gdal.GCP())  # initialize GCP dataStruct for each coordinate point
+# 			# print('-> processing list element: %d' % index)
+# 			#~ X,Y in img frame
+# 			gcp_list[index].GCPLine  = img_pixelFrame_rowcol_list[index][0]       # y == row
+# 			gcp_list[index].GCPPixel = img_pixelFrame_rowcol_list[index][1]       # x == column == pixel
 
-			#~ add lat&lon
-			gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
-			gcp_list[index].GCPX = img_worldFrame_latlon_list[index][1]  # lon=easting
-			antimaridina_crossing = False
-			# print(len(gcp_list))
-			# print(type(gcp_list))
+# 			#~ add lat&lon
+# 			gcp_list[index].GCPY = img_worldFrame_latlon_list[index][0]  # lat=northing 
+# 			gcp_list[index].GCPX = img_worldFrame_latlon_list[index][1]  # lon=easting
+# 			antimaridina_crossing = False
+# 			# print(len(gcp_list))
+# 			# print(type(gcp_list))
 
-		# print(gcp_list)
+# 		# print(gcp_list)
 
-	return gcp_list, len(img_pixelFrame_rowcol_list), antimaridina_crossing, gcp_numbers
+# 	return gcp_list, len(img_pixelFrame_rowcol_list), antimaridina_crossing, gcp_numbers
+
 ########################################################################################################################
 
 def apply_gcp(path_label, block_label, image_dir, in_ds, gcp_list):
@@ -612,18 +581,14 @@ def warp_img(path_label, block_label, total_gcps, image_dir, translated_img_full
 	#~ note: CENTER_LONG +180 maps from [0,-/+180] to [0,360] all will be positive lon.
 	'''
 	out_dtype = 'Float64'
-	warped_img_tag = 'raster_'+path_label+'_'+block_label+'_'+str(total_gcps)+'GCPs_noGdalRes_'+'dType'+out_dtype+'_'+str(gcp_numbers)+'gcps'
+	warped_img_tag = 'raster_'+path_label+'_'+block_label+'_'+str(total_gcps)+'GCPs_noGdalRes_'+'dType'+out_dtype+'_'+str(gcp_numbers)+'gcps'+'_latlon'
 	warped_img_extension = '.tif'
-
 	warped_img = warped_img_tag+warped_img_extension
 	output_file_warped = os.path.join(image_dir, warped_img)
-	print('-> output_file_warped:')
+	print('\n-> output_file_warped:')
 	print(output_file_warped)
 	# print(os.path.isfile(translated_img_fullpath))
 	# print(os.path.isfile(output_file_warped))
-	
-	#~ Q-how use gdal.Warp()?
-
 	warp_ds = gdal.Warp(
 							output_file_warped,
 							translated_img_fullpath,
@@ -635,16 +600,16 @@ def warp_img(path_label, block_label, total_gcps, image_dir, translated_img_full
 							srcNodata = -99.0,  # define noData values=-99 in input files; igniores x in src dataset			# for .tif: bilinear= bad; cubicspline= bad; nearest= bad; cubic= bad; average= bad; max= is better
 							dstNodata = -99.0  	# in the case of NaN?
 						)
-
+	#~~ close datasets in memory
 	warp_ds = None
 	translated_img_fullpath = None
-
 	#~ we return this file to use it later to reproject it to Polar
 	warpedFile_fullPath_noExt = os.path.join(image_dir, warped_img_tag)
 
 	return warpedFile_fullPath_noExt
 
-######################################################## old methoid w/ cmdLine utility
+########################################################################################################################
+######################################################## old methoid w/ cmdLine utility		
 	# print('-> to cmdLine...')
 
 	# cmd = 'gdalwarp\
@@ -686,7 +651,7 @@ if __name__ == '__main__':
 	end_time = dt.datetime.now()
 	print('\n\n')
 	print('-> end time= %s' %end_time)
-	print('-> runtime duration= %s' %(end_time-start_time))
+	print('-> runtime= %s' %(end_time-start_time))
 	print(" ")
 	print('######################## TOA COMPLETED SUCCESSFULLY ########################')
 

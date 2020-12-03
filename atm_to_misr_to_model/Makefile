@@ -1,7 +1,7 @@
 
 exe_path=/Users/ehsanmos/Documents/MISR/MISR-roughness/exe_dir
-exe_name=ATMRoughness2MISR
-src_name=ATMRoughness2MISRpixels.c 				#TOARad2Blocks_noblokcs1to6.c #TOARad2BlocksAllBlocks.c
+exe_name=ATM2MISRpixel2model
+src_name=ATM2MISRpixel2model.c 				#TOARad2Blocks_noblokcs1to6.c #TOARad2BlocksAllBlocks.c
 
 all:
 	gcc -I/Users/ehsanmos/Documents/MISR/mtk_root/Mtk-1.5.0/include 	\

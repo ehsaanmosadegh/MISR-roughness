@@ -17,11 +17,11 @@ print(matplotlib.__version__)
 print(gdal.VersionInfo())
 
 ########################################################################################################################
-raster_dir = '/Volumes/Ehsan7757420250/2013/roughness_2013_apr1to16_p1to233_b1to40/test_some_rasters'
+raster_dir = '/Volumes/Ehsan7757420250/2013/roughness_2013_apr1to16_p1to233_b1to40/mosaics_for_plot/apr9'
 
 #~~ file pattern that we will look for
-# raster_pattern='mosaic_*'+'.tif'
-raster_pattern='raster_path*'+'.tif'
+raster_pattern='mosaic_*'+'.tif'
+# raster_pattern='raster_path*'+'.tif'
 
 #~~ dir where we will save plots
 save_plot_dir = raster_dir
@@ -48,7 +48,7 @@ else:
 	
 	for raster_fp in rasters_fp_list:
 		#~~ split name to get date-tag
-		print('\nsparsing: %s' %raster_fp)
+		print('\nparsing: %s' %raster_fp)
 		raster_date_tag=raster_fp.split('/')[-1].split('_')[-1].split('.')[0]  # this is setup for mosaic files
 		saved_img_name = 'allPaths_'+raster_date_tag+'.jpg'
 		print('saved img label will be: %s' % saved_img_name)
@@ -175,7 +175,9 @@ else:
 		#~ inspired by: https://matplotlib.org/3.2.1/tutorials/colors/colormap-manipulation.html
 		################################################################################################################
 		#~~ build a figure and an axis
-		(fig, ax) = plt.subplots(figsize=(8, 6), dpi=600, sharex=True, sharey=True)  # returns one figure==canvas and we can have multiple subplots==axes; has more features than plt.subplot(); figure != plot = image; e.g: fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(6, 5.4))
+		# (fig, ax) = plt.subplots(figsize=(8, 6), dpi=600, sharex=True, sharey=True)  # returns one figure==canvas and we can have multiple subplots==axes; has more features than plt.subplot(); figure != plot = image; e.g: fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(6, 5.4))
+		(fig, ax) = plt.subplots();  # returns one figure==canvas and we can have multiple subplots==axes; has more features than plt.subplot(); figure != plot = image; e.g: fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(6, 5.4))
+
 		# print(type(fig))
 		# print(type(ax))
 		'''
@@ -185,7 +187,8 @@ else:
 		#~~ try set figsize
 		# fig.set_size_inches(8,6, forward=True)  # + dpi later in plt.savefig()
 		# plt.subplots_adjust(0.5,0.5,1,1) 
-
+		fig.set_figheight(6)
+		fig.set_figwidth(6)
 
 
 		#~~ transpose data to solve flipping issue that imshow() caused: https://github.com/bokeh/bokeh/issues/1666

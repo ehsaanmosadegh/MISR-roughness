@@ -38,13 +38,13 @@ import MisrToolkit as MTK
 
 #===== input directory #=====
 #~ input_storage_path: is where we stored hdf data for each project in sub-directories under this directories. subdirectories can be data for each month. hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
-input_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ellipsoid_files'			# path to dir that hdf files are stored in
-exe_dir = '/data/gpfs/home/emosadegh/MISR-roughness/exe_dir'
+input_dir_fullpath = '/Volumes/Ehsan7757420250/2016/july_2016/ellipsoid_files'			# path to dir that hdf files are stored in
+exe_dir = '/Users/ehsanmos/Documents/MISR/MISR-roughness/exe_dir'
 exe_name = 'TOARad2Refl4AllBlocks'
 
 year = 2016
 month = 7
-day_range = [1,25]		# code checks day range and skips file w/days that are not in day range
+day_range = [1,25]		# code checks dayRange and skips file w/days that are not in day range
 block_range = [1,46] 	# [start, stop]; should match with block range in downloading step
 
 #~ output file labling
@@ -75,7 +75,7 @@ output_path = input_dir_fullpath  		# writes out processed data inside same inpu
 output_filelabel = "toa_refl" 	 		# toa_rad OR toa_refl; change setting inside C-code; 0==false/off &  1==true/on
 # save_not_to_cloud = '.nosync'		
 output_dir = output_filelabel+'_'+month_label+'_'+num_of_days+'_'+ num_of_paths+'_'+num_of_blocks            #+save_not_to_cloud # label of output subdirectory to name output dir; output processed files go here. this code with create this directory if it does not exist
-exe_dir_fullpath = os.path.join(exe_dir, exe_name)
+exe_fullpath = os.path.join(exe_dir, exe_name)
 
 #~ other settings - do not change
 ########################################################################################################################
@@ -108,7 +108,7 @@ def main():
 
 			# ~ now run TOA from UNIX to process hdf ellipsoid data 
 			# print("-> returned False from past step. Go to cmd...")
-			run_from_cmd(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath)  # note: to just check runtime setting comment out this line
+			run_from_cmd(exe_fullpath, hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath)  # note: to just check runtime setting comment out this line
 
 	return 0
 
@@ -147,7 +147,7 @@ def check_file_availability(infile):
 def define_toa_file(path, orbit, block_num, camera, output_dir_name, file_label, hdf_counter, total_hdf_files):
 
 	block_num = str(block_num).rjust(3, '0') # added 3 to right-adjust for 3-zero digits for all range of blocks
-	print('\n-> processing (block/HDFFile/totalHDFFile/cam): (%s/%s/%s/%s) (w/rjust performed) \n' % (block_num, hdf_counter, total_hdf_files, camera))
+	print('\n-> processing (block/HDF-File/totalHDF-File/cam): (%s/%s/%s/%s) (w/rjust performed) \n' % (block_num, hdf_counter, total_hdf_files, camera))
 
 
 	# toa output file names to CMD command --> to do: make function for this section
@@ -169,7 +169,7 @@ def define_toa_file(path, orbit, block_num, camera, output_dir_name, file_label,
 
 ########################################################################################################################
 
-def run_from_cmd(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath):
+def run_from_cmd(exe_fullpath, hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath):
 	
 	# toa_image_file = '%stoa_%s_%s_b%s_%s.png' % (output_dir_name, path, orbit, block_num, camera)  #~ note: this is removed from the original C code, so we do not need image anymore
 	# print(toa_image_file)
@@ -178,7 +178,7 @@ def run_from_cmd(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minna
 	#cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath, toa_image_file) # old version
 	print(" ")
 	print('-> python= <program-name> <Ellipsoid-file> <block> <band> <minnaert>	<toa-file>')
-	cmd = (' "%s" "%s" %s %s %s \"%s\"' %(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath))  # TOA writes data into toa_file_fullpath
+	cmd = (' "%s" "%s" %s %s %s \"%s\"' %(exe_fullpath, hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath))  # TOA writes data into toa_file_fullpath
 	print('-> to cmd= %s \n' % (cmd))	# run the cmd command.
 
 	# return_value_of_cmd = 0 # for debug 
@@ -190,7 +190,7 @@ def run_from_cmd(exe_dir_fullpath, hdf_file_fullpath, block_num, band_num, minna
 	print("\n******************************************\n") # this line represents a signal from python that shows we go to next iteration inside python without any cmd ERROR
 
 	if (return_value_of_cmd != 0):
-		print('-> ERROR: EITHER %s program path NOT set in path, or issue from C-code. *** Exiting' %exe_dir_fullpath)
+		print('-> ERROR: EITHER %s program path NOT set in path, or issue from C-code. *** Exiting' %exe_fullpath)
 		raise SystemExit() 
 
 ########################################################################################################################
@@ -299,7 +299,7 @@ def parse_file_names(hdf_file_fullpath, total_hdf_files, hdf_counter):
 		print('-> ERROR: needed camera NOT found! Check input hdf for camera label. Exiting...')
 		raise SystemExit()
 
-	print('-> camera is= %s' %camera)
+	print('-> camera= %s' %camera)
 
 	return path, orbit, camera
 

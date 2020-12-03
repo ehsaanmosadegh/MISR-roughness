@@ -8,22 +8,35 @@ output: intermediate VRT file, and then final mosaic.tif file at the same direct
 
 note: before running thsi script, we have to build raster.tif files forst
 '''
-import glob, os, gdal
+import glob, os
+from osgeo import gdal
 from subprocess import call
 import datetime as dt
 
 
+#~ we find this file pattern
+raster_file_pattern = 'raster_path_*'+'*_reprojToEPSG_3995.tif'
+# raster_file_pattern = 'raster_path_*'+'latlon.tif'
+# raster_file_pattern = 'raster_path_*'+'85gcps.tif'
+
+########################################################################################################################
 def main():
 
 	print('-> start main(): ')
 
-	raster_dir_fullpath = '/Volumes/Ehsan7757420250/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_2/rasters_noDataNeg99_TiffFileFloat64_max'
+	raster_dir_fullpath = '/Volumes/Ehsan7757420250/2013/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_16/rasters_noDataNeg99_TiffFileFloat64_max'
 	
+	#~~ day label
+	day='16'
+	month='april'
+	year='2013'
+	#~~ forl date-tag from 3 parameters
+	date_tag = day+'-'+month+'-'+year
+
 	#~ naming labels
 	resamplingAlg = 'nearest'
-	day_label = 'test1day' # use a day label to assign to output VRT and mosaic files  ---> ????
-	output_VRT_dataset_name = 'virtualDataset_float64_'+day_label+'_'+resamplingAlg+'.vrt'
-	output_mosaic_name = 'mosaic_fromVRT_float64_'+day_label+'_'+resamplingAlg+'.tif'
+	output_VRT_dataset_name = 'virtualDataset_float64_'+resamplingAlg+'_'+date_tag+'.vrt'
+	output_mosaic_name = 'mosaic_fromVRT_float64_'+resamplingAlg+'_'+date_tag+'.tif'
 
 	########################################################################################################################
 	VRT_fullpath = os.path.join(raster_dir_fullpath, output_VRT_dataset_name)
@@ -31,9 +44,6 @@ def main():
 	print('-> raster dir: %s' %raster_dir_fullpath)
 	print('-> VRT: %s' %VRT_fullpath)
 	print('-> resampling Algorithm: %s' % resamplingAlg)
-
-	#~ we find this file pattern
-	raster_file_pattern = 'raster_path_*'+'*_reprojToEPSG_3995.tif'
 	print('-> looking for pattern: %s' % raster_file_pattern)
 
 	#~ build a list from input raster files
@@ -93,8 +103,6 @@ def main():
 	VRT_fullpath = None  # close opened input file
 
 	return 0
-
-
 ########################################################################################################################
 if __name__ == '__main__':
 	
