@@ -83,8 +83,10 @@ else:
 		print(yMax)
 		print('\n')
 		# metadata['extent'] = (xMin,xMax,yMin,yMax)
-		plot_extent = (xMin,xMax,yMin,yMax)
+		# plot_extent = (xMin,xMax,yMin,yMax)
+		plot_extent = (-3200000,3200000,-3200000,3200000)
 		print(plot_extent)
+
 
 		# array_shape = raster.ReadAsArray(0,0, metadata['array_cols'], metadata['array_rows']).astype('byte').shape # check this f(.)
 		array_shape = raster.ReadAsArray(0,0, metadata['array_cols'], metadata['array_rows']).astype('float64').shape # check this f(.)
