@@ -8,6 +8,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=3500M        		 # Allocate 3.5GB of memory per CPU
 #SBATCH --time=14-00:00					# sets the max. run time; format: D-HH:MM
+#SBATCH --hint=compute_bound			# to allocate all resources on a core (2threaded cpus)
 #SBATCH --mail-user=emosadegh@nevada.unr.edu
 #SBATCH --mail-type=ALL             		 # Send mail on all state changes
 #SBATCH --output=log_toa2rad.txt   		 # The output file name
