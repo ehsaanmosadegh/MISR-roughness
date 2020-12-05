@@ -12,22 +12,21 @@ from platform import python_version
 
 ########################################################################################################################
 #~~ setup paths
+masked_toa_An_dir = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ellipsoid_files/toa_refl_julyl2016_day1_25_p1to233_b1to46/masked_toa_refl_julyl2016_day1_25_p1to233_b1to46/An'
 
-masked_toa_an_dir = '/Volumes/Ehsan7757420250/2016/july_2016/ellipsoid_files/toa_refl_julyl2016_day1_25_p1to233_b1to46/masked_toa_refl_julyl2016_day1_25_p1to233_b1to46/An'
+atmmodel_dir = '/data/gpfs/assoc/misr_roughness/2016/july_2016/atmmodel' ;
+atmmodel_csvfile_label = "atmmodel_july_2016.csv"
 
-atmmodel_dir = '/Volumes/Ehsan7757420250/2016/april_2016/atmmodel/' ;
-atmmodel_csvfile_label = "atmmodel_april_2016.csv"
+predicted_roughness_dir = '/data/gpfs/assoc/misr_roughness/2016/july_2016/roughness_2016_july1to16_p1to233_b1to46'
 
-predicted_roughness_dir = '/Volumes/Ehsan7757420250/2016/july_2016/roughness_2016_july1to16_p1to233_b1to46'
-
-exe_dir = '/Users/ehsanmos/Documents/MISR/MISR-roughness/exe_dir'
+exe_dir = '/data/gpfs/home/emosadegh/MISR-roughness/exe_dir'
 exe_name = 'MISR2Roughness_parallel'
 ########################################################################################################################
 def main():
 	'''
 	passes a pair of argumenst to cmd to run TOA.c program
 	'''
-	input_dir_list = [masked_toa_an_dir, atmmodel_dir, predicted_roughness_dir, exe_dir]
+	input_dir_list = [masked_toa_An_dir, atmmodel_dir, predicted_roughness_dir, exe_dir]
 	for in_dir in input_dir_list:
 		ret_check = os.path.isdir(in_dir)
 		if (ret_check==True):
@@ -40,7 +39,7 @@ def main():
 	atmmodel_fullpath = os.path.join(atmmodel_dir, atmmodel_csvfile_label)
 
 	#~~ now run exe from UNIX to process hdf ellipsoid data 
-	run_from_cmd(exe_fullpath, masked_toa_an_dir, atmmodel_fullpath, predicted_roughness_dir)
+	run_from_cmd(exe_fullpath, masked_toa_An_dir, atmmodel_fullpath, predicted_roughness_dir)
 
 	return 0
 ########################################################################################################################
