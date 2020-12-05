@@ -518,7 +518,7 @@ int main(int argc, char* argv[])
 			// check if output file exists
 			if (access(final_output_fullpath, F_OK) == 0)   // if file exists, success returns == 0
 			{
-				printf("**** file EXIST *** we continue to next file. \n");
+				printf("**** output file EXIST *** we continue to next file. \n");
 
 				free(data);
 				free((unsigned char *) mask);
@@ -529,7 +529,7 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				printf("file NOT exist, writing output to= %s \n", final_output_fullpath);
+				printf("output file NOT exist, writing output to= %s \n", final_output_fullpath);
 
 			}
 

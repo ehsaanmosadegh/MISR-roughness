@@ -2,8 +2,6 @@
 '''
 by: Ehsan Mosadegh 20 August 2020
 this script runs LandMask.c 
-old: Should make directory for input and output based on the labels of files from orevious step
-setup input and output dir path, and output dir will be created inside it
 '''
 from subprocess import call
 import os
