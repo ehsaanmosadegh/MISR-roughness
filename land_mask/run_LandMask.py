@@ -16,7 +16,7 @@ toa_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ellipsoid_fil
 #~ landmask dir
 lsmask_dir_fullpath = '/data/gpfs/assoc/misr_roughness/landseamask_blocks_1to46' ;  									# Ehsan: mask file, output from <ArcticTileToGrid.c> // at: /Volumes/easystore/from_home/Nolin_except_dataFolder/SeaIce/LWData/MISR_LandSeaMask on easystore drive
 
-exe_dir = '/data/gpfs/home/emosadegh/MISR-roughness/exe_dir'-	
+exe_dir = '/data/gpfs/home/emosadegh/MISR-roughness/exe_dir'	
 exe_name = "LandMask" # should be set in $PATH
 
 #~ output dir for masked_toa_refl file
