@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name=MISRtest
-#SBATCH --account=cpu-s6-test-0 
-#SBATCH --partition=cpu-s6-test-0
-##SBATCH --account=cpu-s5-misr_roughness-0
-##SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
-#SBATCH --ntasks=30
+#SBATCH --job-name=MISR2roughness
+##SBATCH --account=cpu-s6-test-0 
+##SBATCH --partition=cpu-s6-test-0
+#SBATCH --account=cpu-s5-misr_roughness-0
+#SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
+#SBATCH --ntasks=500
 #SBATCH --ntasks-per-core=1
 #SBATCH --mail-type=ALL             		 		# Send mail on all state changes
 #SBATCH --mail-user=emosadegh@nevada.unr.edu
