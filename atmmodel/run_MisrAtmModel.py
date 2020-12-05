@@ -22,7 +22,7 @@ cloud_masked_dir = "/data/gpfs/assoc/misr_roughness/2016/july_2016/cloudmask_TC_
 out_atmmodel_dir = "/data/gpfs/assoc/misr_roughness/2016/july_2016/atmmodel" ;
 atmmodel_csvfile_label = "atmmodel_july_2016.csv"
 
-exe_dir = "/Users/ehsanmos/Documents/MISR/MISR-roughness/exe_dir"
+exe_dir = "/data/gpfs/home/emosadegh/MISR-roughness/exe_dir"
 exe_name = "MisrAtmModel"
 ########################################################################################################################
 def main():
