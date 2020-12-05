@@ -17,7 +17,7 @@ print(matplotlib.__version__)
 print(gdal.VersionInfo())
 
 ########################################################################################################################
-raster_dir = '/Volumes/Ehsan7757420250/2013/roughness_2013_apr1to16_p1to233_b1to40/mosaics_for_plot/apr9'
+raster_dir = '/Volumes/Ehsan7757420250/2013/roughness_2013_apr1to16_p1to233_b1to40/mosaics_for_plot/apr14'
 
 #~~ file pattern that we will look for
 raster_pattern='mosaic_*'+'.tif'
@@ -83,8 +83,8 @@ else:
 		print(yMax)
 		print('\n')
 		# metadata['extent'] = (xMin,xMax,yMin,yMax)
-		# plot_extent = (xMin,xMax,yMin,yMax)
-		plot_extent = (-3200000,3200000,-3200000,3200000)
+		plot_extent = (xMin,xMax,yMin,yMax)
+		# plot_extent = (-3200000,3200000,-3200000,3200000)
 		print(plot_extent)
 
 
