@@ -2,7 +2,7 @@
 '''
 by: Ehsan Mosadegh 20 August 2020
 this script runs LandMask.c 
-old:Should make directory for input and output based on the labels of files from orevious step
+old: Should make directory for input and output based on the labels of files from orevious step
 setup input and output dir path, and output dir will be created inside it
 '''
 from subprocess import call
@@ -11,27 +11,29 @@ import datetime as dt
 from platform import python_version
 
 ########################################################################################################################
-#~ input dir- <toa_refl> data should be in 3 different directories in here
-input_dir_fullpath = '/Volumes/Ehsan7757420250/april_2016/sample_ellipsoid_files_april2016/toa_refl_april2016_day1to16_p1to233_b1to46' ;  # //  "/home3/mare/Nolin/2016/Surface3/Jul/";
+#~ input dir- <toa_refl> data should be in 3 different directories in here (An/Ca/Cf)
+toa_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ellipsoid_files/toa_refl_julyl2016_day1_25_p1to233_b1to46' ;  # //  "/home3/mare/Nolin/2016/Surface3/Jul/";
 #~ landmask dir
-lsmask_dir_fullpath = '/Volumes/Ehsan7757420250/landseamask_blocks_1to46' ;  	# Ehsan: mask file, output from <ArcticTileToGrid.c> // at: /Volumes/easystore/from_home/Nolin_except_dataFolder/SeaIce/LWData/MISR_LandSeaMask on easystore drive
+lsmask_dir_fullpath = '/data/gpfs/assoc/misr_roughness/landseamask_blocks_1to46' ;  									# Ehsan: mask file, output from <ArcticTileToGrid.c> // at: /Volumes/easystore/from_home/Nolin_except_dataFolder/SeaIce/LWData/MISR_LandSeaMask on easystore drive
 
-#~ output dir for masked_toa_refl file
-output_path = input_dir_fullpath  # we will create output dir inside input dir
-
-########################################################################################################################
+exe_dir = '/data/gpfs/home/emosadegh/MISR-roughness/exe_dir'
 exe_name = "LandMask" # should be set in $PATH
 
+#~ output dir for masked_toa_refl file
+output_path = toa_dir_fullpath  # we will create output dir inside input dir
+
+exe_dir_fullpath = os.path.join(exe_dir, exe_name)
+########################################################################################################################
 def main():
 	#~ check if input dir exists
-	print("-> input dir: %s" % input_dir_fullpath)
-	if (not os.path.isdir(input_dir_fullpath)):
-		print("-> ERROR: input dir NOT exist: %s" % input_dir_fullpath)
+	print("-> input dir: %s" % toa_dir_fullpath)
+	if (not os.path.isdir(toa_dir_fullpath)):
+		print("-> ERROR: input dir NOT exist: %s" % toa_dir_fullpath)
 		raise SystemExit()
 
 
 	#~ 1st we make output dir 
-	output_dir = "masked_" + input_dir_fullpath.split('/')[-1]
+	output_dir = "masked_" + toa_dir_fullpath.split('/')[-1]
 	output_dir_fullpath = os.path.join(output_path, output_dir)	# output dir; dat and png files; go to 3 different directories	//"/home3/mare/Nolin/2016/Surface3_LandMasked/Jul/"; 
 	if (not os.path.isdir(output_dir_fullpath)):
 		print("-> Warning: output dir NOT exist, we will make it.")
@@ -60,7 +62,7 @@ def main():
 			print('-> %s dir exist!' % cam)
 
 
-	cmd = ('"%s" "%s" "%s" "%s"' % (exe_name, input_dir_fullpath, lsmask_files_fullpath, output_dir_fullpath) )  # cmd = should be a string
+	cmd = ('"%s" "%s" "%s" "%s"' % (exe_dir_fullpath, toa_dir_fullpath, lsmask_files_fullpath, output_dir_fullpath) )  # cmd = should be a string
 	# print(cmd)
 	call(cmd, shell=True)
 
