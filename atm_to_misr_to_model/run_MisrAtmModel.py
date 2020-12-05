@@ -13,15 +13,17 @@ from platform import python_version
 ########################################################################################################################
 #~~ setup paths
 
-atm_dir = "/Volumes/Ehsan7757420250/2016/april_2016/ATM_IceBridge_ILATM2_V002" ;
-masked_toa_refl_home = "/Volumes/Ehsan7757420250/2016/april_2016/sample_ellipsoid_april2016/toa_refl_april2016_day1to16_p1to233_b1to46/masked_toa_refl_april2016_day1to16_p1to233_b1to46" ; # path to home dir that includes 3 subdirectories
-cloud_masked_dir = "/Volumes/Ehsan7757420250/2016/TC_CLASSIFIERS_F07/cloudmask_TC_CLASSIFIERS_F07_HC4_only" ;
+atm_dir = "/data/gpfs/assoc/misr_roughness/2016/july_2016/ATM_july_13_21" ;
 
-out_atmmodel_dir = "/Volumes/Ehsan7757420250/2016/april_2016/atmmodel/" ;
-atmmodel_csvfile_label = "atmmodel_april_2016.csv"
+masked_toa_refl_home = "/data/gpfs/assoc/misr_roughness/2016/july_2016/ellipsoid_files/toa_refl_julyl2016_day1_25_p1to233_b1to46/masked_toa_refl_julyl2016_day1_25_p1to233_b1to46" ; # path to home dir with 3 subdir of An/Ca/Cf
+
+cloud_masked_dir = "/data/gpfs/assoc/misr_roughness/2016/july_2016/cloudmask_TC_CLASSIFIERS_F07_HC4_only"
+
+out_atmmodel_dir = "/data/gpfs/assoc/misr_roughness/2016/july_2016/atmmodel" ;
+atmmodel_csvfile_label = "atmmodel_july_2016.csv"
 
 exe_dir = "/Users/ehsanmos/Documents/MISR/MISR-roughness/exe_dir"
-exe_name = "ATM2MISRpixel2model"
+exe_name = "MisrAtmModel"
 ########################################################################################################################
 def main():
 	'''
