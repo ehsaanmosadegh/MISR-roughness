@@ -465,13 +465,13 @@ int main(int argc, char* argv[]) {
 			// other idfires in myf()?
 
 
-			/* ******************* we create threads and pass ptr-to-struct as arg  **************************** */
+			/* ******************* we create threads and pass ptr-to-struct as an arg  **************************** */
 
 			/* create thread for each struct; each struct is a single diff toaFile */
 			// printf("run pthread... \n");
 			ret1 = pthread_create(&tid[thread_iter], NULL, &multithread_task, (void*) toaFile_struct_ptr[thread_iter]); // called to create threads
 			// printf("retruned: %d \n" , !ret);
-			if (ret1 != 0) { 
+			if (ret1 != 0) {  // Q- what happens here if multithread_task() returns 1 == error? does this code terminate? or goes to next iteration?
 				/* check not-exist true(success)-signal */
 				printf("ERROR: pthread_create() failed \n");
 				return 1;
@@ -502,6 +502,7 @@ int main(int argc, char* argv[]) {
 
 		/* free memory of struct[thread] */
 		for (int thread_iter = 0; thread_iter < total_threads; thread_iter++) {
+			// free allocated memory
 			free(toaFile_struct_ptr[thread_iter]);
 		}
 		printf("c: in main(): out of pThread(), batch iteration ended, and we did free allocated memory to all struct[thread] \n");
@@ -512,7 +513,7 @@ int main(int argc, char* argv[]) {
 
 	}
 
-	/* free all alocated memory here*/
+	/* free all allocated memory here*/
 	free(toa_an_files_list_ptr);
 	free(ATMModel_struct_ptr);
 
@@ -533,7 +534,7 @@ void* multithread_task(void* arg_ptr) { // function definitions, q- what part of
 	int blockElements = nlines * nsamples; // blockElements
 	char roughness_fname[256];
 
-	//
+	// define ptr to DStruct
 	toaFile_DS* inputStruct_ptr = (toaFile_DS*) arg_ptr; // define new ptr to be clear
 
 	// declare IDfiers/variables
@@ -541,23 +542,23 @@ void* multithread_task(void* arg_ptr) { // function definitions, q- what part of
 	double xcf, xca, xan, tweight, xdata_distance, xvector_min_len, xrough_nearest, xroughness, lat, lon;;
 	// float xroughness, lat, lon;
 
-	printf("\n*********************** processing input (%d/%d): %s ***********************\n\n" , inputStruct_ptr->toa_file_count+1, inputStruct_ptr->total_toa_files, inputStruct_ptr->an);
+	printf("\n********** processing input (%d/%d): %s \n" , inputStruct_ptr->toa_file_count+1, inputStruct_ptr->total_toa_files, inputStruct_ptr->an);
 
 	// printf("c: reading each MISR image/block from 3 camera files into memory...\n");
    
 	/* read MISR input files */
 	if (!read_data(inputStruct_ptr->an, nlines, nsamples, &an_masked_toa)) { // we fill an_masked_toa array from: an_fname
-		printf("ERROR: check AN read_data: file name available??? \n");
-		return 1; // return 0 or 1????
+		printf("ERROR: check AN read_data: file name available? \n"); // Q- what happens in main() if here returns 1?
+		return 1; // return 0 or 1? also, how can this return some signal similar to continue that carries the process to next itteration in the multi-thread loop? can we return continue here?
 	}
 
 	if (!read_data(inputStruct_ptr->ca, nlines, nsamples, &ca_masked_toa)) {
-		printf("ERROR: check CA read_data: file name available??? \n");
+		printf("ERROR: check CA read_data: file name available? \n");
 		return 1;
 	}
 
 	if (!read_data(inputStruct_ptr->cf, nlines, nsamples, &cf_masked_toa)) {
-		printf("ERROR: check CF read_data: file name available??? \n");
+		printf("ERROR: check CF read_data: file name available? \n");
 		return 1;
 	}
 
