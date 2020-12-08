@@ -25,7 +25,7 @@ by: Ehsan Mosadegh, 29 August 2020
 #define VERBOSE 0
 
 // E- number of threads to use
-#define total_threads 500         // q- how many threads for my mac? how many logical processors?  how many for HPC? number of cpu cores on HPC?
+#define total_threads 32         // q- how many threads for my mac? how many logical processors?  how many for HPC? number of cpu cores on HPC?
 
 // global variables
 
@@ -350,9 +350,11 @@ int main(int argc, char* argv[]) {
 	for (int batch_iter = 0; batch_iter < total_batches; batch_iter++) { 
 
 		// define batches of input file from toa list
-		printf("******************************************************************************\n");
+		printf("***************************************************************************************************\n");
+		printf("***************************************************************************************************\n");
 		printf("c: start of batch: (%d/%d) \n" , batch_iter+1, total_batches);
-		printf("******************************************************************************\n\n");
+		printf("***************************************************************************************************\n");
+		printf("*************************************************************************************************\n\n");
 
 		// we create x threads for a batch of input files
 		for (int thread_iter = 0 ; thread_iter < total_threads; thread_iter++) { 
