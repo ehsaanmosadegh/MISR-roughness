@@ -5,7 +5,7 @@
 #SBATCH --account=cpu-s5-misr_roughness-0
 #SBATCH --partition=cpu-core-0			 			# Submit job to the cpu partition
 #SBATCH --ntasks=1
-#BATCH --cpus-per-task=32 
+#SBATCH --cpus-per-task=32 
 #SBATCH --hint=compute_bound
 #SBATCH --mem-per-cpu=3500M
 #SBATCH --mail-type=ALL             		 		# Send mail on all state changes
