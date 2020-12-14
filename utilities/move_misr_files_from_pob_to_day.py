@@ -17,22 +17,26 @@ we use python2.7 + MTK library to do this task. MTK lib will find associated day
 
 '''
 
-#~ setup roughness dir, files in this dir are dowbloaded from PH parallel dir
-main_roughness_dir_fullpath = '/Volumes/Ehsan7757420250/roughness_2013_apr1to16_p1to233_b1to40'
+##~ setup roughness dir, files in this dir can be files that are dowbloaded from PH parallel dir, or are on PH now
+main_roughness_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/roughness_2016_july1to16_p1to233_b1to46'
 
-#~ setup year and month of roughness files
-year = 2013
-month = 4
-num_of_days = 16
+##~ setup year and month of roughness files
+year = 2016
+month = 7	# april=4, july=7
+num_of_days = 16  # this is the upper limit of processing 
 
-process_mode_num = 1 
+##~ setup ...
+process_mode_num = 0 
 process_mode_list = ['roughness_files', 'GRP_ELLIPSOID_GM']
 process_mode = process_mode_list[process_mode_num]
 
-
+########################################################################################################################
+##~ select the file oattern for your files
 file_pattern = 'roughness_toa_refl_P*'+'*_O0'+str(orbit)+'*'+'.dat'
+# file_pattern = 'MISR_ELLIPSOID_*'	# update this file pattern to match MISR ellipsoid files
 
-
+########################################################################################################################
+##~
 if (process_mode == 'roughness_files'):
 	#~ loop through all 16 days and move files for each day to its roughness subdir
 	for iday in range(num_of_days):
