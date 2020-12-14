@@ -31,12 +31,8 @@ process_mode_list = ['roughness_files', 'GRP_ELLIPSOID_GM']
 process_mode = process_mode_list[process_mode_num]
 
 ########################################################################################################################
-##~ select the file oattern for your files
-file_pattern = 'roughness_toa_refl_P*'+'*_O0'+str(orbit)+'*'+'.dat'
-# file_pattern = 'MISR_ELLIPSOID_*'	# update this file pattern to match MISR ellipsoid files
+##~ proicessing section - do not change
 
-########################################################################################################################
-##~
 if (process_mode == 'roughness_files'):
 	#~ loop through all 16 days and move files for each day to its roughness subdir
 	for iday in range(num_of_days):
@@ -74,8 +70,8 @@ if (process_mode == 'roughness_files'):
 		## make list of all available roughness file patterns for specific day
 		for orbit in orbit_list:
 			print('-> processing orbit= %d' %orbit)
-			#~ make pattern 
-			# file_pattern = 'roughness_toa_refl_P*'+'*_O0'+str(orbit)+'*'+'.dat'
+			#~ file pattern that we will use 
+			file_pattern = 'roughness_toa_refl_P*'+'*_O0'+str(orbit)+'*'+'.dat'
 			print('-> looking for pattern= %s' %file_pattern)
 			#~ search for file pattern and make a list
 			roughness_files_found_list = glob.glob(os.path.join(main_roughness_dir_fullpath, file_pattern))
@@ -86,7 +82,7 @@ if (process_mode == 'roughness_files'):
 				print('-> moving data to subdir for: %s ' %rough_file_day)
 				new_path = shutil.move(rough_file_day, rough_subdir_fullpath)
 
-
+##----------------------------------------------------------------------------------------------------------------------
 
 if (process_mode == 'GRP_ELLIPSOID_GM'):
 	#~ loop through all 16 days and move files for each day to its roughness subdir
@@ -125,7 +121,7 @@ if (process_mode == 'GRP_ELLIPSOID_GM'):
 		## make list of all available roughness file patterns for specific day
 		for orbit in orbit_list:
 			print('-> processing orbit= %d' %orbit)
-			#~ make pattern 
+			#~ file pattern that we will use to move files 
 			# file_pattern = 'roughness_toa_refl_P*'+'*_O0'+str(orbit)+'*'+'.dat'
 			print('-> looking for pattern= %s' %file_pattern)
 			#~ search for file pattern and make a list
