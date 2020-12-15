@@ -1,12 +1,10 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python
 # coding: utf-8
 '''
 notes:
-	
 	this f() builds georeferenced tif files from roughness arrays. 
 	input: roughness array 
 	output: georeferenced raster <.tif> file in both latlon and polar stereographic projections
-
 '''
 
 import numpy as np
@@ -25,7 +23,7 @@ import tifffile # to write images with dtype=float64 on disc as bigTiff
 # dir path setup by user
 ########################################################################################################################
 #~ setup dir w/ roughness files
-rough_dir_fullpath =  '/Volumes/Ehsan7757420250/2013/roughness_2013_apr1to16_p1to233_b1to40/roughness_subdir_2013_4_1'
+rough_dir_fullpath =  '/data/gpfs/assoc/misr_roughness/2016/july_2016/roughness_2016_july1to16_p1to233_b1to46/roughness_subdir_2016_7_1'
 
 #~ tiff dir where arr2tiff goes to; for now se build it inside rouhness dir
 georefRaster_dir_name = 'rasters_noDataNeg99_TiffFileFloat64_max'
