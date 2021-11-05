@@ -26,9 +26,9 @@
 
 char misr_file_fullpath[4][256];
 unsigned char *mask = 0;
-char **misr_file_list = 0;
+char **misr_file_list = 0; // array of char ptrs
 int misr_total_files_found;
-int max_nfiles = 0;
+// int max_nfiles = 0; // Ehsan turned off to read all files in different directories with different number of files
 int nlines = 512;
 int nsamples = 2048;
 double* data = 0; // %lf
@@ -259,20 +259,20 @@ int read_byte_data(char *misr_file_fullpath, unsigned char **data, int nlines, i
 	f = fopen(misr_file_fullpath, "rb");
 	if (!f)
 	{
-		fprintf(stderr, "read_byte_data: couldn't open %s \n", misr_file_fullpath);
+		fprintf(stderr, "read_byte_data1: couldn't open %s \n", misr_file_fullpath);
 		return 0;
 	}
 		
 	*data = (unsigned char *) malloc(nlines * nsamples * sizeof(unsigned char));
 	if (!*data)
 	{
-		fprintf(stderr, "read_byte_data: couldn't malloc data \n");
+		fprintf(stderr, "read_byte_data2: couldn't malloc data \n");
 		return 0;
 	}
 		
 	if (fread(*data, sizeof(unsigned char), nlines * nsamples, f) != nlines * nsamples)
 	{
-		fprintf(stderr, "read_byte_data: couldn't read data2 \n");
+		fprintf(stderr, "read_byte_data3: couldn't read data2 \n");
 		return 0;
 	}
 		
@@ -289,10 +289,11 @@ int getFileList(char* dir)
 	struct dirent* entryPtr; //char* d_name
 
 	DIR* dirPtr = opendir(dir); // returns pointer to directory; creates stream; dtype=DIR
-	if (!dirPtr) { // if reverse is correct?
+	if (!dirPtr) 
+	{ // if reverse is correct?
 		printf("getFileList: issue with dirPtr; couldn't open %s\n", dir);
 		return 0;
-		}
+	}
 		
 	while ((entryPtr = readdir(dirPtr)) != NULL)  // readdir returns a ptr to next entry in stream
 	{
@@ -302,29 +303,33 @@ int getFileList(char* dir)
 		if (!strstr(entryPtr->d_name, ".dat")) continue; //if not return pointer, continue
 		//if (!strstr(entryPtr->d_name, "sdcm_")) continue;
 		//if (!strstr(entryPtr->d_name, "rms_")) continue;
-		if (misr_file_list == 0) {
+		if (misr_file_list == 0) 
+		{
 			//printf("misr_total_files_found is zero, we pass \n");
-			misr_file_list = (char **) malloc(sizeof(char *));
-			if (!misr_file_list) {
+			misr_file_list = (char **) malloc(sizeof(char *)); // E-why this? initiate?
+
+			if (!misr_file_list) 
+			{
 				printf("getFileList: couldn't malloc misr_file_list \n");
 				return 0;
 			}
 		}
-		else {
-			//printf("nfilesII= %d \n" , misr_total_files_found); E
-
-			if (misr_total_files_found > max_nfiles) {
+		else 
+		{
+			// if (misr_total_files_found > max_nfiles) 
+			
 				misr_file_list = (char **) realloc(misr_file_list, (misr_total_files_found + 1) * sizeof(char *));
-				if (!misr_file_list) {
+				if (!misr_file_list) 
+				{
 					printf("getFileList: couldn't realloc misr_file_list\n");
 					return 0;
 				}
-			}
 		}
 
-		misr_file_list[misr_total_files_found] = (char *) malloc(strlen(entryPtr->d_name) + 1); // alloc mem-
+		misr_file_list[misr_total_files_found] = (char *) malloc(strlen(entryPtr->d_name) + 1); // alloc mem- for a single char ptr
 
-		if (!misr_file_list[misr_total_files_found]) {
+		if (!misr_file_list[misr_total_files_found]) 
+		{
 			printf("getFileList: couldn't malloc misr_file_list[misr_total_files_found]\n");
 			return 0;
 		}
@@ -387,7 +392,7 @@ int main(int argc, char* argv[])
 	char final_output_fullpath[256], ofile1[256];
 	char spath[10], sblock[10];
 	int camera_mode, j, k;
-	int i_init = 0; //E- added to constrain to 2=Cf
+	// int i_init = 0; //E- added to constrain to 2=Cf
 	char output_masked_fileLabel[256];
 	char s[256];
 
@@ -396,7 +401,7 @@ int main(int argc, char* argv[])
 	char cam_name[5] = "";
 	// printf("cam name: %s \n" , cam_name);
 
-	for (camera_mode = i_init; camera_mode < 3; camera_mode++ ) {   //starts from camera= 0 to 2
+	for (camera_mode = 0; camera_mode < 9; camera_mode++ ) {   //starts from camera= 0 to 2
 
 		printf("\n****************************************************************\n");
 
@@ -404,9 +409,9 @@ int main(int argc, char* argv[])
 		
 		if (camera_mode == 0) // adds this dir to the end of surf file dir
 		{
-			strcpy(cam_name, "/An/");
+			strcpy(cam_name, "/Da/");
 			printf("processing camera dir: %s \n" , cam_name);
-			strcat(input_home_dir, "/An/");
+			strcat(input_home_dir, "/Da/");
 		} 
 		if (camera_mode == 1) 
 		{
@@ -416,24 +421,67 @@ int main(int argc, char* argv[])
 		}
 		if (camera_mode == 2) 
 		{
+			strcpy(cam_name, "/Ba/");
+			printf("processing camera dir: %s \n" , cam_name);
+			strcat(input_home_dir, "/Ba/");
+		}
+		if (camera_mode == 3) 
+		{
+			strcpy(cam_name, "/Aa/");
+			printf("processing camera dir: %s \n" , cam_name);
+			strcat(input_home_dir, "/Aa/");
+		}
+		if (camera_mode == 4) 
+		{
+			strcpy(cam_name, "/An/");
+			printf("processing camera dir: %s \n" , cam_name);
+			strcat(input_home_dir, "/An/");
+		}
+		if (camera_mode == 5) 
+		{
+			strcpy(cam_name, "/Af/");
+			printf("processing camera dir: %s \n" , cam_name);
+			strcat(input_home_dir, "/Af/");
+		}
+		if (camera_mode == 6) 
+		{
+			strcpy(cam_name, "/Bf/");
+			printf("processing camera dir: %s \n" , cam_name);
+			strcat(input_home_dir, "/Bf/");
+		}
+		if (camera_mode == 7) 
+		{
 			strcpy(cam_name, "/Cf/");
 			printf("processing camera dir: %s \n" , cam_name);
 			strcat(input_home_dir, "/Cf/");
 		}
 
+		if (camera_mode == 8) 
+		{
+			strcpy(cam_name, "/Df/");
+			printf("processing camera dir: %s \n" , cam_name);
+			strcat(input_home_dir, "/Df/");
+		}
+
 		strcpy(outputDir, output_dir_fullpath);  // copies the pointer
 
-		if (camera_mode == 0) strcat(outputDir, "/An/");
+		if (camera_mode == 0) strcat(outputDir, "/Da/");
 		if (camera_mode == 1) strcat(outputDir, "/Ca/");
-		if (camera_mode == 2) strcat(outputDir, "/Cf/");
+		if (camera_mode == 2) strcat(outputDir, "/Ba/");
+		if (camera_mode == 3) strcat(outputDir, "/Aa/");
+		if (camera_mode == 4) strcat(outputDir, "/An/");
+		if (camera_mode == 5) strcat(outputDir, "/Af/");
+		if (camera_mode == 6) strcat(outputDir, "/Bf/");
+		if (camera_mode == 7) strcat(outputDir, "/Cf/");
+		if (camera_mode == 8) strcat(outputDir, "/Df/");
 
 		printf("input_home_dir: %s \n" , input_home_dir);
-//        printf("misr_total_files_found 1= %d \n" , misr_total_files_found);
-//        printf("max misr_total_files_found 1= %d \n" , max_nfiles);
+		printf("misr_total_files_found = %d \n" , misr_total_files_found);
+		printf("max misr_total_files_found = %d \n" , max_nfiles);
 
-		if (misr_total_files_found > max_nfiles) max_nfiles = misr_total_files_found; //E- why? to remember how many iterations/files we did in past step?
+		// if (misr_total_files_found > max_nfiles) max_nfiles = misr_total_files_found; //E- why? to remember how many iterations/files we did in past step?
 		
-		misr_total_files_found = 0; // defined as initial value
+		misr_total_files_found = 0; // defined as initial value- inside main() as local variable so that it can be set to zero again 
 		
 		if (!getFileList(input_home_dir)) {
 
@@ -451,17 +499,20 @@ int main(int argc, char* argv[])
 			printf("\nprocessing file (%d/%d/%s) \n" , j+1, misr_total_files_found, cam_name); // E
 			printf("%s \n" , misr_file_fullpath);
 
-			if (!read_data(misr_file_fullpath, &data, nlines, nsamples)) {
+			if (!read_data(misr_file_fullpath, &data, nlines, nsamples)) 
+			{
 				printf("ERROR: from read_data\n");
 				return 1;
 			} // reads surf_refl and returns mem-add od data
 
-			if (strstr(misr_file_fullpath, "_P")) { // finds path#
+			if (strstr(misr_file_fullpath, "_P")) 
+			{ // finds path#
 				strncpy(spath, strstr(misr_file_fullpath, "_P") + 2, 3);
 				spath[3] = 0;
-				// printf("spath: %s\n" , spath);
+				printf("spath: %s\n" , spath);
 			}
-			else {
+			else 
+			{
 				fprintf(stderr, "No path info in file name\n");
 				return 1;
 			}
@@ -470,7 +521,7 @@ int main(int argc, char* argv[])
 			{ // finds block#
 				strncpy(sblock, strstr(misr_file_fullpath, "_B") + 2, 3); // note: change 2 to 3 if blocks go larger than 99 (100)
 				sblock[3] = 0; // should get blocks with 3 digits
-				// printf("sblock= %s \n" , sblock);
+				printf("sblock= %s \n" , sblock);
 			}
 			else 
 			{
@@ -480,21 +531,21 @@ int main(int argc, char* argv[])
 
 			/* now define land mask file here*/
 			strcpy(lsMaskedFile, lsmask_files_fullpath);
-			strsub(lsMaskedFile, "P", spath);
-			strsub(lsMaskedFile, "B", sblock);
-			// printf("lsMaskedFile to read_byte func: %s\n", lsMaskedFile);
+			printf("c: lsMaskedFile: %s \n" , lsMaskedFile);
+			
+			strsub(lsMaskedFile, "PPP", spath);
+			strsub(lsMaskedFile, "BBB", sblock);
+			printf("lsMaskedFile to read_byte func: %s\n", lsMaskedFile);
 
 
 			if (!read_byte_data(lsMaskedFile, &mask, nlines, nsamples)) 
 			{
-
 				printf("ERROR: from read_byte_data. Exiting.\n");
 				return 1;
 			}
 			
 			if (!maskData()) 
 			{
-
 				printf("ERROR: from maskData(). Exiting. \n");
 				return 1;
 			}

@@ -29,7 +29,8 @@ by: Ehsan Mosadegh, 29 August 2020
 
 // global variables
 
-typedef struct {  // q- do elements change w/ thread? if not get rid of "thread_iter"; variabloes are diff in each toaFile_DS, cuz each toaFile_DS represents a single diff toaFile
+typedef struct 
+{  // q- do elements change w/ thread? if not get rid of "thread_iter"; variabloes are diff in each toaFile_DS, cuz each toaFile_DS represents a single diff toaFile
 	int toa_file_count;
 	int total_toa_files;
 	int amtmodel_total_rows;
@@ -41,7 +42,6 @@ typedef struct {  // q- do elements change w/ thread? if not get rid of "thread_
 	char cf[256];
 	char an[256];
 	char outDir[256];
-	// int valid;
 } toaFile_DS;
 /* define ptr for our dataStruct */
 toaFile_DS* toaFile_struct_ptr[total_threads]; // array of ptrs w/ [size]; q- why define size here? why array of ptrs? ptr should be defibed as global var?
@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
 	/* declare identifiers */
 	pthread_t tid [total_threads]; // tid descriptor, q- inside or outside main()? create several tid identifires/descriptors/variables
 	int ret1, ret2; // return values
-	int toa_file_iter;
+	int final_iter;
 	char file_char_label[256];
 
 	/* from old code*/
@@ -160,8 +160,8 @@ int main(int argc, char* argv[]) {
 	char sorbit[7]; // made 7 elements so that last=7 element is null char
 	char *token;
 	char *sline = NULL;
-	char **toa_an_files_list_ptr = 0;
-	int total_toa_an_files = 0;
+	char **original_toa_files_ptrList = 0;
+	int originalToaList_cntr = 0;
 	int atmmodel_tot_rows = 0;
 	int i, j, k, n, w;
 	// int r, c, r2, c2;
@@ -181,7 +181,7 @@ int main(int argc, char* argv[]) {
 	//double radius = 0.025; //2013 SeaIce Model
 	// double lat, lon;
 	float lat, lon, xroughness; // note: all were double initially. i changed the stype to save storage
-	int path, block, orbit;
+	int path, path2, block, block2, orbit, orbit2;
 	// int blockElements = nlines * nsamples; // blockElements
 	size_t slen = 0;
 	ssize_t line_size;
@@ -190,15 +190,15 @@ int main(int argc, char* argv[]) {
 	int start_orbit, end_orbit;
 	int relAz_nlines;
 	int *raz_table;
-	int block1, block2;
-	int block12;
+	// int block1, block2;
+	// int block12;
 	int ascend = 0;
 	//unsigned char *mask;
 	//int gridlines = 24000;
 	//int gridsamples = 84000;
 
 
-	/* //////////////////////////// reads atmmodel_csvfile csv file //////////////////////////////////////////// */ // ok
+	/* //////////////////////////// read atmmodel_csv file //////////////////////////////////////////// */ // ok
 	/* reads all rows of atmmodel_csvfile csv file and fills the fileObj= ATMModel_struct_ptr */
 	
 	fPtr_csv = fopen(atmmodel_csvfile, "r");
@@ -285,9 +285,9 @@ int main(int argc, char* argv[]) {
 	/* //////////////////////////// reads ATM csv file ///////////////////////////////////////////////////////////// */
 
 
-	/* //////////////////////////// Get list of MISR Masked files /////////////////////////////////////////////// */ //ok
+	/* //////////////////////////// make a list from MISR (An) toa-masked files on disc /////////////////////////////////////////////// */ //ok
 	printf("\nc: toa dir: %s \n" , masked_toa_an_dir);
-	printf("c: make a list from masked TOA An files ...\n"); // == toa_an_files_list_ptr
+	printf("c: make a dynamic list from masked TOA (An) files ...\n"); // == original_toa_files_ptrList
 	
 	dirp = opendir(masked_toa_an_dir); // define dir stream == dirp == ptr to that directory
 	if (dirp) {     // if ptr available == TRUE
@@ -295,36 +295,42 @@ int main(int argc, char* argv[]) {
 			
 			if (!strstr(DirEntryObj->d_name, ".dat")) continue; // d_name= fileName, if could not find the pattern ".dat" in this string
 			
-			if (toa_an_files_list_ptr == 0) {  // if it has not been created yet
+			if (original_toa_files_ptrList == 0) 
+			{  // if it has not been created yet
 				
-				toa_an_files_list_ptr = (char **) malloc(sizeof(char *));   // allocate mem- for 1st entry
-				if (!toa_an_files_list_ptr) {  // if its reverse was true....
-					printf("main: couldn't malloc toa_an_files_list_ptr\n");
+				original_toa_files_ptrList = (char **) malloc(sizeof(char *));   // allocate mem- for 1st entry
+				
+				if (!original_toa_files_ptrList) 
+				{  // if its reverse was true....
+					printf("main: couldn't malloc original_toa_files_ptrList\n");
 					return 0;
 				}
 			}
-			else{
-				
-				toa_an_files_list_ptr = (char **) realloc(toa_an_files_list_ptr, (total_toa_an_files + 1) * sizeof(char *));
-				if (!toa_an_files_list_ptr) { // if not = to 1 == True...
+			else
+			{
+				original_toa_files_ptrList = (char **) realloc(original_toa_files_ptrList, (originalToaList_cntr + 1) * sizeof(char *)); // expands the previous mem-obj and makes a new obj
+				if (!original_toa_files_ptrList) 
+				{ // if not = to 1 == True...
 					printf("getFileList: couldn't realloc atm_flist\n");
 					return 0;
 				}
 			}
 
-			toa_an_files_list_ptr[total_toa_an_files] = (char *) malloc(strlen(DirEntryObj->d_name) + 1); // allocate mem-
+			original_toa_files_ptrList[originalToaList_cntr] = (char *) malloc(strlen(DirEntryObj->d_name) + 1); // allocate mem- strlen not include null at end 
 
-			if (!toa_an_files_list_ptr[total_toa_an_files]) {
-				printf("main: couldn't malloc atm_flist[%d]\n", total_toa_an_files);
+			if (!original_toa_files_ptrList[originalToaList_cntr]) 
+			{
+				printf("main: couldn't malloc atm_flist[%d]\n", originalToaList_cntr);
 				return 0;
 			}
 
 
 			// copy one string to the fileList
-			strcpy(toa_an_files_list_ptr[total_toa_an_files], DirEntryObj->d_name);  // fill the toa_an_files_list_ptr with d_name: misr surf files; from DirEntryObj=fileObj gets the fileName
+			strcpy(original_toa_files_ptrList[originalToaList_cntr], DirEntryObj->d_name);  // fill the original_toa_files_ptrList with d_name: misr surf files; from DirEntryObj=fileObj gets the fileName
+			
 			// printf("FOUND: d_name == TOA file: %s \n", DirEntryObj->d_name);       // d_name is char array inside <dirent.h>
-			//printf("file no. %d, %s \n", total_toa_an_files, toa_an_files_list_ptr[total_toa_an_files]);
-			total_toa_an_files ++; // counter of num of MISR files found == elements in toa_an_files_list_ptr
+			//printf("file no. %d, %s \n", originalToaList_cntr, original_toa_files_ptrList[originalToaList_cntr]);
+			originalToaList_cntr ++; // counter of num of MISR files found == elements in original_toa_files_ptrList
 		}
 		closedir (dirp);
 	} 
@@ -334,13 +340,147 @@ int main(int argc, char* argv[]) {
 		perror (message);
 		return EXIT_FAILURE;
 	}
-	/* //////////////////////////// Get list of MISR Masked files //////////////////////////////////////////////////// */
+	/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+	/* ******************* check if output roughness-file exists *********************** */
 
-	int total_batches = total_toa_an_files/total_threads; // total batches for toa files
+	char output_roughness_file [256];
+	char roughness_fullpath [256];
+	char masked_toa_in_list [256];
+	char spath2 [4]; // to include last null char
+	char sorbit2 [7];
+	char sblock2 [4];
+	char** second_toa_an_filesNotOnDisc_ptrList = 0; // array of char ptrs
+	// int secondToaList_cntr = 0; rename to secondToaList_cntr
+	int secondToaList_cntr = 0;
+
+
+	for (int toa_file_count = 0; toa_file_count < originalToaList_cntr; toa_file_count++) // checks all files in previous list
+	{
+		/* extract file from list & get P-O-B from this file */
+		printf("\nextracting P-O-B info from toa-masked.dat\n");
+		/* extract path number*/
+		if (strstr(original_toa_files_ptrList[toa_file_count], "_P")) 
+		{   // search for _P in the file name, find _P in each surf file
+			// printf("check path num \n");
+			memset(spath2,0,sizeof(spath2)); // empty string before writing to it
+			strncpy(spath2, strstr(original_toa_files_ptrList[toa_file_count], "_P") + 2, 3); // find path
+			printf("c: spath2: %s\n", spath2);
+			path2 = atoi(spath2); // find path num from surf file
+			// printf("path from MISR: %d \n", path);
+		}
+		else
+		{
+			printf("No path info in file name. \n");
+			return 1;
+		}
+
+		/* extract orbit number*/
+		if (strstr(original_toa_files_ptrList[toa_file_count], "_O")) 
+		{  // check if orbit is found in file name
+			// printf("check orbit number \n");
+			memset(sorbit2,0,sizeof(sorbit2)); // empty string before writing to it
+			strncpy(sorbit2, strstr(original_toa_files_ptrList[toa_file_count], "_O") + 2, 6); // get the orbit num from surf file and copy to sorbit
+			printf("c: sorbit2: %s \n" , sorbit2);
+			orbit2 = atoi(sorbit2); // find orbit no from surf file
+			// printf("orbit: %d \n" , orbit);
+		}
+		else 
+		{
+			printf("No orbit info in file name. \n");
+			return 1;
+		}
+
+		/* extract block number*/
+		if (strstr(original_toa_files_ptrList[toa_file_count], "_B")) 
+		{  // get the block number from surf file name
+			memset(sblock2,0,sizeof(sblock2)); // empty string before writing to it
+			strncpy(sblock2, strstr(original_toa_files_ptrList[toa_file_count], "_B") + 2, 3);
+			printf("c: sblock2: %s \n", sblock2);
+			block2 = atoi(sblock2);
+			// printf("block: %d \n", block);
+		}
+		else
+		{
+			printf("No block info in file name. \n");
+			return 1;
+		}
+
+		/* check if file exists of disc */
+		sprintf(output_roughness_file, "roughness_toa_refl_P%s_O%s_B%s.dat", spath2, sorbit2, sblock2);
+		printf("c: roughness pattern: %s\n", output_roughness_file);
+
+		sprintf(roughness_fullpath, "%s/%s", predicted_roughness_dir, output_roughness_file); 
+		printf("c: check file exists: %s\n", roughness_fullpath);
+
+		fPtr_rough = fopen(roughness_fullpath, "r");
+		
+		/* if file exists- continue */
+		if (fPtr_rough)
+		{
+			// fprintf(stderr, "c: main: roughness file exist on disc, continue to next file\n");
+			printf("c: main: >>> roughness file exist on disc, continue to next file <<<\n");
+			fclose(fPtr_rough);
+			continue;
+		}
+		//***************************************************
+		else /* add this file to new list */
+		{
+			printf("c: roughness file not on disc- adding this file to a new list\n");
+			// add file to a new list & use this list to fill and run multi-threading DS
+			if (second_toa_an_filesNotOnDisc_ptrList == 0) 
+			{  // allocate mem. if it has not been created yet
+				
+				second_toa_an_filesNotOnDisc_ptrList = (char **) malloc(sizeof(char *));   // allocate mem- for 1st entry-- (char **) dynamic?
+
+				if (!second_toa_an_filesNotOnDisc_ptrList) 
+				{  // if its reverse was true....
+					printf("main: couldn't malloc original_toa_files_ptrList\n");
+					return 0;
+				}
+			}
+			else
+			{
+				second_toa_an_filesNotOnDisc_ptrList = (char **) realloc(second_toa_an_filesNotOnDisc_ptrList, (secondToaList_cntr + 1) * sizeof(char *)); // expand mem-obj for next line
+				
+				if (!second_toa_an_filesNotOnDisc_ptrList) 
+				{ // if not = to 1 == True...
+					printf("getFileList: couldn't realloc atm_flist\n");
+					return 0;
+				}
+			}
+
+			second_toa_an_filesNotOnDisc_ptrList[secondToaList_cntr] = (char *) malloc(strlen(original_toa_files_ptrList[toa_file_count]) + 1); // allocate mem- + 1 for null char- cuz strlen() not include null char. at the end
+
+			if (!second_toa_an_filesNotOnDisc_ptrList[secondToaList_cntr])
+			{
+				printf("main: couldn't malloc atm_flist[%d]\n", toa_file_count);
+				return 0;
+			}
+
+
+			// copy one string to the fileList
+			printf("c: adding this file to new list: %s\n" , original_toa_files_ptrList[toa_file_count]);
+
+			strcpy(second_toa_an_filesNotOnDisc_ptrList[secondToaList_cntr], original_toa_files_ptrList[toa_file_count]);  // how get ptr to this?
+			
+			secondToaList_cntr ++; // counter of num of MISR files found == elements in original_toa_files_ptrList
+		}
+	}
+
+	printf("\nc: originalToaList_cntr: %d\n" , originalToaList_cntr);
+	// printf("c: files still not processed: %d \n", secondToaList_cntr);
+
+
+
+	//**************************** later chnage to python up to here ***************************************************//
+
+
+
+	int total_batches = secondToaList_cntr/total_threads; // compute total batches for toa files
 
 	/* //////////////////////////////////////// Ehsan: process toa files ///////////////////////////////////////////// */
 	
-	printf("c: total toa (AN) files: %d \n" , total_toa_an_files);
+	printf("c: total toa (AN) files: %d \n" , secondToaList_cntr); 
 	printf("\nc: In main: creating threads \n");
 	printf("c: total threads: %d \n" , total_threads);
 	printf("c: total batches of files: %d \n" , total_batches);
@@ -362,20 +502,16 @@ int main(int argc, char* argv[]) {
 		for (int thread_iter = 0 ; thread_iter < total_threads; thread_iter++){ 
 
 
-			/* extract information from input file names- we extract toa files out of toa.csv list for each batch and by using toa_file_iter */
-			toa_file_iter = thread_iter + (batch_iter * total_threads);
-			printf("c: toa file iterator (changes in for-loop): %d \n" , toa_file_iter);
-
-			// file_char_label = toa_an_files_list_ptr[toa_file_iter];
-			// printf("c: char (future toa-file): %c \n" , file_char_label);
+			/* extract information from input file names- we extract toa files out of toa.csv list for each batch and by using final_iter */
+			final_iter = thread_iter + (batch_iter * total_threads);
+			printf("c: toa file iterator (loop-step): %d \n" , final_iter);
 
 			/* ******************* we find path, orbit, block numbers from file labels ***************************** */
-
 			/* extract path number*/
-			if (strstr(toa_an_files_list_ptr[toa_file_iter], "_P")) {   // search for _P in the file name, find _P in each surf file
+			if (strstr(second_toa_an_filesNotOnDisc_ptrList[final_iter], "_P")) {   // search for _P in the file name, find _P in each surf file
 				// printf("check path num \n");
 				memset(spath,0,sizeof(spath)); // empty string before writing to it
-				strncpy(spath, strstr(toa_an_files_list_ptr[toa_file_iter], "_P") + 2, 3); // find path
+				strncpy(spath, strstr(second_toa_an_filesNotOnDisc_ptrList[final_iter], "_P") + 2, 3); // find path
 				printf("c: spath: %s\n", spath);
 				path = atoi(spath); // find path num from surf file
 				// printf("path from MISR: %d \n", path);
@@ -386,10 +522,10 @@ int main(int argc, char* argv[]) {
 			}
 	
 			/* extract orbit number*/
-			if (strstr(toa_an_files_list_ptr[toa_file_iter], "_O")) {  // check if orbit is found in file name
+			if (strstr(second_toa_an_filesNotOnDisc_ptrList[final_iter], "_O")) {  // check if orbit is found in file name
 				// printf("check orbit number \n");
 				memset(sorbit,0,sizeof(sorbit)); // empty string before writing to it
-				strncpy(sorbit, strstr(toa_an_files_list_ptr[toa_file_iter], "_O") + 2, 6); // get the orbit num from surf file and copy to sorbit
+				strncpy(sorbit, strstr(second_toa_an_filesNotOnDisc_ptrList[final_iter], "_O") + 2, 6); // get the orbit num from surf file and copy to sorbit
 				printf("c: sorbit: %s \n" , sorbit);
 				orbit = atoi(sorbit); // find orbit no from surf file
 				// printf("orbit: %d \n" , orbit);
@@ -400,47 +536,29 @@ int main(int argc, char* argv[]) {
 			}
 
 			/* extract block number*/
-			if (strstr(toa_an_files_list_ptr[toa_file_iter], "_B")) {  // get the block number from surf file name
+			if (strstr(second_toa_an_filesNotOnDisc_ptrList[final_iter], "_B")) {  // get the block number from surf file name
 				memset(sblock,0,sizeof(sblock)); // empty string before writing to it
-				strncpy(sblock, strstr(toa_an_files_list_ptr[toa_file_iter], "_B") + 2, 3);
+				strncpy(sblock, strstr(second_toa_an_filesNotOnDisc_ptrList[final_iter], "_B") + 2, 3);
 				printf("c: sblock: %s \n", sblock);
 				block = atoi(sblock);
 				// printf("block: %d \n", block);
 			}
-			else{
+			else
+			{
 				printf("No block info in file name. \n");
 				return 1;
 			}
 
-			/* ******************* check if input file exists check if roughness-file exists *********************** */
-
-			// char output_roughness_file [256];
-			// char roughness_fullpath [256];
-
-			// sprintf(output_roughness_file, "roughness_toa_refl_P%s_O%s_B%s.dat", spath, sorbit, sblock);
-			// printf("c: outfile: %s\n", output_roughness_file);
-
-			// sprintf(roughness_fullpath, "%s/%s", predicted_roughness_dir, output_roughness_file); 
-			// printf("c: check if this roughness-toa file exists: %s\n", roughness_fullpath);
-
-			// fPtr_rough = fopen(roughness_fullpath, "r");
-			// if (fPtr_rough){
-			// 	// fprintf(stderr, "c: main: roughness file exist on disc, continue to next file\n");
-			// 	printf("c: main >>> roughness file exist on disc, continue to next file <<<\n");
-			// 	fclose(fPtr_rough);
-			// 	continue;
-			// }
-
 			/* ******************* we use An filenames to define/label Cf and Ca files ***************************** */
 			// 
 
-			//printf("misr list file: %s \n", toa_an_files_list_ptr[i]);
-			sprintf(an_fname, "%s/%s", masked_toa_an_dir, toa_an_files_list_ptr[toa_file_iter]);      // stores surf fileName into an_fname buffer
+			//printf("misr list file: %s \n", original_toa_files_ptrList[i]);
+			sprintf(an_fname, "%s/%s", masked_toa_an_dir, second_toa_an_filesNotOnDisc_ptrList[final_iter]);      // stores surf fileName into an_fname buffer
 			printf("c: an_fname: %s \n", an_fname);
 
 
 			// do the same thing with ca, copy the same surf file into ca
-			sprintf(ca_fname, "%s/%s", masked_toa_an_dir, toa_an_files_list_ptr[toa_file_iter]);
+			sprintf(ca_fname, "%s/%s", masked_toa_an_dir, second_toa_an_filesNotOnDisc_ptrList[final_iter]);
 			// printf("ca_fname: %s \n", ca_fname);
 			// substitute an with cf in both filelabel and directory label
 			strsub(ca_fname, "An", "Ca");       // to rename dir 
@@ -448,8 +566,8 @@ int main(int argc, char* argv[]) {
 			printf("c: ca_fname: %s \n", ca_fname);
 
 
-			//printf("misr list file: %s \n", toa_an_files_list_ptr[i]);
-			sprintf(cf_fname, "%s/%s", masked_toa_an_dir, toa_an_files_list_ptr[toa_file_iter]); // copy the same surf file into cf
+			//printf("misr list file: %s \n", original_toa_files_ptrList[i]);
+			sprintf(cf_fname, "%s/%s", masked_toa_an_dir, second_toa_an_filesNotOnDisc_ptrList[final_iter]); // copy the same surf file into cf
 			// printf("cf_fname: %s \n", cf_fname);
 			// replace an with cf to create file label
 			strsub(cf_fname, "An", "Cf");       // to rename dir // to substitute An dir label to Cf dir label
@@ -471,29 +589,32 @@ int main(int argc, char* argv[]) {
 			// else {
 			 printf("c: struct memory allocated successfully for thread_iter: %d \n" , thread_iter);
 			// }
+
+
+
+			 ////////////////////// or even up to here to python *********************///
 		
-			/* ******************* we add variables/rows to toa-dataStruct  **************************** */
+			/* ******************* we add variables/rows to toa_dataStruct from new-list **************************** */
 
 			/* assing variables to toa dataStruct by dereferencing each by operator: -> */
-			printf("c: add variable/row for thread_iter: %d \n" , thread_iter);
-			toaFile_struct_ptr[thread_iter]->total_toa_files = total_toa_an_files;
-			toaFile_struct_ptr[thread_iter]->toa_file_count = toa_file_iter;
+			printf("c: add variable/row for thread_iter: %d \n\n" , thread_iter);
+			toaFile_struct_ptr[thread_iter]->total_toa_files = secondToaList_cntr; //originalToaList_cntr;
+			toaFile_struct_ptr[thread_iter]->toa_file_count = final_iter;
 			toaFile_struct_ptr[thread_iter]->path = path;
 			toaFile_struct_ptr[thread_iter]->orbit = orbit;
 			toaFile_struct_ptr[thread_iter]->block = block;
 			toaFile_struct_ptr[thread_iter]->amtmodel_total_rows = atmmodel_tot_rows;
-			strcpy(toaFile_struct_ptr[thread_iter]->outFile_lable, toa_an_files_list_ptr[toa_file_iter]); // its string so we shoud copy it
+			strcpy(toaFile_struct_ptr[thread_iter]->outFile_lable, second_toa_an_filesNotOnDisc_ptrList[final_iter]); // its string so we shoud copy it
 			strcpy(toaFile_struct_ptr[thread_iter]->ca, ca_fname);
 			strcpy(toaFile_struct_ptr[thread_iter]->cf, cf_fname);
 			strcpy(toaFile_struct_ptr[thread_iter]->an, an_fname);
 			strcpy(toaFile_struct_ptr[thread_iter]->outDir, predicted_roughness_dir);
-			// strcpy(toaFile_struct_ptr[thread_iter]->valid, 1);
 
 			// if (toaFile_struct_ptr.valid == 0){
 			// 	continue;
 			// }
 
-			/* ******************* we create threads and pass ptr-to-struct as an arg  **************************** */
+			/* ******************* we create threads and pass ptr-to-struct as an argument  **************************** */
 
 			/* create thread for each struct; each struct is a single diff toaFile */
 			// printf("run pthread... \n");
@@ -533,7 +654,7 @@ int main(int argc, char* argv[]) {
 			// free allocated memory
 			free(toaFile_struct_ptr[thread_iter]);
 		}
-		printf("c: in main(): out of pThread(), batch iteration ended, and we did free allocated memory to all struct[thread] \n");
+		printf("c: in main(), we're out of pThread(): batch iteration ended, and we did free allocated memory to all instances of struct[thread] \n");
 
 		// exit threads?
 		// pthread_exit(NULL); // to terminate threads, where/how use it???
@@ -542,7 +663,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	/* free all allocated memory here*/
-	free(toa_an_files_list_ptr);
+	free(original_toa_files_ptrList);
 	free(ATMModel_struct_ptr);
 
 	// finish main() with success signal
@@ -570,23 +691,24 @@ void* multithread_task(void* arg_ptr) { // function definitions, q- what part of
 	double xcf, xca, xan, tweight, xdata_distance, xvector_min_len, xrough_nearest, xroughness, lat, lon;;
 	// float xroughness, lat, lon;
 
-	printf("\n********** processing input (%d/%d): %s \n" , inputStruct_ptr->toa_file_count+1, inputStruct_ptr->total_toa_files, inputStruct_ptr->an);
+	printf("\n********** from multi-thread-task f(.): processing input (%d/%d): %s \n" , inputStruct_ptr->toa_file_count+1, inputStruct_ptr->total_toa_files, inputStruct_ptr->an);
 
 	// printf("c: reading each MISR image/block from 3 camera files into memory...\n");
    
 	/* read MISR input files */
 	if (!read_data(inputStruct_ptr->an, nlines, nsamples, &an_masked_toa)) { // we fill an_masked_toa array from: an_fname
-		printf("ERROR: check AN read_data: file name available? \n"); // Q- what happens in main() if here returns 1?
-		return 1; // return 0 or 1? also, how can this return some signal similar to continue that carries the process to next itteration in the multi-thread loop? can we return continue here?
+		printf("ERROR from multithread f(.): check AN read_data: file name available? \n"); // Q- what happens in main() if here returns 1?
+		// return 0 or 1? also, how can this return some signal similar to continue that carries the process to next itteration in the multi-thread loop? can we return continue here?
+		return 1; 
 	}
 
 	if (!read_data(inputStruct_ptr->ca, nlines, nsamples, &ca_masked_toa)) {
-		printf("ERROR: check CA read_data: file name available? \n");
+		printf("ERROR from multithread f(.): check CA read_data: file name available? \n");
 		return 1;
 	}
 
 	if (!read_data(inputStruct_ptr->cf, nlines, nsamples, &cf_masked_toa)) {
-		printf("ERROR: check CF read_data: file name available? \n");
+		printf("ERROR from multithread f(.): check CF read_data: file name available? \n");
 		return 1;
 	}
 
@@ -616,7 +738,8 @@ void* multithread_task(void* arg_ptr) { // function definitions, q- what part of
 
 			if (!misrPixel2LatLon(inputStruct_ptr->path, inputStruct_ptr->block, r, c, &lat, &lon, &r2, &c2)) { // E- r2 and c2 not used, should I modify misrPixel2LatLon and remove both? I aassume it was used for Land mask and we don't need land mask here anymore
 				printf("ERROR from misrPixel2LatLon.\n");
-				return 1; // error return 0 or 1?
+				// error return 0 or 1?
+				return 1; 
 			} // pass-by-reference: &lat-&lon-&r2-&c2 
 			
 			// start from here ******************************************************************
@@ -747,8 +870,8 @@ void* multithread_task(void* arg_ptr) { // function definitions, q- what part of
 	strsub(roughness_fname, "masked", "roughness");  // E: renamed output file
 
 	//fp = fopen(roughness_fname, "wb");
-	printf("c: writing roughness block: (%d) \n", inputStruct_ptr->toa_file_count+1);
-	printf("%s \n" , roughness_fname);
+	printf("c: writing roughness block (%d) ... \n", inputStruct_ptr->toa_file_count+1);
+	printf("\t%s \n" , roughness_fname);
 	
 	write_data(roughness_fname, roughness_mem_block_ptr, nlines, nsamples);
 
@@ -765,7 +888,7 @@ void* multithread_task(void* arg_ptr) { // function definitions, q- what part of
 	// close all open files
 	pthread_exit((void*)0); // terminate when tid completes its work
 
-	// return 0; // no return cuz its void
+	// return 0??? no return cuz its void
 }
 
 
@@ -859,7 +982,8 @@ int write_data(char *fname, double* data, int nlines, int nsamples)
 //######################################################################################################################
 
 // int pixel2grid(int path, int block, int line, int sample, double* xlat, double* xlon, int* r, int* c)
-int misrPixel2LatLon(int path, int block, int line, int sample, double* xlat, double* xlon, int* r, int* c) { // receives path-block-line-sample as pointer(mem-add) and updates/outputs xlat,xlon,r,c in mem-
+int misrPixel2LatLon(int path, int block, int line, int sample, double* xlat, double* xlon, int* r, int* c)
+{ // receives path-block-line-sample as pointer(mem-add) and updates/outputs xlat,xlon,r,c in mem-
 
 	int status;
 	char *errs[] = MTK_ERR_DESC;
@@ -892,7 +1016,8 @@ int misrPixel2LatLon(int path, int block, int line, int sample, double* xlat, do
 }
 //######################################################################################################################
 
-char *strsub(char *s, char *a, char *b) {
+char *strsub(char *s, char *a, char *b)
+{
 
 	char *p, t[256];
 	p = strstr(s, a);

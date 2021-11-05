@@ -1,13 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 '''
 	written by: Ehsan 19 Nov 2020
-	usage: make a list from available directories and moves files inside dir out to target dir == current dir (to the save level)
+	usage: this program makes a list from available directories and moves files from inside the ATM-ordered zip directories out and to a target dir == current dir (to the save level)
+		I used this program to bring ATM files from their subdirectories to a target directory
+		set the target dir == source directory (to the save level- the directory where includes all ATM-downloaded directories
 
 '''
 
 import os, glob, shutil
 
-src_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ATM_july_13_21/'
+src_dir_fullpath = '/home/ehsan/misr_lab/ATM_oct2016_5days'
 target_dir_fullpath = src_dir_fullpath
 
 
@@ -42,7 +44,7 @@ for idir in dir_content_list:
 				shutil.move(src_file_fp, target_dir_fullpath)
 				#~ check if file was moved successfully
 				if (os.path.isfile(os.path.join(target_dir_fullpath, src_file_fp.split('/')[-1]))):
-					print('file moved successfully!')
+					print('All files moved successfully!')
 				else:
 					print('warning on moving file')
 

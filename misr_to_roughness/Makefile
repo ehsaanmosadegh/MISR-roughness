@@ -1,17 +1,16 @@
-
-src_name=MISR2Roughness_parallel.c
-exe_path=/Users/ehsanmos/Documents/MISR/MISR-roughness/exe_dir
-exe_name=MISR2Roughness_parallel
+exe_path=/home/ehsan/misr_lab/MISR-roughness/exe_dir
+src_name=MISR2Roughness_parallel_checkFileExist.c
+exe_name=MISR2Roughness_parallel_checkFileExist
 
 all:
-	gcc -I/Users/ehsanmos/Documents/MISR/mtk_root/Mtk-1.5.0/include 	\
-		-I/Users/ehsanmos/Documents/MISR/mtk_root/hdfeoslibs/include 	\
-		-L/Users/ehsanmos/Documents/MISR/mtk_root/Mtk-1.5.0/lib 		\
-		-L/Users/ehsanmos/Documents/MISR/mtk_root/fftw-3.3.8_install/lib \
-		-I/Users/ehsanmos/Documents/MISR/mtk_root/fftw-3.3.8_install/include \
+	gcc -I/home/ehsan/misr_lab/mtk_src/Mtk-1.5.1/include	\
+		-L/home/ehsan/misr_lab/mtk_src/Mtk-1.5.1/lib	\
+		-I/home/ehsan/misr_lab/hdfeoslibs/include	\
 		-o ${exe_path}/${exe_name} ${src_name} -lMisrToolkit  -lm -lfftw3 -lpng -pthread
 	
 clean:
 
 	rm ${exe_path}/${exe_name}
+
+
 

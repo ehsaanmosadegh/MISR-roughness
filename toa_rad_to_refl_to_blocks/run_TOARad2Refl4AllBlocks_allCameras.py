@@ -2,7 +2,7 @@
 '''
 author: Ehsna Mosadegh (emosadegh@nevada.unr.edu)
 
-version history: 2 Nov 2019
+version history: 30 oct 2021
 
 about:
 	reads each hdf (MISR imagery) file, transforms TOA-rad to TOA-refl, extract data for each block from each hdf file, and write out data to each block.
@@ -38,23 +38,23 @@ import MisrToolkit as MTK
 #===== input directory #=====
 #~ input_storage_path: is where we stored hdf data for each project in sub-directories under this directories. subdirectories can be data for each month. hdf radiance files reflectance (GRP_ELLIPSOID) files, where we downloaded files
 
-# input_dir_fullpath = '/home/ehsan/misr_lab/test_input_june2016_old'							# path to dir that hdf files are stored in
-input_dir_fullpath = '/home/ehsan/misr_lab/orders/14528'
-output_path = input_dir_fullpath  																# writes out processed data inside same input dir
+# input_dir_fullpath = '/home/ehsan/misr_lab/test_input_june2016_old'							
+input_dir_fullpath = '/home/ehsan/misr_lab/orders/14528_apr2016'
+output_path = '/media/ehsan/6T_part1'  																# writes out processed data inside same input dir
 
 exe_dir = '/home/ehsan/misr_lab/MISR-roughness/exe_dir'
-exe_name = 'TOARad2Refl4AllBlocks'
+exe_name = 'TOARad2Refl4AllBlocks_allCameras'
 
 year = 2016
 month = 4
-day_range = [1,30]		# this code checks day-range and skips files w/days that are not in this range
+day_range = [1,16]		# this code checks day-range and skips files w/days that are not in this range
 block_range = [1,46] 	# [start, stop]; should match with block range in downloading step
 
 #~ output file labling- rename them based on your project
-month_label = 'april2016'
-num_of_days = 'day1_30'
-num_of_paths = 'p1to233'
-num_of_blocks = 'b1to46'
+month_label = 'april_2016_9cam4bands'
+num_of_days = 'day1-16'
+num_of_paths = 'p1-233'
+num_of_blocks = 'b1-46'
 
 #~ end of directory path setting (>>> set by USER <<<)
 ########################################################################################################################
@@ -69,8 +69,9 @@ num_of_blocks = 'b1to46'
 		###############################################################################
 
 #~ other settings - you might not need to change it
-band_list = ['Red']
-band_num = 2 # from [0,1,2,3]==[B,G,R,NIR]
+# band_list = ['Red']
+# band_num = 2 # from [0,1,2,3]==[B,G,R,NIR]
+###################################################
 minnaert = 0	# correction, turns off minnert parameter, f=0 it will not run inside C-code
 
 #~ some other settings- do not change
@@ -84,9 +85,9 @@ exe_fullpath = os.path.join(exe_dir, exe_name)
 
 def main():
 	'''
-	passes a pair of argumenst to cmd to run TOA.c program
+	passes a pair of arguments to cmd to run TOA.c program
 	'''
-	hdf_files_fullpath_list, total_hdf_files, output_dir_fullpath, band_num = in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, band_list, minnaert, exe_fullpath)	# order of arg params: root_dir, input_dir, output_dir_name, band_list
+	hdf_files_fullpath_list, total_hdf_files, output_dir_fullpath = in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, minnaert, exe_fullpath)	# order of arg params: root_dir, input_dir, output_dir_name, band_list
 	
 	for hdf_counter, hdf_file_fullpath in enumerate(hdf_files_fullpath_list):
 		# if day > day_range[1]
@@ -99,20 +100,35 @@ def main():
 
 		#-- 3 camera run-mode
 		path, orbit, camera = parse_file_names(hdf_file_fullpath, total_hdf_files, hdf_counter)
-		if (camera != 'an') and (camera != 'cf') and (camera != 'ca'):
-			print("but camera is not one of 3, we continue to the next hdf file...")
+
+		#-- check if camera is in list of 9 cameras
+		if (camera not in ['df','cf','bf','af','an','aa','ba','ca','da']):
+			print("Warning: camera not found in list, we continue to the next hdf file...")
 			continue
-		#-- 9 camera run-mode-- for later// just check camera matches one of 9 cameras available- QA check of camera name
 
-		for block_num in range(block_range[0], block_range[1], 1):
-			toa_file_fullpath = define_toa_file(path, orbit, block_num, camera, output_dir_fullpath, output_filelabel, hdf_counter, total_hdf_files)
-			#~ use a function to check if toa-file available on disc? if not, pass it to run_from_cmd()
-			if (check_TOA_file_availability(toa_file_fullpath)):
-				continue; # to next iteration == inside for loop
+		for nband in ['blue','green','red','NIR']: # we define what band we want
+			print('nband= %s' %nband)
+			#-- we only need/process all 9 cameras with red band and all bands for An camera
+			if ((camera != 'an') and (nband != 'red')):
+				print('note: cam-band combo not our favorite, will skip this HDF file-continue!')
+				continue
 
-			# ~ now run TOA from UNIX to process hdf ellipsoid data 
-			# print("returned False from past step. Go to cmd...")
-			run_from_cmd(exe_fullpath, hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath, hdf_counter, total_hdf_files, camera)  # note: to just check runtime setting comment out this line
+			#-- define band_num
+			if (nband == 'blue'): band_num = 0;
+			elif (nband == 'green'): band_num = 1;
+			elif (nband == 'red'): band_num = 2;
+			elif (nband == 'nir'): band_num = 3;
+			else: print('WARNING: band-number not assigned correctl!') 
+
+			for block_num in range(block_range[0], block_range[1], 1):
+				toa_file_fullpath = define_toa_file(path, orbit, block_num, camera, output_dir_fullpath, output_filelabel, hdf_counter, total_hdf_files, nband)
+				#~ use a function to check if toa-file available on disc? if not, pass it to run_from_cmd()
+				if (check_TOA_file_availability(toa_file_fullpath)):
+					continue; # to next iteration == inside for loop
+
+				# ~ now run TOA from UNIX to process hdf ellipsoid data 
+				# print("returned False from past step. Go to cmd...")
+				run_from_cmd(exe_fullpath, hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath, hdf_counter, total_hdf_files, camera)  # note: to just check runtime setting comment out this line
 
 	return 0
 
@@ -148,25 +164,49 @@ def check_TOA_file_availability(infile):
 
 ########################################################################################################################
 
-def define_toa_file(path, orbit, block_num, camera, output_dir_name, file_label, hdf_counter, total_hdf_files):
+def define_toa_file(path, orbit, block_num, camera, output_dir_name, file_label, hdf_counter, total_hdf_files, nband):
 
 	block_num = str(block_num).rjust(3, '0') # added 3 to right-adjust for 3-zero digits for all range of blocks
 	print('\nprocessing (block/HDF-File/totalHDF-File/cam): (%s/%s/%s/%s) (w/rjust performed) \n' % (block_num, hdf_counter, total_hdf_files, camera))
 
 
 	# toa output file names to CMD command --> to do: make function for this section
-	toa_file_pattern = (file_label+'_%s_%s_B%s_%s.dat' %(path, orbit, block_num, camera)) # will be written by TOA
+	toa_file_pattern = (file_label+'_%s_%s_B%s_%s_%s.dat' %(path, orbit, block_num, camera, nband)) # will be written by TOA
 		
+	if (camera == 'df'):
+		toa_file_fullpath = os.path.join(output_dir_name, 'Df', toa_file_pattern)
+		print('TOA file will be= %s' % (toa_file_fullpath))
+
+	if (camera == 'cf'):
+		toa_file_fullpath = os.path.join(output_dir_name, 'Cf', toa_file_pattern)
+		print('TOA file will be= %s' % (toa_file_fullpath))
+
+	if (camera == 'bf'):
+		toa_file_fullpath = os.path.join(output_dir_name, 'Bf', toa_file_pattern)
+		print('TOA file will be= %s' % (toa_file_fullpath))
+
+	if (camera == 'af'):
+		toa_file_fullpath = os.path.join(output_dir_name, 'Af', toa_file_pattern)
+		print('TOA file will be= %s' % (toa_file_fullpath))
+
 	if (camera == 'an'):
 		toa_file_fullpath = os.path.join(output_dir_name, 'An', toa_file_pattern)
+		print('TOA file will be= %s' % (toa_file_fullpath))
+
+	if (camera == 'aa'):
+		toa_file_fullpath = os.path.join(output_dir_name, 'Aa', toa_file_pattern)
+		print('TOA file will be= %s' % (toa_file_fullpath))
+
+	if (camera == 'ba'):
+		toa_file_fullpath = os.path.join(output_dir_name, 'Ba', toa_file_pattern)
 		print('TOA file will be= %s' % (toa_file_fullpath))
 
 	if (camera == 'ca'):
 		toa_file_fullpath = os.path.join(output_dir_name, 'Ca', toa_file_pattern)
 		print('TOA file will be= %s' % (toa_file_fullpath))
 
-	if (camera == 'cf'):
-		toa_file_fullpath = os.path.join(output_dir_name, 'Cf', toa_file_pattern)
+	if (camera == 'da'):
+		toa_file_fullpath = os.path.join(output_dir_name, 'Da', toa_file_pattern)
 		print('TOA file will be= %s' % (toa_file_fullpath))
 
 	return toa_file_fullpath
@@ -181,7 +221,7 @@ def run_from_cmd(exe_fullpath, hdf_file_fullpath, block_num, band_num, minnaert,
 	#~ run the C-cmd program
 	#cmd = 'TOA3 "%s" %s %s %s \"%s\" \"%s\"' %(hdf_file_fullpath, block_num, band_num, minnaert, toa_file_fullpath, toa_image_file) # old version
 	print(" ")
-	print('python= <program-name> <Ellipsoid-file> <block> <band> <minnaert>	<toa-file>')
+	print('python= <exe-name> <Ellipsoid-HDF-file> <block> <band> <minnaert> <toa-file>')
 	print(exe_fullpath)
 	print(hdf_file_fullpath)
 	print('\n')
@@ -203,16 +243,16 @@ def run_from_cmd(exe_fullpath, hdf_file_fullpath, block_num, band_num, minnaert,
 
 ########################################################################################################################
 
-def in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, band_list, minnaert, exe_fullpath):
+def in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, minnaert, exe_fullpath):
 	'''
-	reads dir paths and check if they exist, lists all hdf ellipsoid files and returns a list of files in fullpath mode
+	reads dir paths and check if they exist, lists all HDF ellipsoid files and returns a list of files in fullpath mode
 	'''
 	output_dir_fullpath = os.path.join(output_path, output_dir)
 	print('input dir : %s' % (input_dir_fullpath))
 	print('output dir: %s' % (output_dir_fullpath))
 	print('exe fullPath: %s' %exe_fullpath)
 
-	# check if directories exist
+	#-- check if directories exist
 	if not (os.path.isdir(input_dir_fullpath)): # needs fullpath
 		print('-> input/download directory NOT exist! check the input path')
 		raise SystemExit()
@@ -228,8 +268,8 @@ def in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, band_list, m
 		else:
 			print('output dir created successfully!\n')
 
-	#~ we create 3 dir for 3 cameras
-	camera_list = ['Ca', 'An', 'Cf']
+	#-- we create dir for all 9 cameras
+	camera_list = ['Da','Ca','Ba','Aa','An','Af','Bf','Cf','Df']
 	for cam in camera_list:
 		cam_dir = os.path.join(output_dir_fullpath, cam)
 		if (not os.path.isdir(cam_dir)):
@@ -243,13 +283,15 @@ def in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, band_list, m
 			print('%s dir exist!' % cam)
 
 
-	# checking some constants
-	for band in band_list:
-		if (band == 'Red'):
-			nband = band_num  # red band=2
-		else:
-			print('WARNING: band is NOT set correctly, we only work woth RED band.\n')
-	print('band= %s' %nband)
+######################################
+	# #-- checking bands
+	# for band in band_list:
+	# 	if (band == 'Red'):
+	# 		nband = band_num  # red band=2
+	# 	else:
+	# 		print('WARNING: band is NOT set correctly, we only work woth RED band.\n')
+	# print('band= %s' %nband)
+######################################
 	print('minnaert= %d' % minnaert)
 
 	# we need Ellipsoid radiance files
@@ -261,7 +303,7 @@ def in_n_out_dir_setup(input_dir_fullpath, output_path, output_dir, band_list, m
 
 	print('number of "GRP_ELLIPSOID***.hdf" files that will be processed= %s \n' % total_hdf_files)
 
-	return hdf_files_fullpath_list, total_hdf_files, output_dir_fullpath, nband
+	return hdf_files_fullpath_list, total_hdf_files, output_dir_fullpath
 
 ########################################################################################################################
 
@@ -283,24 +325,22 @@ def parse_file_names(hdf_file_fullpath, total_hdf_files, hdf_counter):
 	# find the camera in the file name
 
 	#~ three needed cameras
-	if hdf_file_fullpath.find('_CF') != -1 :
+	if hdf_file_fullpath.find('_DF') != -1 :
+		camera = 'df'
+	elif hdf_file_fullpath.find('_CF') != -1 :
 		camera = 'cf'
-	elif hdf_file_fullpath.find('_CA') != -1 :
-		camera = 'ca'
-	elif hdf_file_fullpath.find('_AN') != -1 :
-		camera = 'an'
-
-	#~ other cameras, but we don't need them
-	elif hdf_file_fullpath.find('_AF') != -1 :
-		camera = 'af'
 	elif hdf_file_fullpath.find('_BF') != -1 :
 		camera = 'bf'
+	elif hdf_file_fullpath.find('_AF') != -1 :
+		camera = 'af'
+	elif hdf_file_fullpath.find('AN') != -1 :
+		camera = 'an'
 	elif hdf_file_fullpath.find('_AA') != -1 :
 		camera = 'aa'
 	elif hdf_file_fullpath.find('_BA') != -1 :
 		camera = 'ba'
-	elif hdf_file_fullpath.find('_DF') != -1 :
-		camera = 'df'
+	elif hdf_file_fullpath.find('_CA') != -1 :
+		camera = 'ca'
 	elif hdf_file_fullpath.find('_DA') != -1 :
 		camera = 'da'
 

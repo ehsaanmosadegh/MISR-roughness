@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3.6
 '''
 by: Ehsan Mosadegh 20 August 2020
 this script runs LandMask.c 
@@ -9,29 +9,34 @@ import datetime as dt
 from platform import python_version
 
 ########################################################################################################################
-#~ input dir- <toa_refl> data should be in 3 different directories in here (An/Ca/Cf)
-toa_dir_fullpath = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ellipsoid_files/toa_refl_julyl2016_day1_25_p1to233_b1to46' ;  # //  "/home3/mare/Nolin/2016/Surface3/Jul/";
-#~ landmask dir
-lsmask_dir_fullpath = '/data/gpfs/assoc/misr_roughness/landseamask_blocks_1to46' ;  									# Ehsan: mask file, output from <ArcticTileToGrid.c> // at: /Volumes/easystore/from_home/Nolin_except_dataFolder/SeaIce/LWData/MISR_LandSeaMask on easystore drive
+# change the following section
+########################################################################################################################
+#-- input dir- <toa_refl_P-O-B> NOTE: data should be in 3 different directories at this path (An/Ca/Cf)
+toa_refl_dir_fullpath = '/home/ehsan/misr_lab/orders/14528_apr2016/test_with_9cameras/toa_refl_april2016_day_test_p1to233_b1to46'                     
 
-exe_dir = '/data/gpfs/home/emosadegh/MISR-roughness/exe_dir'	
+#-- landmask dir # Ehsan: mask file, output from <ArcticTileToGrid.c>
+lsmask_dir_fullpath = '/media/ehsan/seagate_6TB/landseamask_blocks_1to46'							
+
+exe_dir = '/home/ehsan/misr_lab/MISR-roughness/exe_dir'	
 exe_name = "LandMask" # should be set in $PATH
 
-#~ output dir for masked_toa_refl file
-output_path = toa_dir_fullpath  # we will create output dir inside input dir
+#-- output dir for masked_toa_refl file
+output_path = toa_refl_dir_fullpath  # we will create output dir inside input dir
 
 exe_dir_fullpath = os.path.join(exe_dir, exe_name)
 ########################################################################################################################
+# do not change anymore
+########################################################################################################################
 def main():
 	#~ check if input dir exists
-	print("-> input dir: %s" % toa_dir_fullpath)
-	if (not os.path.isdir(toa_dir_fullpath)):
-		print("-> ERROR: input dir NOT exist: %s" % toa_dir_fullpath)
+	print("-> input dir: %s" % toa_refl_dir_fullpath)
+	if (not os.path.isdir(toa_refl_dir_fullpath)):
+		print("-> ERROR: input dir NOT exist: %s" % toa_refl_dir_fullpath)
 		raise SystemExit()
 
 
-	#~ 1st we make output dir 
-	output_dir = "masked_" + toa_dir_fullpath.split('/')[-1]
+	#~ make output dir 
+	output_dir = "masked_" + toa_refl_dir_fullpath.split('/')[-1]
 	output_dir_fullpath = os.path.join(output_path, output_dir)	# output dir; dat and png files; go to 3 different directories	//"/home3/mare/Nolin/2016/Surface3_LandMasked/Jul/"; 
 	if (not os.path.isdir(output_dir_fullpath)):
 		print("-> Warning: output dir NOT exist, we will make it.")
@@ -42,12 +47,13 @@ def main():
 		else:
 			print("-> output dir: %s" % output_dir_fullpath)
 
-	lsmask_files_fullpath = os.path.join(lsmask_dir_fullpath, 'lsmask_pP_bB.dat');
+	lsmask_files_fullpath = os.path.join(lsmask_dir_fullpath, 'lsmask_pPPP_bBBB.dat');
 	print('-> landMask dir: %s' % lsmask_files_fullpath)
 
+
 	#~ now, we make 3 dirs for 3 cameras
-	camera_list = ['Ca', 'An', 'Cf']
-	for cam in camera_list:
+	camera_dir_list = ['Da','Ca','Ba','Aa','An','Af','Bf','Cf','Df']
+	for cam in camera_dir_list:
 		cam_dir = os.path.join(output_dir_fullpath, cam)
 		if (os.path.isdir(cam_dir)==False):
 			os.mkdir(cam_dir)	 # note mkdir() doen't return anything!
@@ -60,7 +66,7 @@ def main():
 			print('-> %s dir exist!' % cam)
 
 
-	cmd = ('"%s" "%s" "%s" "%s"' % (exe_dir_fullpath, toa_dir_fullpath, lsmask_files_fullpath, output_dir_fullpath) )  # cmd = should be a string
+	cmd = ('"%s" "%s" "%s" "%s"' % (exe_dir_fullpath, toa_refl_dir_fullpath, lsmask_files_fullpath, output_dir_fullpath) )  # cmd = should be a string
 	# print(cmd)
 	call(cmd, shell=True)
 

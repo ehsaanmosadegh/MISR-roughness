@@ -1352,7 +1352,7 @@ int main(int argc, char* argv[]) { // return 0= success, return 1= error
 
 	if (argc < 5) // this might happen later, cos I turnedoff fname[2]
 	{
-		fprintf(stderr, "Usage: TOARad2BlocksAllBlocks_exe, GRP_ELLIPSOID.hdf, block, band, minnaert, toa_data_file \n"); // updated
+		fprintf(stderr, "Usage: <TOARad2BlocksAllBlocks_exe> , <GRP_ELLIPSOID.hdf> , <block> , <band> , <minnaert> , <toa_data_file> \n"); // updated
 		// fprintf(stderr, "Usage: TOA3 input-misr-file block band minnaert output-data-file output-image-file-Ehsan--noNeed\n"); old with image
 
 		return 1;
@@ -1408,13 +1408,15 @@ int main(int argc, char* argv[]) { // return 0= success, return 1= error
 		return 1;
 	}
 		// check supported cameras; how about camera Df and Da? order of cameras? F->A? or A->F?
-	if      (strstr(fname[0], "_CF_")) camera = 1; // check if there if CF
-	else if (strstr(fname[0], "_BF_")) camera = 2;
-	else if (strstr(fname[0], "_AF_")) camera = 3;
-	else if (strstr(fname[0], "_AN_")) camera = 4; // change to 5 later
-	else if (strstr(fname[0], "_AA_")) camera = 5;
-	else if (strstr(fname[0], "_BA_")) camera = 6;
-	else if (strstr(fname[0], "_CA_")) camera = 7;
+	if      (strstr(fname[0], "_DF_")) camera = 1; // check if there if CF
+	else if (strstr(fname[0], "_CF_")) camera = 2;
+	else if (strstr(fname[0], "_BF_")) camera = 3;
+	else if (strstr(fname[0], "_AF_")) camera = 4; // change to 5 later
+	else if (strstr(fname[0], "_AN_")) camera = 5;
+	else if (strstr(fname[0], "_AA_")) camera = 6;
+	else if (strstr(fname[0], "_BA_")) camera = 7;
+	else if (strstr(fname[0], "_CA_")) camera = 8;
+	else if (strstr(fname[0], "_DA_")) camera = 9;
 	else
 	{
 		fprintf(stderr, "Unsupported camera\n");
@@ -1425,8 +1427,8 @@ int main(int argc, char* argv[]) { // return 0= success, return 1= error
 	PNG_NLINES = 512; // no of pixels in column; for error checking
 	PNG_NSAMPLES = 2048; // no of pixels in each row of image
 	ZOOM = 64;
-	// for band !=3
-	if ((band != 2) && (camera != 4)) // if not nadir==vertical camera... E: should we check camera too? or just band is enough? // change camera to 5 later
+	// check if not red and not An
+	if ((band != 2) && (camera != 5)) // if not nadir==vertical camera... E: should we check camera too? or just band is enough? // change camera to 5 fpr An later
 	{
 	    PNG_NLINES = 128; // check these two
 	    PNG_NSAMPLES = 512;

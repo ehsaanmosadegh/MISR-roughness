@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 '''
 by: Ehsan Mosadegh 26 November 2020
 
-this script runs MISR2roughness.c parallel code
+	this script runs MISR2roughness.c parallel code
+
 
 '''
 from subprocess import call
@@ -11,16 +12,16 @@ import datetime as dt
 from platform import python_version
 
 ########################################################################################################################
-#~~ setup paths
-masked_toa_An_dir = '/data/gpfs/assoc/misr_roughness/2016/july_2016/ellipsoid_files/toa_refl_julyl2016_day1_25_p1to233_b1to46/masked_toa_refl_julyl2016_day1_25_p1to233_b1to46/An'
-
-atmmodel_dir = '/data/gpfs/assoc/misr_roughness/2016/july_2016/atmmodel' ;
-atmmodel_csvfile_label = "atmmodel_july_2016.csv"
-
-predicted_roughness_dir = '/data/gpfs/assoc/misr_roughness/2016/july_2016/roughness_2016_july1to16_p1to233_b1to46'
-
-exe_dir = '/data/gpfs/home/emosadegh/MISR-roughness/exe_dir'
-exe_name = 'MISR2Roughness_parallel'
+#-- setup paths
+#-- inputs
+masked_toa_An_dir = '/home/ehsan/misr_lab/orders/14528_apr2016/toa_refl_april2016_day1_30_p1to233_b1to46/masked_toa_refl_april2016_day1_30_p1to233_b1to46/An/' 	# note: should set to masked/AN/ dir= should have An/ at the end of path
+atmmodel_dir = '/home/ehsan/misr_lab/april_2016/models'
+atmmodel_csvfile_label = 'MisrAtmCalibratedModel_april_2016.csv'
+#-- output
+predicted_roughness_dir = '/home/ehsan/misr_lab/roughness_2016_April_1to16_p1to233_b1to46'
+#-- executable
+exe_dir = '/home/ehsan/misr_lab/MISR-roughness/exe_dir'
+exe_name = 'MISR2Roughness_parallel_checkFileExist'
 ########################################################################################################################
 def main():
 	'''
@@ -46,7 +47,7 @@ def main():
 def run_from_cmd(exe_fp, maskedTOAan, atmmodel, roughDir):
 	#~~ run the C-cmd program
 	print(" ");
-	print('-> python: "Usage: <exe-name> <maskedTOA-AN-dir-dir> <atmmodelCSV-file> <predictedRoughness-dir>')
+	print('-> python: "Usage: <exe-name> <maskedTOA-AN-dir> <atmmodelCSV-file> <predictedRoughness-dir>')
 	cmd = (' %s %s %s %s' %(exe_fp, maskedTOAan, atmmodel, roughDir));
 	print('-> to cmd= %s \n' %cmd)	# run the cmd command.
 	#~~ run the cmd command

@@ -279,7 +279,7 @@ int main(int argc, char *argv[]) {
     int ATMnewLine = 0;
 
     // E- if we use cloud mask
-    int cm_run_stat = 1; // change to 0 == turn off cloud mask, update: we use ASCM and I turned it on here
+    int cloudMask_run_stat = 0; // 0 == turn off cloud mask
 
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
     /* Get list of all available ATM.csv files available in directory */
@@ -339,7 +339,7 @@ int main(int argc, char *argv[]) {
     }
 
     printf("----------------------------------------------------------------------------------------------\n");
-    printf("num of ATM.csv files found= (%d) \nin direcotry: %s \n" , atm_nfiles_index, atm_dir);
+    printf("number of ATM.csv (ILATM2) files found= (%d) \nin direcotry: %s \n" , atm_nfiles_index, atm_dir);
     printf("\n");
     // Get list of available ATM csv files /////////////////////////////////////////////////////////////////////////////
 
@@ -349,12 +349,11 @@ int main(int argc, char *argv[]) {
     //}
 
 
-
-
     /*////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
-    /* read all available ATM file in the list we made in the past section */
+    /* read all available ATM file from the list we made in the past section */
 
-    for (int i = 0; i < atm_nfiles_index; i++){ // i = num of available ATM files in the list
+    for (int i = 0; i < atm_nfiles_index; i++)
+    { // i = num of available ATM files in the list
         printf("\n############################## process a new ATM nfile ##############################\n");
         printf("ATM file: (%d/%d) --> %s \n\n" , i+1, atm_nfiles_index, atm_fileList[i]);
         
@@ -386,7 +385,7 @@ int main(int argc, char *argv[]) {
         // extracted this info from each ATM file name
         // printf("date info= yr: %s; mon: %d; day: %s \n", syear, month, sday);
 
-
+        //-------------
         for (k  = -1; k < 2; k++) { // k=days; yesterday (-1) or tmrw (+1) == 0.5 of the ATM overpass; today=o
 
             // printf("\nprocess for k-day: %d \n", k);
@@ -430,6 +429,7 @@ int main(int argc, char *argv[]) {
 
             // printf("\nnow process each orbit number...\n\n");
 
+            //---------------------
             for (j = 0; j < orbit_count; j++) 
             {   // what is orbit_count? orbitCount; Q- orbit during each day? --> comes from MTK, orbits in a specific day
                 
@@ -582,7 +582,7 @@ int main(int argc, char *argv[]) {
                     }
 
                     // 4- now check cloudMask file
-                    if (!cm_run_stat) 
+                    if (!cloudMask_run_stat) // if cloudMask is off
                     { // go here
                         printf("c: NOTE: cloudMask is off == we do not use cloud mask anymore! \n");
                     } 
@@ -595,7 +595,7 @@ int main(int argc, char *argv[]) {
                         {
                             printf("C: cloudMask NOT exist: %s\n", cloudmask_fname_fullpath);
                             // continue; // check if file is accessible
-                            // cm_run_stat = 0;
+                            // cloudMask_run_stat = 0;
                         }
                         else
                         {
@@ -681,7 +681,7 @@ int main(int argc, char *argv[]) {
                         // printf("CHECK: ca= %f, an= %f, cf= %f\n\n" , ca, an, cf);
 
                         //  to process cloud mask files
-                        if (cm_run_stat) 
+                        if (cloudMask_run_stat) 
                         {
                             // printf("c: reading cloud mask file... \n");
                             read_data_cloudmask(cloudmask_fname_fullpath, line, sample, &cm); // cloud mask
