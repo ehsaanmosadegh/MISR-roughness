@@ -42,7 +42,7 @@ output???
 
 // setting for running for BRF conversion or toa radiance output- turn on (= 1) the option you need
 int TOARadianceOut = 0; // Ehsan: turns on TOAradiance, outputs TOA radiance
-int doTOA_BRFConversion = 1; // Ehsan: turns on BRF conversion, outputs TOA reflectance; note: we used an equation from MISR docs to convert TOA-radance to TOA-reflectance
+int TOA_BRFConversion = 1; // Ehsan: turns on BRF conversion, outputs TOA reflectance; note: we used an equation from MISR docs to convert TOA-radance to TOA-reflectance
 
 // other settings
 char fname[3][256];
@@ -56,7 +56,7 @@ int path = 0;
 int orbit = 0;
 int block = 0;
 int band = 2; // red-band
-int camera = 1;
+int camera = 0;
 int nlines = 0;
 int nsamples = 0;
 double *data = 0;
@@ -485,11 +485,11 @@ int readEllipsoidFile(char* fname) // gets the hdf file
 	if (VERBOSE) fprintf(stderr, "readEllipsoidFile: grid=%s, field=%s\n", gridName, fieldName);
 
 	status = MtkReadBlock(fname, gridName, fieldName, block, &radianceBuffer); // radiance data 
-	printf("C: status= %d, MTK_SUCCESS= %d \n" , status, MTK_SUCCESS);
+	// printf("C: status= %d, MTK_SUCCESS= %d \n" , status, MTK_SUCCESS);
 
 	if (status != MTK_SUCCESS) 
 		{
-		fprintf(stderr, "readEllipsoidFile: MtkReadBlock [2] failed!!!, status = %d (%s)\n", status, errs[status]);
+		fprintf(stderr, "readEllipsoidFile: MtkReadBlock_2 failed!!!, status = %d (%s)\n", status, errs[status]);
 		return 0;
 		}
 		
@@ -556,7 +556,7 @@ int readEllipsoidFile(char* fname) // gets the hdf file
 	status = MtkReadBlock(fname, gridName, fieldName, block, &conversionFactorBuffer); // conversion factor
 	if (status != MTK_SUCCESS) 
 		{
-		fprintf(stderr, "readEllipsoidFile: MtkReadBlock [3] failed!!!, status = %d (%s)\n", status, errs[status]);
+		fprintf(stderr, "readEllipsoidFile: MtkReadBlock_3 failed!!!, status = %d (%s)\n", status, errs[status]);
 		return 0;
 		}
 		
@@ -804,12 +804,12 @@ int readEllipsoidFile(char* fname) // gets the hdf file
 	}
 
 	//-------------------------------------------------------------------------------------------
-	//-------------------------------------------- doTOA_BRFConversion --------------------------------
+	//-------------------------------------------- TOA_BRFConversion --------------------------------
 	// note: converts TOA-rad to TOA-refl and outputs TOA reflectance, at TOA == sensor level
 
-	if (doTOA_BRFConversion)
+	if (TOA_BRFConversion)
 	{
-		printf("\nC: NOTE: doTOA_BRFConversion is on, we calculate TOA BRF conversion\n");
+		printf("\nC: NOTE: TOA_BRFConversion is on, we calculate TOA BRF conversion\n");
 
 		FileLines = radianceBuffer.nline / conversionFactorBuffer.nline; // radianceBuffer and conversionFactorBuffer come from MtkReadBlock==read data in mem-
 		FileSamples = radianceBuffer.nsample / conversionFactorBuffer.nsample;	// so data is in mem-
@@ -823,7 +823,7 @@ int readEllipsoidFile(char* fname) // gets the hdf file
 
 		if (!data) // check mem-allocation is right
 		{
-			printf("doTOA_BRFConversion: malloc of double array failed!!!\n");
+			printf("TOA_BRFConversion: malloc of double array failed!!!\n");
 			nlines = 0;
 			nsamples = 0;
 			nvalid = 0;
@@ -831,19 +831,20 @@ int readEllipsoidFile(char* fname) // gets the hdf file
 		}
 
 		nvalid = 0; // *************   here: conversion from toa-rad to toa-reflectance
-		if (doTOA_BRFConversion)
+		if (TOA_BRFConversion)
 		{
 		    for (j = 0; j < nlines; j++)
 		        for (i = 0; i < nsamples; i++)
 		            {
-		            if (radianceBuffer.data.u16[j][i] < fillbuf.data.u16[0][0] && // check this condition definitely to see what it filters
-		                conversionFactorBuffer.data.f[j/FileLines][i/FileSamples] > 0.0)  // Q- why we need this condition?
+		            if (radianceBuffer.data.u16[j][i] < fillbuf.data.u16[0][0] && 					// Q- check what does it filter?
+		                conversionFactorBuffer.data.f[j/FileLines][i/FileSamples] > 0.0)  	// Q- why we need this condition?
 		                {
 		                data[i + j * nsamples] = (radianceBuffer.data.u16[j][i] >> 2) * scaleFactorBuffer.data.d[0][0] * conversionFactorBuffer.data.f[j / FileLines][i / FileSamples]; // update data with these 3; is it toa_refl? or something else?
 		                nvalid++;
 		                }
 		            else // what condition????
 		                {
+		                // printf("conv1_pixel updated to -1.0 \n");
 		                data[i + j * nsamples] = -1.0;
 		                }
 		            //printf("BRF data pixel: %lf\n" , data[i + j * nsamples]);
@@ -861,6 +862,7 @@ int readEllipsoidFile(char* fname) // gets the hdf file
 		                }
 		            else
 		                {
+		                // printf("conv2_pixel updated to -1.0 \n");
 		                data[i + j * nsamples] = -1.0;
 		                }
 		                //printf("notBRF data pixel: %lf\n" , data[i + j * nsamples]);
@@ -1347,7 +1349,7 @@ int main(int argc, char* argv[]) { // return 0= success, return 1= error
 	//	printf("C: inside C\n");
 	if (argc == 6)
 	{
-		printf("C: received 6 arguments. \n");
+		// printf("\nC: received 6 arguments.\n");
 	}
 
 	if (argc < 5) // this might happen later, cos I turnedoff fname[2]
@@ -1423,6 +1425,8 @@ int main(int argc, char* argv[]) { // return 0= success, return 1= error
 		return 1; // if camera not found= error= return 1
 	}
 
+	printf("C: camera code is: %d\n" , camera);
+
 	// for band=2; is set based on band number
 	PNG_NLINES = 512; // no of pixels in column; for error checking
 	PNG_NSAMPLES = 2048; // no of pixels in each row of image
@@ -1479,18 +1483,23 @@ int main(int argc, char* argv[]) { // return 0= success, return 1= error
 		// printf("%03d  %06d  %03d  %s  %5d  %5d  %10d  %14.6f  %14.6f  %14.6f  %14.6f  %14.6f  %10d\n", 
 		// 	path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??", 
 		// 	nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ, ndropouts); // formatted output to stdout
-		printf("\n");
+		
+
+		printf("\nbefore writing data to file...\n");
 		printf("%s %03d  %06d  %03d  %s  %5d  %5d  %10d  %14.6f  %14.6f  %14.6f  %14.6f  %14.6f \n", 
-		"C:", path, orbit, block, camera == 1 ? "cf" : camera == 4 ? "an" : camera == 7 ? "ca" : camera == 2 ? "bf" : camera == 3 ? "af" : camera == 5 ? "aa" : camera == 6 ? "ba" : "??",
-			nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ ); // Ehsan - removed ndropouts, %10d from output
+		"C:", path, orbit, block, camera == 1 ? "df" : camera == 2 ? "cf" : camera == 3 ? "bf" : camera == 4 ? "af" : camera == 5 ? "an" : camera == 6 ? "aa" : camera == 7 ? "ba" : camera == 8 ? "ca" : camera == 9 ? "da" : "??",
+			nlines, nsamples, nvalid, min, max, mean, stddev, meanSZ); 		// Ehsan - removed ndropouts, %10d from output
 
 		fflush(stdout); // flush to clean it
 
-		if (!write_data(fname[1], data, nlines, nsamples)) return 1; // TOA writes hdf data into file fname[1] 
+		if (!write_data(fname[1], data, nlines, nsamples))
+		{
+		return 1;
+		} // TOA writes hdf data into file fname[1] 
 		// if (!write_png(fname[2], data2image(data, nlines, nsamples, 1), nlines, nsamples)) return 1; E: turnedoff this function & data2image, fname[2]- anything that goes to this function
 	}
 
-	printf("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+	printf("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\n");
 
 	return 0;
 

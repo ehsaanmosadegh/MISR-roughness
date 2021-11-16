@@ -529,7 +529,7 @@ int main(int argc, char *argv[]) {
                         { //Q- why/when img_block returns -1? 
                             // printf("WARNING2: MTK img_block retured -1 from MTK, skippingm! \n");
                             atm_row_num++;
-                            continue;
+                            continue;  // to next ATM row==location== similar to exception in python
                         }
 //                        printf("ERROR for: %f %f %d %f %f", xlat, xlon, img_block, fline, fsample); // Q- why float for line-sample?
 //                        return 1;
